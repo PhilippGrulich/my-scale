@@ -26,12 +26,22 @@ jobs:
       - name: Test
         run: swift test --enable-code-coverage
 
-  # app-build job is added in milestone M0b, once the SwiftUI/HealthKit Xcode
-  # project exists and depends on MiScaleCore:
-  #
-  #   app-build:
-  #     runs-on: macos-14
-  #     steps:
-  #       - uses: actions/checkout@v4
-  #       - run: xcodebuild build -scheme MiScaleApp \
-  #              -destination 'platform=iOS Simulator,name=iPhone 15'
+  app-build:
+    name: MiScaleApp (xcodebuild)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build app (simulator, no signing)
+        run: |
+          xcodebuild build \
+            -project MyScale.xcodeproj \
+            -scheme MiScaleApp \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO

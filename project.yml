@@ -1,0 +1,41 @@
+# XcodeGen spec — run `xcodegen generate` to produce MyScale.xcodeproj.
+# The project is generated (git-ignored); this file is the source of truth.
+name: MyScale
+options:
+  bundleIdPrefix: com.example.myscale
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  MiScaleCore:
+    path: .
+
+targets:
+  MiScaleApp:
+    type: application
+    platform: iOS
+    sources:
+      - App/Sources
+    dependencies:
+      - package: MiScaleCore
+        product: MiScaleCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.myscale.app
+        PRODUCT_NAME: MiScale
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.7"
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/MiScale.entitlements
+        CODE_SIGN_STYLE: Automatic
+
+schemes:
+  MiScaleApp:
+    build:
+      targets:
+        MiScaleApp: all
