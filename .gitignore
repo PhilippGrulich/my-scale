@@ -4,10 +4,14 @@
 Package.resolved
 
 # Xcode (added in M0b)
-*.xcodeproj/xcuserdata/
+# The .xcodeproj is generated from project.yml by XcodeGen — do not commit it.
+*.xcodeproj/
 *.xcworkspace/xcuserdata/
 DerivedData/
 xcuserdata/
 
 # macOS
 .DS_Store
+
+# Xcode intermediate build output
+build/
