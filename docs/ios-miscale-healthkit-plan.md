@@ -375,6 +375,40 @@ Pure, no I/O. Input `(weightKg, impedanceOhms, UserProfile, at: Date)`.
 - Rationale (locked decision): never auto-attribute — a wrong HealthKit write is
   painful to undo, so ambiguity is always human-confirmed.
 
+### 6a. Pure resolver + canonical domain types (`MiScaleCore`)
+
+`MiScaleCore` owns the canonical `UserProfile` using the core `BiologicalSex`
+(not `HKBiologicalSex`); the app maps HealthKit's sex onto it at the HealthKit
+boundary only. Keeps the resolver pure and CI-testable.
+
+```swift
+public struct UserProfile: Identifiable, Equatable, Sendable {
+    public let id: UUID
+    public var name: String
+    public var heightCm: Double
+    public var dateOfBirth: Date
+    public var sex: BiologicalSex
+    public var weightRangeKg: ClosedRange<Double>
+    public var isHealthKitOwner: Bool
+}
+public enum UserResolution: Equatable {
+    case matched(UserProfile)
+    case ambiguous([UserProfile])   // >1 range contains the weight
+    case noMatch                    // 0 ranges contain the weight
+}
+public enum UserResolver {
+    static func resolve(weightKg: Double, among: [UserProfile]) -> UserResolution
+    static func rangeWarnings(_ profiles: [UserProfile]) -> [RangeWarning]  // overlaps/gaps for Settings
+}
+```
+
+Plus helpers reused downstream: `ageYears(dateOfBirth:at:)` and
+`BodyProfile(from: UserProfile, at: Date)` so the existing
+`BodyCompositionCalculator` consumes a resolved profile directly — giving a
+pure, end-to-end `finalize → resolve → compute` path that is testable with no
+hardware. Only `.matched` proceeds to compute/write; `.ambiguous`/`.noMatch`
+go to the Unassigned queue (§6).
+
 ---
 
 ## 7. Edge cases & failure modes
@@ -488,8 +522,13 @@ full parser + formula golden vectors behind the same green gate.
    scale** (first hardware milestone) and a logging/console view.
 5. **M4 — Persistence + pipeline.** `MeasurementStore`, wire
    scan→parse→finalize→(resolve)→store; readings durable before any sink.
-6. **M5 — User profiles + resolver + Unassigned queue UI.** Profile CRUD,
-   weight-range config with overlap/gap validation, manual-assign flow.
+6. **M5a — Pure resolver + domain types (this step).** `UserProfile`,
+   `UserResolution`, `UserResolver` (resolve + range warnings), age/`BodyProfile`
+   helpers, and a pure end-to-end `finalize→resolve→compute` test. Under green
+   CI, no hardware.
+   **M5b — Profiles + Unassigned queue UI.** Profile CRUD, weight-range config
+   surfacing the resolver's overlap/gap warnings, manual-assign flow. (App
+   target.)
 7. **M6 — HealthKit sink.** Auth flow, batched write of 4 samples, metadata,
    failure/retry, owner-user gating; verify samples land in Health app.
 8. **M7 — HA sink (optional).** Settings config (Keychain token), async POST,
