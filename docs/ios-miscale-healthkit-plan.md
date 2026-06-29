@@ -379,12 +379,55 @@ Pure, no I/O. Input `(weightKg, impedanceOhms, UserProfile, at: Date)`.
 
 ---
 
+## 7b. Continuous Integration (GitHub Actions)
+
+CI exploits the plan's core/platform split: the **pure** parser and calculator
+live in a SwiftPM library (`MiScaleCore`) that `swift test` runs on a macOS
+runner with **no simulator and no hardware**; the SwiftUI/HealthKit/CoreBluetooth
+app shell is built (not unit-run) with `xcodebuild`.
+
+**Repo layout introduced now** (also satisfies M0/start of M1):
+```
+Package.swift                       # SwiftPM manifest, MiScaleCore library + test target
+Sources/MiScaleCore/                # pure logic: parser, calculator, models (no UIKit/HK/CB)
+Tests/MiScaleCoreTests/             # XCTest golden cases (hex fixtures, formula vectors)
+.github/workflows/ci.yml            # the workflow below
+```
+The Xcode **app** target is added later (M0 scaffold) and depends on the
+`MiScaleCore` package; CI gains an `xcodebuild build` job at that point.
+
+**`.github/workflows/ci.yml`:**
+- Triggers: `pull_request` to `main`, and `push` to `claude/**` and `main`.
+- `concurrency` group per-ref to cancel superseded runs.
+- Job **core-tests** (gate, runs today):
+  - `runs-on: macos-14`.
+  - `swift --version` (Xcode/Swift toolchain check).
+  - `swift build` then `swift test --enable-code-coverage` on `MiScaleCore`.
+- Job **app-build** (added with the Xcode project in M0; until then omitted /
+  guarded so it doesn't fail on a missing `.xcodeproj`):
+  - `xcodebuild build -scheme MiScaleApp -destination 'platform=iOS
+    Simulator,name=iPhone 15'` (and `test` once UI/integration tests exist).
+- Optional **lint** job: SwiftFormat/SwiftLint in `--lint` mode (non-blocking
+  initially).
+
+**Bootstrap so CI is green immediately:** scaffold `MiScaleCore` with the
+`ParsedAdvertisement`/`BodyComposition` model stubs and **one real smoke test**
+(e.g. a BMI golden value) so the first CI run passes; M1/M2 then fill in the
+full parser + formula golden vectors behind the same green gate.
+
+---
+
 ## 8. Milestone-ordered build plan (v1)
 
-1. **M0 — Project scaffold.** SwiftUI app, iOS 16 target, folders per layer,
+0. **M0a — CI + core package scaffold (this step).** Add `Package.swift`
+   (`MiScaleCore` library + test target), `Sources/MiScaleCore` model stubs, one
+   passing smoke test, and `.github/workflows/ci.yml` (core-tests job). CI green
+   on the existing PR before any app code.
+1. **M0b — App scaffold.** SwiftUI app, iOS 16 target, folders per layer,
    `Info.plist` usage strings (`NSBluetoothAlwaysUsageDescription`,
    `NSHealthShareUsageDescription`, `NSHealthUpdateUsageDescription`), HealthKit
-   capability. No logic.
+   capability, app target depends on `MiScaleCore`; add `app-build` CI job. No
+   logic.
 2. **M1 — Pure parser + fixtures + tests.** `AdvertisementParser` with the
    verified byte/bit map; XCTest golden cases from captured/synthesized hex
    payloads (stabilized, non-stabilized, weight-removed, lb unit, bad length).

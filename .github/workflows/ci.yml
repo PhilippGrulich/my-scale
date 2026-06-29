@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "claude/**"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-tests:
+    name: MiScaleCore (swift test)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Swift toolchain
+        run: swift --version
+
+      - name: Build
+        run: swift build
+
+      - name: Test
+        run: swift test --enable-code-coverage
+
+  # app-build job is added in milestone M0b, once the SwiftUI/HealthKit Xcode
+  # project exists and depends on MiScaleCore:
+  #
+  #   app-build:
+  #     runs-on: macos-14
+  #     steps:
+  #       - uses: actions/checkout@v4
+  #       - run: xcodebuild build -scheme MiScaleApp \
+  #              -destination 'platform=iOS Simulator,name=iPhone 15'
