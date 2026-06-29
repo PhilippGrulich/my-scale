@@ -251,6 +251,50 @@ stabilized frame. (This is also exactly why background scanning is out of scope:
   must tolerate `allowDuplicates` being disabled (rely on stabilized frame only,
   accept lower fidelity).
 
+### 3a. Pure finalizer (`MeasurementFinalizer`) — the testable core
+
+The state machine is split from CoreBluetooth so it runs under CI. One
+`MeasurementFinalizer` instance per peripheral; **time is injected** (every
+call takes `now: Date`) so the settle/cooldown/stale windows are deterministic
+in tests with no real clock.
+
+```swift
+public struct FinalizerConfig {           // tunable in M9 field soak
+    var settle: TimeInterval = 0.6        // hold a consistent weight this long
+    var cooldown: TimeInterval = 10       // suppress the repeat burst after emit
+    var staleTimeout: TimeInterval = 5    // drop a half-finished weigh-in
+    var weightToleranceKg: Double = 0.1   // "same weight" band while settling
+}
+public struct FinalizedReading: Equatable {
+    var weightKg: Double; var impedanceOhms: Int
+    var capturedAt: Date; var deviceTimestamp: Date?
+}
+public final class MeasurementFinalizer {
+    enum State { case idle, measuring, cooldown }
+    func ingest(_ adv: ParsedAdvertisement, at now: Date) -> FinalizedReading?
+    func tick(at now: Date) -> FinalizedReading?   // settle/stale/cooldown when adverts pause
+}
+```
+
+Transitions (emit **exactly one** reading per weigh-in):
+- **idle + final frame** (`adv.isFinalReading`) → `measuring`; record
+  `firstStableAt`, candidate weight/impedance. Non-final frames ignored.
+- **measuring + final frame** within tolerance: if `now − firstStableAt ≥
+  settle` → emit `FinalizedReading(capturedAt: now)`, go `cooldown`; else keep
+  waiting. Weight beyond tolerance → restart the settle window on the new value.
+- **measuring + weight-removed frame** → finalize the held candidate immediately
+  (the load-lifted finalize trigger), go `cooldown`.
+- **measuring + tick**: `now − lastAdvAt ≥ staleTimeout` → reset to `idle` (no
+  emit); else `settle` elapsed → emit.
+- **cooldown**: ignore all frames (dedupes the repeating stable burst and the
+  weight-removed event) until `now − finalizedAt ≥ cooldown`, then → `idle`.
+
+Tests (pure, no hardware): replay an advert sequence with synthetic timestamps
+and assert exactly one reading for a normal weigh-in, none for a step-off-early
+burst, dedupe across the repeat burst + removed event, and restart when the
+weight shifts mid-settle. The CoreBluetooth wrapper (M3b) just forwards
+`didDiscover` payloads into `ingest` and runs a timer calling `tick`.
+
 ---
 
 ## 4. Body-composition computation module
@@ -435,8 +479,12 @@ full parser + formula golden vectors behind the same green gate.
 3. **M2 — Pure body-comp calculator + tests.** LBM/fat%/lean/BMI with constants
    isolated; golden-value tests vs lolouk44/bodymiscale reference outputs;
    clamping tests; partial (no-impedance) path.
-4. **M3 — BLE scanner + state machine.** `CBCentralManager` foreground scan,
-   per-device finalize/debounce/dedupe state machine; verify with the **real
+4. **M3a — Pure finalizer (this step).** `MeasurementFinalizer` (§3a) in
+   `MiScaleCore`: time-injected finalize/debounce/dedupe state machine + tests
+   replaying advert sequences. Under green CI, no hardware.
+5. **M3b — BLE scanner wrapper.** `CBCentralManager` foreground scan that
+   forwards `didDiscover` 0x181B service data into a per-peripheral
+   `MeasurementFinalizer` and runs a `tick` timer; verify with the **real
    scale** (first hardware milestone) and a logging/console view.
 5. **M4 — Persistence + pipeline.** `MeasurementStore`, wire
    scan→parse→finalize→(resolve)→store; readings durable before any sink.
