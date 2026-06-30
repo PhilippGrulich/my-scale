@@ -1,0 +1,43 @@
+name: MiScaleApp
+options:
+  bundleIdPrefix: com.philippgrulich.miscale
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  MiScaleCore:
+    # Local SwiftPM package living at the repo root (Package.swift).
+    path: .
+
+targets:
+  MiScaleApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: App
+    dependencies:
+      - package: MiScaleCore
+        product: MiScaleCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.philippgrulich.miscale.app
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        # Usage strings (plan §5 / §1).
+        INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription: "Scans for nearby Mi Body Composition Scale 2 advertisements to read your weigh-ins. No pairing or connection is made."
+        INFOPLIST_KEY_NSHealthShareUsageDescription: "Reads your date of birth and biological sex to compute body composition from scale readings."
+        INFOPLIST_KEY_NSHealthUpdateUsageDescription: "Saves your weight, body fat percentage, lean body mass, and BMI to Apple Health."
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 8M2DN93YKC
+    entitlements:
+      path: App/MiScaleApp.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []

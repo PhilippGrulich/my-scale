@@ -22,6 +22,21 @@ public struct BodyProfile: Equatable, Sendable {
     }
 }
 
+/// A single weight reading on the timeline, sourced from Apple Health (mapped
+/// from `HKQuantitySample` at the HealthKit boundary) and rendered in the chart.
+/// Platform-free so range/trend logic stays unit-testable.
+public struct WeightSample: Equatable, Sendable, Identifiable {
+    public let id: UUID
+    public var date: Date
+    public var weightKg: Double
+
+    public init(id: UUID, date: Date, weightKg: Double) {
+        self.id = id
+        self.date = date
+        self.weightKg = weightKg
+    }
+}
+
 /// The four HealthKit-native metrics this app computes and writes in v1.
 public struct BodyComposition: Equatable, Codable, Sendable {
     public var bodyMassKg: Double
