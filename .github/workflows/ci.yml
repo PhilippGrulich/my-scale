@@ -28,7 +28,9 @@ jobs:
 
   app-build:
     name: MiScaleApp (xcodebuild)
-    runs-on: macos-14
+    # Xcode 16 (macos-15) — XcodeGen emits the newer pbxproj object format that
+    # Xcode 15.4 on macos-14 cannot open ("future project file format 77").
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
