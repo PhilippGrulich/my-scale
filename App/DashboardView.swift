@@ -80,8 +80,10 @@ struct DashboardView: View {
             Label(model.bleStatus.label, systemImage: "dot.radiowaves.left.and.right")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 14)
                 .padding(.vertical, 8)
+                .glassEffect(in: .capsule)
+                .frame(maxWidth: .infinity)
         }
     }
 
