@@ -23,7 +23,8 @@ xcodebuild -scheme MyOpenScaleApp -destination 'generic/platform=iOS' build
 
 Pure logic lives in the `MyOpenScaleCore` Swift package (`swift test`); the app,
 HealthKit, and CoreBluetooth code is in `App/`. See `docs/` for the design plan,
-the multi-scale support plan, and App Store notes.
+the multi-scale support plan, and App Store notes. To ship a new build to
+TestFlight, follow [`docs/RELEASING.md`](docs/RELEASING.md).
 
 ## Compatibility
 
