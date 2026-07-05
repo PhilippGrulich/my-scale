@@ -1,6 +1,6 @@
 import SwiftUI
 import Charts
-import MiScaleCore
+import MyOpenScaleCore
 
 enum ChartRange: String, CaseIterable, Identifiable {
     case d30 = "30D"
@@ -19,12 +19,17 @@ enum ChartRange: String, CaseIterable, Identifiable {
 /// Interactive weight-history chart (Swift Charts) sourced from Apple Health.
 struct WeightChartView: View {
     let history: [WeightSample]
+    var goalKg: Double? = nil
 
     @State private var range: ChartRange = .d30
     @State private var selectedDate: Date?
 
     private var samples: [WeightSample] {
         WeightHistory.filter(history, lastDays: range.days, now: Date())
+    }
+
+    private var trend: [WeightSample] {
+        WeightHistory.movingAverage(samples)
     }
 
     private var selected: WeightSample? {
@@ -74,22 +79,44 @@ struct WeightChartView: View {
     }
 
     private var chart: some View {
-        Chart(samples) { s in
-            AreaMark(
-                x: .value("Date", s.date),
-                yStart: .value("Baseline", yDomain.lowerBound),
-                yEnd: .value("Weight", s.weightKg)
-            )
-            .interpolationMethod(.catmullRom)
-            .foregroundStyle(
-                LinearGradient(colors: [Theme.accent.opacity(0.30), Theme.accent.opacity(0.02)],
-                               startPoint: .top, endPoint: .bottom)
-            )
-
-            LineMark(x: .value("Date", s.date), y: .value("Weight", s.weightKg))
+        Chart {
+            ForEach(samples) { s in
+                AreaMark(
+                    x: .value("Date", s.date),
+                    yStart: .value("Baseline", yDomain.lowerBound),
+                    yEnd: .value("Weight", s.weightKg)
+                )
                 .interpolationMethod(.catmullRom)
-                .foregroundStyle(Theme.accent)
-                .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .foregroundStyle(
+                    LinearGradient(colors: [Theme.accent.opacity(0.30), Theme.accent.opacity(0.02)],
+                                   startPoint: .top, endPoint: .bottom)
+                )
+
+                LineMark(x: .value("Date", s.date), y: .value("Weight", s.weightKg),
+                         series: .value("Series", "Weight"))
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(Theme.accent)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+            }
+
+            // Smoothed trend line (de-noised weight).
+            ForEach(trend) { t in
+                LineMark(x: .value("Date", t.date), y: .value("Trend", t.weightKg),
+                         series: .value("Series", "Trend"))
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(Theme.accentSecondary.opacity(0.55))
+                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
+            }
+
+            if let goalKg {
+                RuleMark(y: .value("Goal", goalKg))
+                    .foregroundStyle(Theme.accentSecondary.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                    .annotation(position: .top, alignment: .leading) {
+                        Text("Goal \(goalKg.formatted(1)) kg")
+                            .font(.caption2).foregroundStyle(Theme.accentSecondary)
+                    }
+            }
 
             if let sel = selected {
                 RuleMark(x: .value("Date", sel.date))
@@ -128,7 +155,8 @@ struct WeightChartView: View {
 
     /// Padded domain around the visible samples (never degenerate).
     private var yDomain: ClosedRange<Double> {
-        let weights = samples.map(\.weightKg)
+        var weights = samples.map(\.weightKg)
+        if let goalKg { weights.append(goalKg) }   // keep the goal line on-screen
         guard let lo = weights.min(), let hi = weights.max() else { return 0...100 }
         let pad = max(1.0, (hi - lo) * 0.15)
         return (lo - pad)...(hi + pad)

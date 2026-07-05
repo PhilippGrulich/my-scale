@@ -1,5 +1,5 @@
 import XCTest
-@testable import MiScaleCore
+@testable import MyOpenScaleCore
 
 final class MeasurementFinalizerTests: XCTestCase {
 
@@ -98,14 +98,36 @@ final class MeasurementFinalizerTests: XCTestCase {
         XCTAssertEqual(f.state, .idle)
     }
 
-    func testNewWeighInAfterCooldownEmitsAgain() {
+    func testStayingOnScaleDoesNotReEmit() {
         let f = MeasurementFinalizer()
         XCTAssertNil(f.ingest(finalFrame(75.0, 500), at: at(0)))
         XCTAssertNotNil(f.ingest(finalFrame(75.0, 500), at: at(0.7)))  // first emit
-        // After cooldown (10s) a fresh weigh-in emits again.
-        XCTAssertNil(f.ingest(finalFrame(90.0, 600), at: at(12)))
-        let second = f.ingest(finalFrame(90.0, 600), at: at(12.7))
+        // User keeps standing well past the old 10s cooldown — must NOT re-emit.
+        XCTAssertNil(f.ingest(finalFrame(75.0, 500), at: at(12)))
+        XCTAssertNil(f.ingest(finalFrame(75.0, 500), at: at(20)))
+        XCTAssertEqual(f.state, .cooldown)
+    }
+
+    func testNewWeighInAfterStepOffEmitsAgain() {
+        let f = MeasurementFinalizer()
+        XCTAssertNil(f.ingest(finalFrame(75.0, 500), at: at(0)))
+        XCTAssertNotNil(f.ingest(finalFrame(75.0, 500), at: at(0.7)))  // first emit
+        // Step off (load lifted) releases the lock.
+        XCTAssertNil(f.ingest(removedFrame(), at: at(2)))
+        XCTAssertEqual(f.state, .idle)
+        // A fresh weigh-in now emits again.
+        XCTAssertNil(f.ingest(finalFrame(90.0, 600), at: at(3)))
+        let second = f.ingest(finalFrame(90.0, 600), at: at(3.7))
         XCTAssertEqual(second?.weightKg, 90.0)
+    }
+
+    func testCooldownClearsAfterAdvertsStop() {
+        let f = MeasurementFinalizer()
+        XCTAssertNil(f.ingest(finalFrame(75.0, 500), at: at(0)))
+        XCTAssertNotNil(f.ingest(finalFrame(75.0, 500), at: at(0.7)))  // first emit
+        // No clean removed frame, but adverts stop: stale clears the lock.
+        XCTAssertNil(f.tick(at: at(0.7 + 6)))   // > staleTimeout since last adv
+        XCTAssertEqual(f.state, .idle)
     }
 }
 

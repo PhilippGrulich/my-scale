@@ -1,5 +1,5 @@
 import XCTest
-@testable import MiScaleCore
+@testable import MyOpenScaleCore
 
 final class UserResolverTests: XCTestCase {
 

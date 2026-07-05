@@ -1,6 +1,6 @@
 import Foundation
 import HealthKit
-import MiScaleCore
+import MyOpenScaleCore
 
 /// Writes the four HealthKit-native body metrics for an owner-user weigh-in
 /// (plan §5). No body-composition correlation type exists, so the samples are
@@ -31,16 +31,71 @@ final class HealthKitSink {
         ].compactMap { $0 })
     }
 
-    /// Read types: characteristics for composition math (DOB / sex) plus bodyMass
-    /// so we can chart the user's full weight history. HealthKit never reveals
-    /// whether a read was granted, so the app treats these as best-effort.
+    /// Read types: characteristics for composition math (DOB / sex), height to
+    /// prefill the profile during onboarding, plus bodyMass so we can chart the
+    /// user's full weight history. HealthKit never reveals whether a read was
+    /// granted, so the app treats these as best-effort.
     private var readTypes: Set<HKObjectType> {
         Set(([
             HKObjectType.characteristicType(forIdentifier: .dateOfBirth),
             HKObjectType.characteristicType(forIdentifier: .biologicalSex),
         ] as [HKObjectType?] + [
+            HKObjectType.quantityType(forIdentifier: .height),
             HKObjectType.quantityType(forIdentifier: .bodyMass),
         ]).compactMap { $0 })
+    }
+
+    /// Basic identity details we can pre-fill from Apple Health during onboarding.
+    /// Apple Health has no name field, so name is always entered by the user.
+    /// Every field is optional: a missing/denied read, or a non-binary/unset sex,
+    /// leaves the value nil for the user to fill in.
+    struct HealthPrefill: Equatable {
+        var dateOfBirth: Date?
+        var sex: BiologicalSex?
+        var heightCm: Double?
+    }
+
+    /// Best-effort read of DOB, biological sex, and most-recent height to seed the
+    /// profile. Characteristics are synchronous; height needs a sample query, so
+    /// the whole result is delivered once the height query returns. Completion on
+    /// the main queue. A denied read surfaces as nil (HealthKit hides read grants).
+    func readUserCharacteristics(_ completion: @escaping (HealthPrefill) -> Void) {
+        guard Self.isAvailable else {
+            DispatchQueue.main.async { completion(HealthPrefill()) }
+            return
+        }
+
+        var prefill = HealthPrefill()
+
+        // DOB (characteristic).
+        if let components = try? store.dateOfBirthComponents() {
+            prefill.dateOfBirth = Calendar(identifier: .gregorian).date(from: components)
+        }
+        // Biological sex (characteristic) → core binary enum; .other/.notSet ⇒ nil.
+        if let hkSex = try? store.biologicalSex().biologicalSex {
+            switch hkSex {
+            case .male: prefill.sex = .male
+            case .female: prefill.sex = .female
+            default: prefill.sex = nil   // .other / .notSet / future cases
+            }
+        }
+
+        // Height (quantity) → most recent sample.
+        guard let heightType = HKQuantityType.quantityType(forIdentifier: .height) else {
+            DispatchQueue.main.async { completion(prefill) }
+            return
+        }
+        let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let query = HKSampleQuery(sampleType: heightType,
+                                  predicate: nil,
+                                  limit: 1,
+                                  sortDescriptors: [sort]) { _, samples, _ in
+            if let sample = (samples as? [HKQuantitySample])?.first {
+                prefill.heightCm = sample.quantity.doubleValue(for: .meterUnit(with: .centi))
+            }
+            DispatchQueue.main.async { completion(prefill) }
+        }
+        store.execute(query)
     }
 
     /// Request authorization. Completion is delivered on the main queue.
@@ -76,9 +131,9 @@ final class HealthKitSink {
 
         let metadata: [String: Any] = [
             HKMetadataKeyWasUserEntered: false,
-            "MiScaleImpedanceOhms": impedanceOhms,
-            "MiScaleAppBuild": appBuild,
-            "MiScaleUserID": profile.id.uuidString,
+            "MyOpenScaleImpedanceOhms": impedanceOhms,
+            "MyOpenScaleAppBuild": appBuild,
+            "MyOpenScaleUserID": profile.id.uuidString,
         ]
 
         var samples: [HKQuantitySample] = []
@@ -129,6 +184,31 @@ final class HealthKitSink {
         }
     }
 
+    /// Write the user's height to Apple Health so it syncs to other devices
+    /// (notably the Apple Watch, which reads it back to compute body composition
+    /// during a standalone weigh-in). Best-effort: silently no-ops if HealthKit is
+    /// unavailable or the height type can't be resolved, and a denied share just
+    /// fails the save. Completion (optional) on the main queue.
+    func writeHeight(cm: Double, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard Self.isAvailable, cm > 0,
+              let type = HKQuantityType.quantityType(forIdentifier: .height) else {
+            DispatchQueue.main.async { completion?(.failure(SinkError.unavailable)) }
+            return
+        }
+        let sample = HKQuantitySample(
+            type: type,
+            quantity: HKQuantity(unit: .meterUnit(with: .centi), doubleValue: cm),
+            start: Date(), end: Date(),
+            metadata: [HKMetadataKeyWasUserEntered: true])
+        store.save(sample) { success, error in
+            DispatchQueue.main.async {
+                if let error = error { completion?(.failure(error)) }
+                else if success { completion?(.success(())) }
+                else { completion?(.failure(SinkError.saveFailed)) }
+            }
+        }
+    }
+
     /// Read the user's full weight history from Apple Health for the chart.
     /// Returns samples ascending by date, in kg. Completion on the main queue.
     ///
@@ -159,6 +239,102 @@ final class HealthKitSink {
             DispatchQueue.main.async { completion(.success(result)) }
         }
         store.execute(query)
+    }
+
+    /// A body metric chartable from Apple Health history.
+    enum MetricKind: String, Identifiable, CaseIterable {
+        case bodyFat, lean, bmi
+        var id: String { rawValue }
+        var title: String {
+            switch self { case .bodyFat: return "Body Fat"; case .lean: return "Lean Mass"; case .bmi: return "BMI" }
+        }
+        var unitLabel: String {
+            switch self { case .bodyFat: return "%"; case .lean: return "kg"; case .bmi: return "" }
+        }
+        fileprivate var hkIdentifier: HKQuantityTypeIdentifier {
+            switch self { case .bodyFat: return .bodyFatPercentage; case .lean: return .leanBodyMass; case .bmi: return .bodyMassIndex }
+        }
+        fileprivate var hkUnit: HKUnit {
+            switch self {
+            case .bodyFat: return .percent()
+            case .lean: return .gramUnit(with: .kilo)
+            case .bmi: return .count()
+            }
+        }
+        /// Multiply the raw HealthKit value to get the displayed value (fraction → %).
+        fileprivate var displayScale: Double { self == .bodyFat ? 100 : 1 }
+    }
+
+    /// One point on a metric's timeline, already scaled to display units.
+    struct MetricSample: Identifiable, Equatable {
+        let id: UUID
+        let date: Date
+        let value: Double
+    }
+
+    /// Read a metric's full history from Apple Health, ascending by date, scaled
+    /// to display units. Empty on denied read (HealthKit hides read grants).
+    func readQuantityHistory(_ kind: MetricKind, completion: @escaping ([MetricSample]) -> Void) {
+        guard Self.isAvailable, let type = HKQuantityType.quantityType(forIdentifier: kind.hkIdentifier) else {
+            DispatchQueue.main.async { completion([]) }
+            return
+        }
+        let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        let query = HKSampleQuery(sampleType: type, predicate: nil,
+                                  limit: HKObjectQueryNoLimit, sortDescriptors: [sort]) { _, samples, _ in
+            let unit = kind.hkUnit, scale = kind.displayScale
+            let result = (samples as? [HKQuantitySample] ?? []).map {
+                MetricSample(id: $0.uuid, date: $0.startDate, value: $0.quantity.doubleValue(for: unit) * scale)
+            }
+            DispatchQueue.main.async { completion(result) }
+        }
+        store.execute(query)
+    }
+
+    /// Delete a weigh-in: removes the body samples THIS app wrote at `date`
+    /// (weight, BMI, body fat, lean mass) from Apple Health. Only our own source
+    /// is touched, so manual Health entries / other apps are left alone.
+    /// Completion on the main queue.
+    func deleteMeasurement(at date: Date, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard Self.isAvailable else {
+            DispatchQueue.main.async { completion(.failure(SinkError.unavailable)) }
+            return
+        }
+        let types = [
+            HKQuantityType.quantityType(forIdentifier: .bodyMass),
+            HKQuantityType.quantityType(forIdentifier: .bodyMassIndex),
+            HKQuantityType.quantityType(forIdentifier: .bodyFatPercentage),
+            HKQuantityType.quantityType(forIdentifier: .leanBodyMass),
+        ].compactMap { $0 }
+
+        // Samples are saved with start == end == capturedAt; match a tight window
+        // around it, restricted to this app's source.
+        let window = HKQuery.predicateForSamples(withStart: date.addingTimeInterval(-1),
+                                                 end: date.addingTimeInterval(1),
+                                                 options: [])
+        let mine = HKQuery.predicateForObjects(from: .default())
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [window, mine])
+
+        let group = DispatchGroup()
+        let lock = NSLock()
+        var firstError: Error?
+
+        for type in types {
+            group.enter()
+            store.deleteObjects(of: type, predicate: predicate) { _, _, error in
+                // HealthKit reports "no objects deleted" as an error; ignore it so
+                // a partial weigh-in (e.g. no fat sample) doesn't fail the delete.
+                if let error = error as NSError?,
+                   !(error.domain == HKError.errorDomain && error.code == HKError.Code.errorNoData.rawValue) {
+                    lock.lock(); if firstError == nil { firstError = error }; lock.unlock()
+                }
+                group.leave()
+            }
+        }
+        group.notify(queue: .main) {
+            if let firstError { completion(.failure(firstError)) }
+            else { completion(.success(())) }
+        }
     }
 
     enum SinkError: LocalizedError {

@@ -375,9 +375,9 @@ Pure, no I/O. Input `(weightKg, impedanceOhms, UserProfile, at: Date)`.
 - Rationale (locked decision): never auto-attribute — a wrong HealthKit write is
   painful to undo, so ambiguity is always human-confirmed.
 
-### 6a. Pure resolver + canonical domain types (`MiScaleCore`)
+### 6a. Pure resolver + canonical domain types (`MyOpenScaleCore`)
 
-`MiScaleCore` owns the canonical `UserProfile` using the core `BiologicalSex`
+`MyOpenScaleCore` owns the canonical `UserProfile` using the core `BiologicalSex`
 (not `HKBiologicalSex`); the app maps HealthKit's sex onto it at the HealthKit
 boundary only. Keeps the resolver pure and CI-testable.
 
@@ -460,19 +460,19 @@ go to the Unassigned queue (§6).
 ## 7b. Continuous Integration (GitHub Actions)
 
 CI exploits the plan's core/platform split: the **pure** parser and calculator
-live in a SwiftPM library (`MiScaleCore`) that `swift test` runs on a macOS
+live in a SwiftPM library (`MyOpenScaleCore`) that `swift test` runs on a macOS
 runner with **no simulator and no hardware**; the SwiftUI/HealthKit/CoreBluetooth
 app shell is built (not unit-run) with `xcodebuild`.
 
 **Repo layout introduced now** (also satisfies M0/start of M1):
 ```
-Package.swift                       # SwiftPM manifest, MiScaleCore library + test target
-Sources/MiScaleCore/                # pure logic: parser, calculator, models (no UIKit/HK/CB)
-Tests/MiScaleCoreTests/             # XCTest golden cases (hex fixtures, formula vectors)
+Package.swift                       # SwiftPM manifest, MyOpenScaleCore library + test target
+Sources/MyOpenScaleCore/                # pure logic: parser, calculator, models (no UIKit/HK/CB)
+Tests/MyOpenScaleCoreTests/             # XCTest golden cases (hex fixtures, formula vectors)
 .github/workflows/ci.yml            # the workflow below
 ```
 The Xcode **app** target is added later (M0 scaffold) and depends on the
-`MiScaleCore` package; CI gains an `xcodebuild build` job at that point.
+`MyOpenScaleCore` package; CI gains an `xcodebuild build` job at that point.
 
 **`.github/workflows/ci.yml`:**
 - Triggers: `pull_request` to `main`, and `push` to `claude/**` and `main`.
@@ -480,15 +480,15 @@ The Xcode **app** target is added later (M0 scaffold) and depends on the
 - Job **core-tests** (gate, runs today):
   - `runs-on: macos-14`.
   - `swift --version` (Xcode/Swift toolchain check).
-  - `swift build` then `swift test --enable-code-coverage` on `MiScaleCore`.
+  - `swift build` then `swift test --enable-code-coverage` on `MyOpenScaleCore`.
 - Job **app-build** (added with the Xcode project in M0; until then omitted /
   guarded so it doesn't fail on a missing `.xcodeproj`):
-  - `xcodebuild build -scheme MiScaleApp -destination 'platform=iOS
+  - `xcodebuild build -scheme MyOpenScaleApp -destination 'platform=iOS
     Simulator,name=iPhone 15'` (and `test` once UI/integration tests exist).
 - Optional **lint** job: SwiftFormat/SwiftLint in `--lint` mode (non-blocking
   initially).
 
-**Bootstrap so CI is green immediately:** scaffold `MiScaleCore` with the
+**Bootstrap so CI is green immediately:** scaffold `MyOpenScaleCore` with the
 `ParsedAdvertisement`/`BodyComposition` model stubs and **one real smoke test**
 (e.g. a BMI golden value) so the first CI run passes; M1/M2 then fill in the
 full parser + formula golden vectors behind the same green gate.
@@ -498,13 +498,13 @@ full parser + formula golden vectors behind the same green gate.
 ## 8. Milestone-ordered build plan (v1)
 
 0. **M0a — CI + core package scaffold (this step).** Add `Package.swift`
-   (`MiScaleCore` library + test target), `Sources/MiScaleCore` model stubs, one
+   (`MyOpenScaleCore` library + test target), `Sources/MyOpenScaleCore` model stubs, one
    passing smoke test, and `.github/workflows/ci.yml` (core-tests job). CI green
    on the existing PR before any app code.
 1. **M0b — App scaffold.** SwiftUI app, iOS 16 target, folders per layer,
    `Info.plist` usage strings (`NSBluetoothAlwaysUsageDescription`,
    `NSHealthShareUsageDescription`, `NSHealthUpdateUsageDescription`), HealthKit
-   capability, app target depends on `MiScaleCore`; add `app-build` CI job. No
+   capability, app target depends on `MyOpenScaleCore`; add `app-build` CI job. No
    logic.
 2. **M1 — Pure parser + fixtures + tests.** `AdvertisementParser` with the
    verified byte/bit map; XCTest golden cases from captured/synthesized hex
@@ -514,7 +514,7 @@ full parser + formula golden vectors behind the same green gate.
    isolated; golden-value tests vs lolouk44/bodymiscale reference outputs;
    clamping tests; partial (no-impedance) path.
 4. **M3a — Pure finalizer (this step).** `MeasurementFinalizer` (§3a) in
-   `MiScaleCore`: time-injected finalize/debounce/dedupe state machine + tests
+   `MyOpenScaleCore`: time-injected finalize/debounce/dedupe state machine + tests
    replaying advert sequences. Under green CI, no hardware.
 5. **M3b — BLE scanner wrapper.** `CBCentralManager` foreground scan that
    forwards `didDiscover` 0x181B service data into a per-peripheral

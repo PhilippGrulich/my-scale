@@ -15,3 +15,6 @@ xcuserdata/
 
 # Xcode intermediate build output
 build/
+
+# App Store Connect API keys — never commit
+AuthKey_*.p8*

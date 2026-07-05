@@ -1,5 +1,5 @@
 import Foundation
-import MiScaleCore
+import MyOpenScaleCore
 
 /// Codable mirror of the core `UserProfile` (which is intentionally not Codable
 /// to keep the pure core platform-free). Persisted to `UserDefaults` for v1;
@@ -12,6 +12,8 @@ struct StoredProfile: Codable, Equatable {
     var sex: BiologicalSex
     var weightMinKg: Double
     var weightMaxKg: Double
+    /// Optional target weight for the goal/ETA UI. nil = no goal set.
+    var goalWeightKg: Double?
 
     /// A sensible default so the app is usable on first launch without setup.
     static func makeDefault() -> StoredProfile {
@@ -31,6 +33,17 @@ struct StoredProfile: Codable, Equatable {
         )
     }
 
+    /// Return a copy with any non-nil Apple Health values applied. Used to
+    /// pre-fill onboarding; fields Health can't supply (name) or didn't have are
+    /// left untouched so the existing default stands and the user can edit.
+    func applying(prefill: HealthKitSink.HealthPrefill) -> StoredProfile {
+        var copy = self
+        if let dob = prefill.dateOfBirth { copy.dateOfBirth = dob }
+        if let sex = prefill.sex { copy.sex = sex }
+        if let h = prefill.heightCm, h > 0 { copy.heightCm = h }
+        return copy
+    }
+
     /// Map to the pure-core profile. This is always the HealthKit owner in v1
     /// (single-profile-per-device, plan §5).
     var coreProfile: UserProfile {
@@ -48,7 +61,7 @@ struct StoredProfile: Codable, Equatable {
 
 /// Tiny persistence wrapper. Single-profile for v1.
 enum ProfileStore {
-    private static let key = "miscale.profile.v1"
+    private static let key = "myopenscale.profile.v1"
 
     static func load() -> StoredProfile {
         guard

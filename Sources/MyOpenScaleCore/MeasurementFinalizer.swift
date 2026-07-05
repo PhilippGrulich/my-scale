@@ -5,8 +5,9 @@ import Foundation
 public struct FinalizerConfig: Equatable, Sendable {
     /// Hold a consistent qualifying weight at least this long before emitting.
     public var settle: TimeInterval
-    /// After emitting, suppress further frames this long (dedupes the repeat
-    /// burst and the trailing weight-removed event).
+    /// Reserved. The post-emit lock is now released by a step-off (weight-removed
+    /// frame) or by adverts going stale, not by a fixed timer — so the user
+    /// staying on the scale never auto-starts a second weigh-in.
     public var cooldown: TimeInterval
     /// Drop a half-finished weigh-in if no advert arrives for this long.
     public var staleTimeout: TimeInterval
@@ -58,7 +59,6 @@ public final class MeasurementFinalizer {
     private var candidateDeviceTimestamp: Date?
     private var firstStableAt = Date.distantPast
     private var lastAdvAt = Date.distantPast
-    private var finalizedAt = Date.distantPast
 
     public init(config: FinalizerConfig = FinalizerConfig()) {
         self.config = config
@@ -96,9 +96,12 @@ public final class MeasurementFinalizer {
             }
 
         case .cooldown:
-            guard now.timeIntervalSince(finalizedAt) >= config.cooldown else { return nil }
-            state = .idle
-            return ingest(adv, at: now)
+            // Stay locked after a finalized reading until the load is lifted, so
+            // a fresh weigh-in does NOT auto-start while the user simply keeps
+            // standing on the scale. A weight-removed frame (step-off) clears it.
+            lastAdvAt = now
+            if adv.isWeightRemoved { state = .idle }
+            return nil
         }
     }
 
@@ -114,7 +117,9 @@ public final class MeasurementFinalizer {
             }
             return finalizeIfSettled(at: now)
         case .cooldown:
-            if now.timeIntervalSince(finalizedAt) >= config.cooldown { state = .idle }
+            // Stepped off without a clean weight-removed frame (some firmwares):
+            // clear once adverts stop so a later weigh-in can register.
+            if now.timeIntervalSince(lastAdvAt) >= config.staleTimeout { state = .idle }
             return nil
         case .idle:
             return nil
@@ -143,7 +148,6 @@ public final class MeasurementFinalizer {
                                        capturedAt: now,
                                        deviceTimestamp: candidateDeviceTimestamp)
         state = .cooldown
-        finalizedAt = now
         return reading
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 import CoreBluetooth
-import MiScaleCore
+import MyOpenScaleCore
 
 /// A single observed advertisement frame, surfaced to the UI for live debugging.
 struct ObservedFrame: Identifiable {
@@ -48,6 +48,10 @@ final class BLEScanner: NSObject {
     /// value, so the parser sees the bare 13-byte payload (plan §1).
     static let bodyCompositionService = CBUUID(string: "181B")
 
+    /// Stable identifier so iOS can preserve/restore our central manager (and its
+    /// scan) across app termination — enabling best-effort background relaunch.
+    private static let restoreIdentifier = "com.philippgrulich.myopenscale.central"
+
     private var central: CBCentralManager!
     private var finalizers: [UUID: MeasurementFinalizer] = [:]
     private var tickTimer: Timer?
@@ -66,18 +70,30 @@ final class BLEScanner: NSObject {
         self.finalizerConfig = finalizerConfig
         super.init()
         // queue: nil → delegate callbacks arrive on the main queue.
-        central = CBCentralManager(delegate: self, queue: nil)
+        // Restore identifier opts into state preservation/restoration so the
+        // system can relaunch us in the background to keep scanning (best-effort;
+        // requires the bluetooth-central background mode).
+        central = CBCentralManager(
+            delegate: self,
+            queue: nil,
+            options: [CBCentralManagerOptionRestoreIdentifierKey: Self.restoreIdentifier]
+        )
     }
 
     func start() {
         guard central.state == .poweredOn else { return }
-        guard !central.isScanning else { return }
-        central.scanForPeripherals(
-            withServices: [Self.bodyCompositionService],
-            // Required: otherwise iOS coalesces adverts and we miss the
-            // stabilized frame (plan §3).
-            options: [CBCentralManagerScanOptionAllowDuplicatesKey: true]
-        )
+        // On a restoration relaunch the system may already be scanning; only
+        // (re)issue the scan if it isn't, but always (re)arm the tick timer so
+        // the finalizers' settle/stale/cooldown still advance. startTickTimer()
+        // is idempotent (it stops any existing timer first).
+        if !central.isScanning {
+            central.scanForPeripherals(
+                withServices: [Self.bodyCompositionService],
+                // Required: otherwise iOS coalesces adverts and we miss the
+                // stabilized frame (plan §3).
+                options: [CBCentralManagerScanOptionAllowDuplicatesKey: true]
+            )
+        }
         status = .scanning
         startTickTimer()
     }
@@ -125,6 +141,14 @@ final class BLEScanner: NSObject {
 // MARK: - CBCentralManagerDelegate
 
 extension BLEScanner: CBCentralManagerDelegate {
+
+    /// Called when iOS relaunches the app (e.g. in the background) and restores
+    /// our central manager. We hold no connections — scanning resumes via
+    /// `centralManagerDidUpdateState` → `start()` once state is `.poweredOn`.
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String: Any]) {
+        // No-op: ad-only scanner, nothing to reattach. Restoration's value is the
+        // background relaunch itself.
+    }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {

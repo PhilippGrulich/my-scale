@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleDisplayName</key>
+	<string>MyOpenScale</string>
+	<key>CFBundlePackageType</key>
+	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<!-- Modern single-target SwiftUI watch app (WatchKit lifecycle via WKApplication). -->
+	<key>WKApplication</key>
+	<true/>
+	<!-- Ties this watch app to its iOS companion so they install together. -->
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>com.philippgrulich.myopenscale.app</string>
+	<!-- Standalone: the watch captures a weigh-in on its own, phone absent. -->
+	<key>WKRunsIndependentlyOfCompanionApp</key>
+	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Scans for nearby body-composition scale advertisements (compatible with the Xiaomi Mi Body Composition Scale 2) to read your weigh-ins. No pairing or connection is made.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Reads your date of birth, biological sex, height, and weight history to compute body composition from scale readings.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Saves your weight, body fat percentage, lean body mass, and BMI to Apple Health.</string>
+</dict>
+</plist>

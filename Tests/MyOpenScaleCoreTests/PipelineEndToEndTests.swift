@@ -1,5 +1,5 @@
 import XCTest
-@testable import MiScaleCore
+@testable import MyOpenScaleCore
 
 /// Exercises the full pure path with no hardware: finalize → resolve → compute.
 final class PipelineEndToEndTests: XCTestCase {

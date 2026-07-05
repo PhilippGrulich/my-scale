@@ -1,5 +1,5 @@
 import XCTest
-@testable import MiScaleCore
+@testable import MyOpenScaleCore
 
 final class WeightHistoryTests: XCTestCase {
 
@@ -14,6 +14,42 @@ final class WeightHistoryTests: XCTestCase {
 
     private func sample(daysAgo: Double, kg: Double) -> WeightSample {
         WeightSample(id: UUID(), date: now.addingTimeInterval(-daysAgo * 86_400), weightKg: kg)
+    }
+
+    // MARK: - trends / goal
+
+    func testChangeKgOverWindow() {
+        let s = [sample(daysAgo: 28, kg: 82), sample(daysAgo: 14, kg: 81), sample(daysAgo: 1, kg: 80)]
+        XCTAssertEqual(WeightHistory.changeKg(s, lastDays: 30, now: now)!, -2, accuracy: 1e-9)
+        XCTAssertNil(WeightHistory.changeKg([sample(daysAgo: 1, kg: 80)], lastDays: 30, now: now))
+    }
+
+    func testWeeklyRateIsNegativeWhenLosing() {
+        // ~1 kg over 14 days ⇒ ~ -0.5 kg/week.
+        let s = [sample(daysAgo: 14, kg: 81), sample(daysAgo: 7, kg: 80.5), sample(daysAgo: 0, kg: 80)]
+        let rate = WeightHistory.weeklyRateKg(s, lastDays: 30, now: now)!
+        XCTAssertEqual(rate, -0.5, accuracy: 0.05)
+    }
+
+    func testWeeksToGoalOnlyWhenMovingToward() {
+        // Losing 0.5/wk, want to drop 3 kg ⇒ ~6 weeks.
+        XCTAssertEqual(WeightHistory.weeksToGoal(currentKg: 80, goalKg: 77, weeklyRateKg: -0.5)!, 6, accuracy: 1e-9)
+        // Gaining while goal is below ⇒ never (nil).
+        XCTAssertNil(WeightHistory.weeksToGoal(currentKg: 80, goalKg: 77, weeklyRateKg: 0.3))
+        // Already at goal ⇒ nil.
+        XCTAssertNil(WeightHistory.weeksToGoal(currentKg: 77, goalKg: 77, weeklyRateKg: -0.5))
+    }
+
+    func testMovingAverageSmoothsAndPreservesCount() {
+        let s = [sample(daysAgo: 4, kg: 80), sample(daysAgo: 3, kg: 84),
+                 sample(daysAgo: 2, kg: 80), sample(daysAgo: 1, kg: 84)]
+        let ema = WeightHistory.movingAverage(s, alpha: 0.25)
+        XCTAssertEqual(ema.count, 4)
+        // Spikes are damped: the smoothed series never reaches the raw peak, and
+        // stays within the raw range.
+        XCTAssertLessThan(ema.map(\.weightKg).max()!, 84)
+        XCTAssertTrue(ema.allSatisfy { $0.weightKg >= 80 && $0.weightKg <= 84 })
+        XCTAssertLessThan(ema[1].weightKg, 84)   // the first 84 spike is smoothed down
     }
 
     // MARK: - filter

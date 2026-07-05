@@ -7,6 +7,7 @@ import UIKit
 struct WeighInOverlayView: View {
     let phase: MeasurementPhase
     let startedAt: Date?
+    let bleStatus: BLEStatus
     let onAccept: () -> Void
     let onDismiss: () -> Void
 
@@ -27,6 +28,8 @@ struct WeighInOverlayView: View {
         switch phase {
         case .idle:
             Color.clear
+        case .waiting:
+            WaitingView(bleStatus: bleStatus, onCancel: onDismiss)
         case .measuring(let w):
             MeasuringView(weightKg: w, label: "Reading weight…",
                           hint: "Stay still on the scale.",
@@ -38,6 +41,49 @@ struct WeighInOverlayView: View {
         case .result(let r):
             ResultView(reading: r)
         }
+    }
+}
+
+// MARK: - Waiting (armed, no adverts yet)
+
+private struct WaitingView: View {
+    let bleStatus: BLEStatus
+    let onCancel: () -> Void
+
+    /// Bluetooth is usable and we're actively listening.
+    private var isListening: Bool { bleStatus == .scanning }
+
+    var body: some View {
+        VStack(spacing: 28) {
+            ZStack {
+                PulsingRing()
+                Image(systemName: isListening ? "figure.stand" : "dot.radiowaves.left.and.right")
+                    .font(.system(size: 64))
+                    .foregroundStyle(Theme.accent)
+                    .symbolEffect(.pulse, isActive: isListening)
+            }
+            .frame(width: 260, height: 260)
+
+            VStack(spacing: 12) {
+                Text(isListening ? "Step on your scale" : "Can't reach Bluetooth")
+                    .font(.title2.weight(.semibold))
+                    .multilineTextAlignment(.center)
+                Text(isListening
+                     ? "Waiting for your scale… stand still once you're on and the reading will start automatically."
+                     : bleStatus.label)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+            }
+
+            Button(action: onCancel) {
+                Text("Cancel").font(.headline)
+            }
+            .buttonStyle(.glass)
+            .tint(.secondary)
+        }
+        .animation(.snappy, value: isListening)
     }
 }
 
