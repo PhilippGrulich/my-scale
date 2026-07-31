@@ -32,6 +32,10 @@ struct WeightChartView: View {
         WeightHistory.movingAverage(samples)
     }
 
+    private var yAxis: WeightChartAxis {
+        WeightHistory.chartAxis(for: samples)
+    }
+
     private var selected: WeightSample? {
         guard let date = selectedDate, samples.count >= 2 else { return nil }
         return samples.min { abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date)) }
@@ -83,7 +87,7 @@ struct WeightChartView: View {
             ForEach(samples) { s in
                 AreaMark(
                     x: .value("Date", s.date),
-                    yStart: .value("Baseline", yDomain.lowerBound),
+                    yStart: .value("Baseline", yAxis.domain.lowerBound),
                     yEnd: .value("Weight", s.weightKg)
                 )
                 .interpolationMethod(.catmullRom)
@@ -108,7 +112,7 @@ struct WeightChartView: View {
                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
             }
 
-            if let goalKg {
+            if let goalKg, yAxis.domain.contains(goalKg) {
                 RuleMark(y: .value("Goal", goalKg))
                     .foregroundStyle(Theme.accentSecondary.opacity(0.7))
                     .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
@@ -126,9 +130,11 @@ struct WeightChartView: View {
                     .symbolSize(120)
             }
         }
-        .chartYScale(domain: yDomain)
+        .chartYScale(domain: yAxis.domain)
         .chartXSelection(value: $selectedDate)
-        .chartYAxis { AxisMarks(position: .leading) }
+        .chartYAxis {
+            AxisMarks(position: .leading, values: .stride(by: yAxis.strideKg))
+        }
         .chartXAxis { AxisMarks(preset: .aligned) }
         .frame(height: 200)
         .chartPlotStyle { plot in plot.clipped() }
@@ -151,14 +157,5 @@ struct WeightChartView: View {
         }
         .frame(maxWidth: .infinity, minHeight: 180)
         .padding(.vertical, 8)
-    }
-
-    /// Padded domain around the visible samples (never degenerate).
-    private var yDomain: ClosedRange<Double> {
-        var weights = samples.map(\.weightKg)
-        if let goalKg { weights.append(goalKg) }   // keep the goal line on-screen
-        guard let lo = weights.min(), let hi = weights.max() else { return 0...100 }
-        let pad = max(1.0, (hi - lo) * 0.15)
-        return (lo - pad)...(hi + pad)
     }
 }
