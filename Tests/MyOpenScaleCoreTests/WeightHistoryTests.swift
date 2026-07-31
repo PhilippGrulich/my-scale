@@ -16,6 +16,42 @@ final class WeightHistoryTests: XCTestCase {
         WeightSample(id: UUID(), date: now.addingTimeInterval(-daysAgo * 86_400), weightKg: kg)
     }
 
+    // MARK: - chart axis
+
+    func testChartAxisUsesSafeFallbackForEmptySamples() {
+        let axis = WeightHistory.chartAxis(for: [])
+        XCTAssertEqual(axis.domain, 0...100)
+        XCTAssertEqual(axis.strideKg, 25)
+    }
+
+    func testChartAxisGivesStableReadingsAtLeastSixKilograms() {
+        let axis = WeightHistory.chartAxis(for: [
+            sample(daysAgo: 2, kg: 79.8),
+            sample(daysAgo: 1, kg: 80.2),
+        ])
+        XCTAssertGreaterThanOrEqual(axis.domain.upperBound - axis.domain.lowerBound, 6)
+        XCTAssertLessThanOrEqual(axis.domain.lowerBound, 79.8)
+        XCTAssertGreaterThanOrEqual(axis.domain.upperBound, 80.2)
+        XCTAssertEqual(axis.strideKg, 2)
+    }
+
+    func testChartAxisCentersIdenticalReadingsWithoutDegenerating() {
+        let axis = WeightHistory.chartAxis(for: [
+            sample(daysAgo: 2, kg: 80),
+            sample(daysAgo: 1, kg: 80),
+        ])
+        XCTAssertEqual(axis.domain, 77...83)
+    }
+
+    func testChartAxisPadsLargeSpreadAndRoundsOutward() {
+        let axis = WeightHistory.chartAxis(for: [
+            sample(daysAgo: 2, kg: 70.4),
+            sample(daysAgo: 1, kg: 80.6),
+        ])
+        XCTAssertEqual(axis.domain, 68...83)
+        XCTAssertEqual(axis.strideKg, 5)
+    }
+
     // MARK: - trends / goal
 
     func testChangeKgOverWindow() {

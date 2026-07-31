@@ -1,9 +1,42 @@
 import Foundation
 
+/// A readable vertical scale for the weight-history chart.
+public struct WeightChartAxis: Equatable, Sendable {
+    public let domain: ClosedRange<Double>
+    public let strideKg: Double
+
+    public init(domain: ClosedRange<Double>, strideKg: Double) {
+        self.domain = domain
+        self.strideKg = strideKg
+    }
+}
+
 /// Pure, platform-free helpers for the weight-history chart: windowing by time
 /// range and trend computation. Kept in the core (like `UserResolver` /
 /// `BodyCompositionCalculator`) so it is unit-testable with no simulator.
 public enum WeightHistory {
+
+    /// A calm, rounded chart scale that never exaggerates small fluctuations.
+    public static func chartAxis(
+        for samples: [WeightSample],
+        minimumSpanKg: Double = 6
+    ) -> WeightChartAxis {
+        let weights = samples.map(\.weightKg)
+        guard let minimum = weights.min(), let maximum = weights.max() else {
+            return WeightChartAxis(domain: 0...100, strideKg: 25)
+        }
+
+        let midpoint = (minimum + maximum) / 2
+        let desiredSpan = max(minimumSpanKg, (maximum - minimum) * 1.3)
+        let lower = floor(midpoint - desiredSpan / 2)
+        let upper = ceil(midpoint + desiredSpan / 2)
+        let domain = lower...upper
+        let targetStride = (upper - lower) / 4
+        let niceStrides: [Double] = [1, 2, 5, 10, 20, 25, 50]
+        let stride = niceStrides.first { $0 >= targetStride }
+            ?? ceil(targetStride / 50) * 50
+        return WeightChartAxis(domain: domain, strideKg: stride)
+    }
 
     /// Samples within the last `lastDays` days of `now`, sorted ascending by
     /// date (chart-friendly). The lower bound is inclusive.
