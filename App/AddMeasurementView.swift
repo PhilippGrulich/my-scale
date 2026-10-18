@@ -199,11 +199,17 @@ struct AddMeasurementView: View {
                         Button { pickingDate = true } label: {
                             Label(dateLabel, systemImage: "calendar")
                         }
-                        if !includeBodyFat {
-                            Button { withAnimation(.snappy) { includeBodyFat = true } } label: {
-                                Label("Body fat", systemImage: "plus")
+                        // Optional: shows / hides the body-fat row below.
+                        Button { withAnimation(.snappy) { includeBodyFat.toggle() } } label: {
+                            Label {
+                                Text("Body fat")
+                            } icon: {
+                                Image(systemName: includeBodyFat ? "drop.fill" : "drop")
+                                    .foregroundStyle(BodyMetric.bodyFat.tint)
                             }
                         }
+                        .buttonStyle(ManualChipStyle(tint: includeBodyFat ? BodyMetric.bodyFat.tint : nil))
+                        .accessibilityValue(includeBodyFat ? Text("On") : Text("Off"))
                     }
                     .buttonStyle(ManualChipStyle())
                     .padding(.top, 18)
@@ -477,6 +483,9 @@ struct AddMeasurementView: View {
 
 /// The small white date / body-fat chips under the manual weight circle.
 private struct ManualChipStyle: ButtonStyle {
+    /// A subtle tint over the white chip, e.g. while the chip's option is on.
+    var tint: Color? = nil
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.medium))
@@ -484,7 +493,10 @@ private struct ManualChipStyle: ButtonStyle {
             .labelStyle(ChipLabelStyle())
             .padding(.horizontal, 14)
             .padding(.vertical, 9)
-            .background(Theme.circleFill, in: Capsule())
+            .background {
+                Capsule().fill(Theme.circleFill)
+                    .overlay(Capsule().fill((tint ?? .clear).opacity(0.14)))
+            }
             .shadow(color: .black.opacity(0.06), radius: 3, y: 1)
             .opacity(configuration.isPressed ? 0.6 : 1)
     }
