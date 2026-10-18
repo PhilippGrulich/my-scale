@@ -96,6 +96,10 @@ struct AddMeasurementView: View {
 
     private func enter() {
         mode = model.hasPairedScale ? .scale : .manual
+        if model.pairingRequested {
+            model.pairingRequested = false
+            mode = .pairing
+        }
         date = Date()
         includeBodyFat = false
         error = nil

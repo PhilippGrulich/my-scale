@@ -45,9 +45,10 @@ struct ProfileEditorView: View {
                             Button("Unpair", role: .destructive) { confirmingUnpair = true }
                                 .font(.subheadline)
                         } else {
-                            Text("Not paired")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            Button("Pair scale") { model.requestPairing() }
+                                .font(.subheadline.weight(.semibold))
+                                .buttonStyle(.borderedProminent)
+                                .tint(Theme.accent)
                         }
                     }
                     .confirmationDialog("Unpair this scale?", isPresented: $confirmingUnpair,

@@ -71,6 +71,15 @@ final class AppModel: ObservableObject {
     /// for a new measurement; `RootTabView` opens the Add Measurement sheet and
     /// clears it.
     @Published var addMeasurementRequested = false
+    /// Set with `addMeasurementRequested` when the Weigh in tab should open
+    /// straight into pairing (Settings → Pair); the tab consumes it on entry.
+    var pairingRequested = false
+
+    /// Open the Weigh in tab in pairing mode.
+    func requestPairing() {
+        pairingRequested = true
+        addMeasurementRequested = true
+    }
     /// Activity context for the History feed (from Apple Health, any app).
     @Published private(set) var workouts: [HealthKitSink.WorkoutEntry] = []
     @Published private(set) var dailyTotals: [Date: HealthKitSink.DailyTotals] = [:]

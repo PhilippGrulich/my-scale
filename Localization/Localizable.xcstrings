@@ -1912,16 +1912,6 @@
         }
       }
     },
-    "Not paired": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht gekoppelt"
-          }
-        }
-      }
-    },
     "Not saved to Health": {
       "localizations": {
         "de": {
