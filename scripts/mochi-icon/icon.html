@@ -1,0 +1,73 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Mochi icon</title>
+<style>
+:root{--head:#F5953A;--cap:#F5953A;--body:#F5953A;--stripe:#D9772A;--bstripe:#D9772A;--tail:#F5953A;--white:#FFFFFF;--ink:#3B2A20;--ear:#F7B4B4}
+html,body{margin:0;padding:0;width:1024px;height:1024px;overflow:hidden}
+#bg{position:absolute;inset:0;width:1024px;height:1024px}
+svg{position:absolute;left:52px;top:52px;width:920px;height:920px;overflow:visible}
+.head{fill:var(--head)}.cap{fill:var(--cap)}.body{fill:var(--body)}.stripe{fill:var(--stripe)}.bstripe{fill:var(--bstripe)}.wh{fill:var(--white)}
+.ink{fill:var(--ink)}.inkS{stroke:var(--ink);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ear{fill:var(--ear)}.blush{fill:#F28B8B;opacity:.45}
+.tailS{stroke:var(--tail);fill:none;stroke-width:16;stroke-linecap:round}.tailTip{stroke:var(--white);fill:none;stroke-width:16;stroke-linecap:round}
+.armS{stroke:var(--body);fill:none;stroke-width:15;stroke-linecap:round}
+.outline{stroke:rgba(59,42,32,.12);stroke-width:1.2}
+.arm{transform:rotate(var(--r));transform-origin:0 0}
+/* Watch: watchOS masks to a circle, so keep the cat well inside it */
+body.watch svg{left:132px;top:132px;width:760px;height:760px}
+body.tinted svg{filter:grayscale(1)}
+</style></head><body>
+<div id="bg"></div>
+<script>
+const v=new URLSearchParams(location.search).get("v")||"light";
+// Backgrounds: soft mint->sky (light, also Watch), deep teal->navy (dark), near-black grays (tinted).
+const G={light:["#E2F8EF","#D6ECFC"],watch:["#E2F8EF","#D6ECFC"],dark:["#092E26","#0C1E38"],tinted:["#0E1012","#202428"]}[v];
+document.getElementById("bg").style.background="linear-gradient(135deg,"+G[0]+","+G[1]+")";
+document.body.className=v;
+</script>
+<svg viewBox="10 0 180 200" preserveAspectRatio="xMidYMid meet">
+    
+    <rect x="44" y="168" width="112" height="20" rx="10" fill="#EEF4F6"/>
+    <rect x="44" y="182" width="112" height="6" rx="3" fill="#C9D6DB"/>
+    <rect x="84" y="172" width="32" height="11" rx="3" fill="#1E2B2F"/>
+    <text class="digits" x="100" y="180.5" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="8" fill="#5FF2B8"></text>
+    <g class="catg" transform="translate(0 -10)"><g>
+      <g class="tail"><path class="tailS" d="M148 160 C182 160 190 128 174 110"/><path class="tailTip" d="M178 119 C177 115 176 112 174 110"/></g>
+      <g class="bodyg">
+        <g class="belly-j">
+          <ellipse class="body outline" cx="100" cy="132" rx="60" ry="46"/>
+          <path class="bstripe" d="M44 128 Q52 126 56 132 Q50 134 44 132Z M156 128 Q148 126 144 132 Q150 134 156 132Z M46 144 Q54 142 58 148 Q51 150 47 148Z M154 144 Q146 142 142 148 Q149 150 153 148Z"/>
+          <path class="wh" d="M100 100 C78 100 62 118 63 142 C64 162 80 172 100 172 C120 172 136 162 137 142 C138 118 122 100 100 100Z"/>
+          
+        </g>
+        <ellipse class="wh outline" cx="80" cy="174" rx="13" ry="7.5"/><ellipse class="wh outline" cx="120" cy="174" rx="13" ry="7.5"/>
+        <path class="inkS" style="stroke-width:1.3;opacity:.3" d="M76 172 L76 177 M84 172 L84 177 M116 172 L116 177 M124 172 L124 177"/>
+      </g>
+      <g class="headg">
+        <path class="cap" d="M64 62 L60 26 L92 46 Z"/><path class="ear" d="M68 56 L66 36 L84 48 Z"/>
+        <path class="cap" d="M136 62 L140 26 L108 46 Z"/><path class="ear" d="M132 56 L134 36 L116 48 Z"/>
+        <ellipse class="head outline" cx="100" cy="80" rx="45" ry="37"/>
+        <path class="cap" d="M55.5 76 C56 54 74 43 100 43 C126 43 144 54 144.5 76 C138 70 130 69 124 71 C116 64 107 66 104 72 L100 80 L96 72 C93 66 84 64 76 71 C70 69 62 70 55.5 76Z"/>
+        <path class="wh" d="M91 45 Q93 54 95 45Z M98 44 Q100 56 102 44Z M105 45 Q107 54 109 46Z"/>
+        <path class="wh" d="M100 66 C96 74 94 80 88 84 C78 86 74 94 80 100 C88 107 112 107 120 100 C126 94 122 86 112 84 C106 80 104 74 100 66Z"/>
+        <ellipse class="blush" cx="76" cy="91" rx="6.5" ry="4"/>
+        <ellipse class="blush" cx="124" cy="91" rx="6.5" ry="4"/>
+        <g class="pupils"><g class="eye"><ellipse class="ink" cx="84" cy="78" rx="6.6" ry="8.4"/><circle cx="86.3" cy="74.8" r="2.6" fill="#fff"/><circle cx="82" cy="81.5" r="1.1" fill="#fff"/></g><g class="eye"><ellipse class="ink" cx="116" cy="78" rx="6.6" ry="8.4"/><circle cx="118.3" cy="74.8" r="2.6" fill="#fff"/><circle cx="114" cy="81.5" r="1.1" fill="#fff"/></g></g>
+        <path d="M96.5 87.5 L103.5 87.5 L100 91.5 Z" fill="#E77F8C"/>
+        <path class="inkS" style="stroke-width:2.4" d="M93 93 Q96.5 98 100 93 Q103.5 98 107 93"/>
+        <path class="inkS" style="stroke-width:1.3;opacity:.5" d="M70 88 L50 85 M70 93 L50 95 M130 88 L150 85 M130 93 L150 95"/>
+        
+      </g>
+      <g transform="translate(66 114)"><g class="arm armL" style="--r:12deg">
+    <path class="armS" d="M0 0 L0 30"/>
+    <circle class="wh outline" cx="0" cy="33" r="9"/>
+    <path class="inkS" style="stroke-width:1.2;opacity:.35" d="M-3 38 L-3 41 M3 38 L3 41"/>
+    
+  </g></g><g transform="translate(134 114)"><g class="arm armR" style="--r:-155deg">
+    <path class="armS" d="M0 0 L0 30"/>
+    <circle class="wh outline" cx="0" cy="33" r="9"/>
+    <path class="inkS" style="stroke-width:1.2;opacity:.35" d="M-3 38 L-3 41 M3 38 L3 41"/>
+    
+  </g></g>
+      
+    </g></g>
+  </svg>
+</body></html>
