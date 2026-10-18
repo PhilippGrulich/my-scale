@@ -1025,8 +1025,14 @@ final class AppModel: ObservableObject {
 
     private func armDismiss(for id: UUID) {
         dismissTask?.cancel()
-        // Mochi's line needs a little longer to read.
-        let delay: UInt64 = mochi.settings.enabled ? 6_500_000_000 : 3_500_000_000
+        // Mochi's line needs time to read: at least 10 s, longer for long lines.
+        let delay: UInt64
+        if mochi.settings.enabled {
+            let characters = Double(weighInPresentation?.text.count ?? 0)
+            delay = UInt64(max(10, 3 + 0.07 * characters) * 1_000_000_000)
+        } else {
+            delay = 3_500_000_000
+        }
         dismissTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: delay)
             guard let self, !Task.isCancelled else { return }

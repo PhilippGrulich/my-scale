@@ -3,7 +3,7 @@ import MyOpenScaleCore
 
 /// Small Mochi in the dashboard's top-leading corner with a speech bubble to its right.
 /// The bubble appears shortly after the view appears (or the line changes, or Mochi is
-/// tapped), stays a few seconds, then fades; Mochi gently bobs unless Reduce Motion is on.
+/// tapped) and stays until tapped away; Mochi gently bobs unless Reduce Motion is on.
 struct MochiCornerView: View {
     let presentation: MochiPresentation?
     /// Tummy display: the latest weight.
@@ -21,7 +21,6 @@ struct MochiCornerView: View {
     static let size: CGFloat = 64
     private static let bubbleTop: CGFloat = 8
     private static let appearDelay: Duration = .milliseconds(600)
-    private static let visibleFor: Duration = .seconds(5)
 
     private var text: String? {
         guard let text = presentation?.text, !text.isEmpty else { return nil }
@@ -40,6 +39,10 @@ struct MochiCornerView: View {
                     if bubbleVisible {
                         MochiSpeechBubble(text: text, maxWidth: .infinity)
                             .accessibilityElement(children: .combine)
+                            .accessibilityAddTraits(.isButton)
+                            // Tapping the bubble dismisses it; tapping Mochi asks for a new line.
+                            .onTapGesture { dismissBubble() }
+                            .accessibilityAction { dismissBubble() }
                     }
                 }
                 .padding(.top, Self.bubbleTop)
@@ -63,16 +66,18 @@ struct MochiCornerView: View {
             bubbleVisible = false
             try? await Task.sleep(for: Self.appearDelay)
             guard !Task.isCancelled else { return }
+            // Stays until the user taps (Mochi: new line; bubble: dismiss) or the dashboard goes away.
             withAnimation(.easeOut(duration: 0.3)) { bubbleVisible = true }
-            try? await Task.sleep(for: Self.visibleFor)
-            guard !Task.isCancelled else { return }
-            withAnimation(.easeIn(duration: 0.4)) { bubbleVisible = false }
         }
     }
 
     private func startBobbing() {
         guard !reduceMotion else { return }
         withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) { bobbing = true }
+    }
+
+    private func dismissBubble() {
+        withAnimation(.easeIn(duration: 0.3)) { bubbleVisible = false }
     }
 
     private func tap() {

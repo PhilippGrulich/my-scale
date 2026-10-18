@@ -22,7 +22,7 @@ struct OnboardingView: View {
     @State private var declining = false
     @State private var mochiFading = false
 
-    private static let declineHold: Duration = .milliseconds(2500)
+    private static let declineHold: Duration = .milliseconds(3500)
 
     private var mochiEnabled: Bool { choice == .with }
 
