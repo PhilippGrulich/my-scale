@@ -11,7 +11,8 @@ final class MochiCoordinator: ObservableObject {
         didSet {
             guard settings != oldValue else { return }
             MochiStateStore.settings = settings
-            rescheduleReminders(history: historyProvider(), profile: profileProvider())
+            rescheduleReminders(history: historyProvider(), profile: profileProvider(),
+                                lastWeighInOverride: lastWeighInProvider())
         }
     }
 
@@ -21,6 +22,8 @@ final class MochiCoordinator: ObservableObject {
     /// Current weight history and profile, supplied by `AppModel`, for work not
     /// triggered by a call that passes them in (e.g. reminders after a settings change).
     var historyProvider: () -> [WeightSample] = { [] }
+    /// Newest own weigh-in that may not be in the history (e.g. a failed Health write).
+    var lastWeighInProvider: () -> Date? = { nil }
     var profileProvider: () -> StoredProfile = { StoredProfile.makeDefault() }
 
     private let library: MochiLibrary

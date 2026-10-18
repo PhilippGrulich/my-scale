@@ -144,6 +144,7 @@ final class AppModel: ObservableObject {
         if !HealthKitSink.isAvailable { self.healthAuth = .unavailable }
 
         mochi.historyProvider = { [weak self] in self?.weightHistory ?? [] }
+        mochi.lastWeighInProvider = { [weak self] in self?.lastOwnWeighInAt }
         mochi.profileProvider = { [weak self] in self?.profile ?? ProfileStore.load() }
 
         notifications.configure()
