@@ -16,6 +16,18 @@ enum Theme {
     static var ringGradient: AngularGradient {
         AngularGradient(colors: [accent, accentSecondary, accent], center: .center)
     }
+
+    /// The weight circle's face: white, or a raised grey in dark mode.
+    static let circleFill = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
+    })
+
+    /// The weight circle's soft mint inner ring (#e8f7f1 in light mode).
+    static let circleRing = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.13, green: 0.72, blue: 0.55, alpha: 0.18)
+            : UIColor(red: 0xe8 / 255, green: 0xf7 / 255, blue: 0xf1 / 255, alpha: 1)
+    })
 }
 
 extension Double {

@@ -69,14 +69,10 @@ struct WaitingView: View {
 
     var body: some View {
         VStack(spacing: 28) {
-            ZStack {
-                PulsingRing()
-                Image(systemName: isListening ? "figure.stand" : "dot.radiowaves.left.and.right")
-                    .font(.system(size: 64))
-                    .foregroundStyle(Theme.accent)
-                    .symbolEffect(.pulse, isActive: isListening)
+            WeightCircleFace(diameter: 240) {
+                WeightCircleNumber(text: "– –")
+                    .foregroundStyle(.tertiary)
             }
-            .frame(width: 260, height: 260)
 
             VStack(spacing: 12) {
                 Text(isListening ? "Step on your scale" : "Can't reach Bluetooth")
@@ -128,19 +124,10 @@ struct MeasuringView: View {
 
     var body: some View {
         VStack(spacing: 28) {
-            ZStack {
-                PulsingRing()
-                VStack(spacing: 0) {
-                    Text(weightKg, format: .number.precision(.fractionLength(1)))
-                        .font(.system(size: 66, weight: .bold, design: .rounded))
-                        .contentTransition(.numericText(value: weightKg))
-                        .monospacedDigit()
-                    Text("kg")
-                        .font(.title3.weight(.medium))
-                        .foregroundStyle(.secondary)
-                }
+            // No real progress value exists while the reading settles: the ring runs.
+            WeightCircleFace(diameter: 240, progress: .indeterminate) {
+                WeightCircleNumber(text: weightKg.formatted(1), value: weightKg)
             }
-            .frame(width: 260, height: 260)
 
             MeasuringStatusView(weightKg: weightKg, label: label, hint: hint,
                                 startedAt: startedAt, onAccept: onAccept)
@@ -198,24 +185,6 @@ struct MeasuringStatusView: View {
     }
 }
 
-/// Continuously breathing concentric rings (iOS 17+ `PhaseAnimator`).
-private struct PulsingRing: View {
-    var body: some View {
-        PhaseAnimator([0.0, 1.0]) { p in
-            ZStack {
-                Circle()
-                    .stroke(Theme.ringGradient, lineWidth: 12)
-                    .scaleEffect(1.0 + p * 0.06)
-                    .opacity(1.0 - p * 0.15)
-                Circle()
-                    .stroke(Theme.accent.opacity(0.3), lineWidth: 2)
-                    .scaleEffect(1.0 + p * 0.28)
-                    .opacity(0.55 - p * 0.55)
-            }
-        } animation: { _ in .easeInOut(duration: 1.1) }
-    }
-}
-
 // MARK: - Result
 
 struct ResultView: View {
@@ -226,20 +195,19 @@ struct ResultView: View {
     @State private var appeared = false
 
     var body: some View {
-        VStack(spacing: 22) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(Theme.accent)
-                .symbolEffect(.bounce, value: appeared)
-
-            VStack(spacing: 0) {
-                Text(reading.weightKg, format: .number.precision(.fractionLength(1)))
-                    .font(.system(size: 60, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                Text("kg").font(.title3.weight(.medium)).foregroundStyle(.secondary)
+        VStack(spacing: 24) {
+            // The full ring says "done".
+            WeightCircleFace(diameter: 240, progress: .fraction(1)) {
+                VStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(Theme.accent)
+                        .symbolEffect(.bounce, value: appeared)
+                    WeightCircleNumber(text: reading.weightKg.formatted(1), value: reading.weightKg)
+                }
             }
 
-            WeighInResultDetails(reading: reading)
+            WeighInResultDetails(reading: reading, style: .chips)
 
             if showsDismissHint {
                 Text("Tap anywhere to dismiss")
@@ -261,20 +229,55 @@ struct ResultView: View {
 /// A result's mini metrics (body fat, lean, BMI) and Apple Health sync badge.
 /// Shared by the plain overlay and Mochi's.
 struct WeighInResultDetails: View {
+    enum Style { case tiles, chips }
+
     let reading: LoggedReading
+    /// Mochi's result keeps the glass tiles; the plain circle result uses small chips.
+    var style: Style = .tiles
 
     var body: some View {
         VStack(spacing: 22) {
             if let c = reading.composition {
-                HStack(spacing: 12) {
-                    miniMetric("Body fat", c.bodyFatPercent, "%")
-                    miniMetric("Lean", c.leanMassKg, "kg")
-                    miniMetric("BMI", c.bmi, "")
+                switch style {
+                case .tiles:
+                    HStack(spacing: 12) {
+                        miniMetric("Body fat", c.bodyFatPercent, "%")
+                        miniMetric("Lean", c.leanMassKg, "kg")
+                        miniMetric("BMI", c.bmi, "")
+                    }
+                case .chips:
+                    let fat = chip("Body fat", c.bodyFatPercent, "%")
+                    let lean = chip("Lean", c.leanMassKg, "kg")
+                    let bmi = chip("BMI", c.bmi, "")
+                    // One row when it fits, else two.
+                    ViewThatFits {
+                        HStack(spacing: 8) { fat; lean; bmi }
+                        VStack(spacing: 8) {
+                            HStack(spacing: 8) { fat; lean }
+                            bmi
+                        }
+                    }
                 }
             }
 
             syncLine
         }
+    }
+
+    private func chip(_ title: LocalizedStringKey, _ value: Double, _ unit: String) -> some View {
+        HStack(spacing: 5) {
+            Text(title).foregroundStyle(.secondary)
+            Text(value.formatted(1) + (unit.isEmpty || !value.isFinite ? "" : " " + unit))
+                .fontWeight(.semibold)
+                .monospacedDigit()
+        }
+        .font(.subheadline)
+        .lineLimit(1)
+        .fixedSize()
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Theme.circleFill, in: Capsule())
+        .shadow(color: .black.opacity(0.06), radius: 3, y: 1)
     }
 
     private func miniMetric(_ title: LocalizedStringKey, _ value: Double, _ unit: String) -> some View {

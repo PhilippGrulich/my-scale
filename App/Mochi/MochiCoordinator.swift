@@ -39,9 +39,9 @@ final class MochiCoordinator: ObservableObject {
         self.library = loader()
         var initial = MochiStateStore.settings
         #if DEBUG
-        // `-mochiEnabled YES` on launch turns Mochi on (and persists it) for simulator checks.
-        if UserDefaults.standard.bool(forKey: "mochiEnabled") {
-            initial.enabled = true
+        // `-mochiEnabled YES|NO` on launch turns Mochi on or off (and persists it) for simulator checks.
+        if UserDefaults.standard.object(forKey: "mochiEnabled") != nil {
+            initial.enabled = UserDefaults.standard.bool(forKey: "mochiEnabled")
             MochiStateStore.settings = initial
         }
         #endif

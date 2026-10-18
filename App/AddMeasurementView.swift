@@ -6,7 +6,7 @@ import MyOpenScaleCore
 ///
 /// - **Scale paired** → `.scale`: live "step on your scale" → reading → result,
 ///   with "Enter manually" as the way out (prominent when Bluetooth is off).
-/// - **No scale yet** → `.manual`: a short form saved to Apple Health, with a
+/// - **No scale yet** → `.manual`: a rolling weight circle saved to Apple Health, with a
 ///   "Pair a scale" card that switches to `.pairing` in place. Bluetooth stays
 ///   off (no permission prompt) until that card is tapped.
 /// - `.pairing` scans while the user stands on the scale; confirming pairs it
@@ -28,6 +28,7 @@ struct AddMeasurementView: View {
     @State private var includeBodyFat = false
     @State private var bodyFatPercent: Double = 20
     @State private var date = Date()
+    @State private var pickingDate = false
     @State private var saving = false
     @State private var error: String?
 
@@ -60,6 +61,10 @@ struct AddMeasurementView: View {
             default: break
             }
         }
+        // History loaded after the form opened: start from the last weight after all.
+        .onChange(of: model.currentWeightKg) { old, new in
+            if old == nil, let new, mode == .manual { weightKg = (new * 10).rounded() / 10 }
+        }
     }
 
     private var title: LocalizedStringKey {
@@ -72,12 +77,7 @@ struct AddMeasurementView: View {
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
-        if mode == .manual {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save", action: save)
-                    .disabled(!Self.weightRange.contains(weightKg) || saving)
-            }
-        } else if mode == .scale, case .result = model.measurementPhase {
+        if mode == .scale, case .result = model.measurementPhase {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Done") { finish() }
             }
@@ -98,7 +98,8 @@ struct AddMeasurementView: View {
 
     private func leave() {
         model.endPairingScan()
-        model.dismissOverlay()
+        // A saved manual entry's Mochi reaction shows over Overview; leaving must not close it.
+        if mode != .manual { model.dismissOverlay() }
     }
 
     private func finish() {
@@ -173,56 +174,177 @@ struct AddMeasurementView: View {
 
     // MARK: - Manual
 
+    /// The rolling weight circle, how it compares to last time, the date and optional
+    /// body fat as chips, and a big Save.
     private var manualForm: some View {
-        Form {
-            Section {
-                HStack {
-                    Text("Weight")
-                    Spacer()
-                    TextField("Weight", value: $weightKg,
-                              format: .number.precision(.fractionLength(1)))
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .font(.title3.weight(.semibold).monospacedDigit())
-                        .frame(maxWidth: 110)
-                    Text("kg").foregroundStyle(.secondary)
-                    Stepper("Weight", value: $weightKg, in: Self.weightRange, step: 0.1)
-                        .labelsHidden()
-                }
-                DatePicker("Date", selection: $date, in: ...Date())
-            }
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 0) {
+                    VStack(spacing: 14) {
+                        WeightWheel(value: $weightKg, range: Self.weightRange, step: 0.1,
+                                    diameter: 240, unit: "kg")
+                        deltaLine
+                            .frame(minHeight: 20)
+                    }
+                    .padding(.top, 28)
 
-            Section {
-                Toggle("Body fat", isOn: $includeBodyFat.animation())
-                if includeBodyFat {
-                    HStack {
-                        TextField("Body fat", value: $bodyFatPercent,
-                                  format: .number.precision(.fractionLength(1)))
-                            .keyboardType(.decimalPad)
-                            .monospacedDigit()
-                        Text("%").foregroundStyle(.secondary)
-                        Stepper("Body fat", value: $bodyFatPercent, in: 3...75, step: 0.5)
-                            .labelsHidden()
+                    HStack(spacing: 10) {
+                        Button { pickingDate = true } label: {
+                            Label(dateLabel, systemImage: "calendar")
+                        }
+                        if !includeBodyFat {
+                            Button { withAnimation(.snappy) { includeBodyFat = true } } label: {
+                                Label("Body fat", systemImage: "plus")
+                            }
+                        }
+                    }
+                    .buttonStyle(ManualChipStyle())
+                    .padding(.top, 18)
+
+                    if includeBodyFat {
+                        bodyFatWheel
+                            .padding(.top, 24)
+                            .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    }
+
+                    Group {
+                        if includeBodyFat {
+                            Text("Saved to Apple Health as a manual entry. BMI is calculated from your height, lean mass from your body fat.")
+                        } else {
+                            Text("Saved to Apple Health as a manual entry. BMI is calculated from your height.")
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+                    .padding(.top, 20)
+
+                    Spacer(minLength: 24)
+
+                    VStack(spacing: 14) {
+                        if let error {
+                            Label(error, systemImage: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.red)
+                                .font(.footnote)
+                        }
+                        Button(action: save) {
+                            ZStack {
+                                Text("Save").opacity(saving ? 0 : 1)
+                                if saving { ProgressView().tint(.white) }
+                            }
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                        .tint(Theme.accent)
+                        .disabled(!Self.weightRange.contains(weightKg) || saving)
+
+                        scaleCallToAction
                     }
                 }
-            } footer: {
-                if includeBodyFat {
-                    Text("Saved to Apple Health as a manual entry. BMI is calculated from your height, lean mass from your body fat.")
-                } else {
-                    Text("Saved to Apple Health as a manual entry. BMI is calculated from your height.")
-                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 16)
+                .frame(maxWidth: .infinity, minHeight: geometry.size.height)
+                .animation(.snappy, value: includeBodyFat)
+                // Tapping outside the circle applies a typed value.
+                .contentShape(Rectangle())
+                .onTapGesture(perform: dismissKeyboard)
             }
-
-            if let error {
-                Section {
-                    Label(error, systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.red)
-                        .font(.footnote)
-                }
-            }
-
-            Section { scaleCallToAction }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollDismissesKeyboard(.immediately)
         }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done", action: dismissKeyboard)
+            }
+        }
+        .sheet(isPresented: $pickingDate) { datePicker }
+    }
+
+    /// "−0,2 since last": green toward the goal, orange away from it; hidden without a previous weight.
+    @ViewBuilder
+    private var deltaLine: some View {
+        if let unrounded = model.currentWeightKg {
+            // Compared as shown (one decimal), so the starting value reads "same as last".
+            let last = (unrounded * 10).rounded() / 10
+            let delta = ((weightKg - last) * 10).rounded() / 10
+            Group {
+                if abs(delta) < 0.05 {
+                    Text("same as last")
+                        .foregroundStyle(.secondary)
+                } else {
+                    let signed = (delta < 0 ? "−" : "+") + abs(delta).formatted(1)
+                    Text("\(signed) since last")
+                        .foregroundStyle(model.profile.weightGoal.isToward(fromKg: last, toKg: weightKg)
+                                         ? Theme.accent : .orange)
+                }
+            }
+            .font(.subheadline.weight(.semibold))
+            .contentTransition(.numericText(value: delta))
+        }
+    }
+
+    /// The optional body fat: the same rolling circle, smaller, with an × to remove it.
+    private var bodyFatWheel: some View {
+        VStack(spacing: 10) {
+            Text("Body fat")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+            WeightWheel(value: $bodyFatPercent, range: 3...75, step: 0.5,
+                        diameter: 150, unit: "%", label: "Body fat")
+                .overlay(alignment: .topTrailing) {
+                    Button { withAnimation(.snappy) { includeBodyFat = false } } label: {
+                        Image(systemName: "xmark")
+                            .font(.footnote.weight(.bold))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 32, height: 32)
+                            .background(Theme.circleFill, in: Circle())
+                            .shadow(color: .black.opacity(0.08), radius: 3, y: 1)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Remove body fat")
+                    .offset(x: 8, y: -4)
+                }
+        }
+    }
+
+    /// "Today, 21:20", "Yesterday, 07:05", or the date.
+    private var dateLabel: String {
+        let calendar = Calendar.current
+        let time = date.formatted(date: .omitted, time: .shortened)
+        if calendar.isDateInToday(date) { return String(localized: "Today, \(time)") }
+        if calendar.isDateInYesterday(date) { return String(localized: "Yesterday, \(time)") }
+        return date.formatted(date: .abbreviated, time: .shortened)
+    }
+
+    private var datePicker: some View {
+        NavigationStack {
+            VStack {
+                DatePicker("Date", selection: $date, in: ...Date())
+                    .datePickerStyle(.graphical)
+                    .tint(Theme.accent)
+                    .padding(.horizontal)
+                Spacer(minLength: 0)
+            }
+            .navigationTitle("Date")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { pickingDate = false }
+                }
+            }
+        }
+        .presentationDetents([.height(560), .large])
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     /// Paired → one tap back to the live scale. Not paired → invite to pair,
@@ -233,20 +355,23 @@ struct AddMeasurementView: View {
         if model.hasPairedScale {
             Button { switchTo(.scale) } label: {
                 Label("Weigh in on the scale", systemImage: "scalemass")
+                    .font(.subheadline.weight(.medium))
             }
+            .buttonStyle(.glass)
+            .tint(Theme.accent)
         } else {
             Button { switchTo(.pairing) } label: {
-                HStack(spacing: 14) {
+                HStack(spacing: 12) {
                     Image(systemName: "scalemass.fill")
-                        .font(.title2)
+                        .font(.title3)
                         .foregroundStyle(Theme.accent)
-                        .frame(width: 36)
+                        .frame(width: 30)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Pair a scale")
-                            .font(.headline)
+                            .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.primary)
                         Text("Weigh-ins with body fat, lean mass and BMI are then saved automatically.")
-                            .font(.footnote)
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                         Text("Works with Xiaomi Mi Body Composition Scale 2")
                             .font(.caption)
@@ -257,7 +382,9 @@ struct AddMeasurementView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.tertiary)
                 }
-                .padding(.vertical, 4)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(Theme.circleFill, in: RoundedRectangle(cornerRadius: 18))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -265,6 +392,7 @@ struct AddMeasurementView: View {
     }
 
     private func save() {
+        dismissKeyboard()
         saving = true
         error = nil
         model.addManualMeasurement(weightKg: weightKg,
@@ -356,6 +484,30 @@ struct AddMeasurementView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+        }
+    }
+}
+
+/// The small white date / body-fat chips under the manual weight circle.
+private struct ManualChipStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(.primary)
+            .labelStyle(ChipLabelStyle())
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .background(Theme.circleFill, in: Capsule())
+            .shadow(color: .black.opacity(0.06), radius: 3, y: 1)
+            .opacity(configuration.isPressed ? 0.6 : 1)
+    }
+
+    private struct ChipLabelStyle: LabelStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            HStack(spacing: 6) {
+                configuration.icon.foregroundStyle(Theme.accent)
+                configuration.title
+            }
         }
     }
 }

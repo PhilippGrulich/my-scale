@@ -725,30 +725,46 @@ final class AppModel: ObservableObject {
             return
         }
         healthKit.writeManual(composition: composition, at: date) { [weak self] result in
+            var reaction: (LoggedReading, MochiPresentation)?
             switch result {
             case .success:
                 self?.lastSyncError = nil
-                self?.reactToManualEntry(weightKg: weightKg, date: date)
+                reaction = self?.reactToManualEntry(weightKg: weightKg, date: date)
                 self?.loadWeightHistory()
             case .failure(let error):
                 self?.lastSyncError = error.localizedDescription
             }
             completion(result)
+            // After the Weigh in tab has finished (and switched to Overview), so its
+            // cleanup doesn't close the reaction straight away.
+            if let (reading, presentation) = reaction { self?.showManualReaction(reading, presentation) }
         }
     }
 
-    /// Mochi reacts to a typed weigh-in too (the user did weigh in): the reaction waits on
-    /// the home-screen corner, where the Weigh in tab returns after saving. Mochi off: nothing.
-    private func reactToManualEntry(weightKg: Double, date: Date) {
-        guard mochi.settings.enabled else { return }
+    /// Mochi reacts to a typed weigh-in too (the user did weigh in). Mochi off: nothing.
+    private func reactToManualEntry(weightKg: Double, date: Date) -> (LoggedReading, MochiPresentation)? {
+        guard mochi.settings.enabled else { return nil }
         let reading = LoggedReading(capturedAt: date, weightKg: weightKg, impedanceOhms: 0,
                                     resolution: "You", composition: nil, healthKitStatus: .written)
         // Only samples from before it; the Health reload after the write would contain it.
         let history = weightHistory.filter { $0.date < date.addingTimeInterval(-60) }
         fillGoalStartIfNeeded(for: reading)
         let presentation = mochi.presentationForWeighIn(reading, history: history, profile: profile)
-        mochi.stash(presentation)
+        return (reading, presentation)
+    }
+
+    /// Shows a manual entry's reaction full screen, like a scale weigh-in's result (same
+    /// overlay, tap to dismiss, same auto-dismiss). Nothing is logged or written again.
+    private func showManualReaction(_ reading: LoggedReading, _ presentation: MochiPresentation) {
+        dismissTask?.cancel()
+        idleTask?.cancel()
+        simulateTask?.cancel()
+        liveStartedAt = nil
+        manualMeasurementActive = false
+        weighInPresentation = presentation
+        measurementPhase = .result(reading)
         if appIsActive { mochi.playHaptic(for: presentation.pose) }
+        armDismiss(for: reading.id)
     }
 
     /// Correct the weight (and/or time) of a weigh-in this app saved. Entries
