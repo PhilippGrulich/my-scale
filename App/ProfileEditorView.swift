@@ -1,13 +1,12 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// Settings sheet (gear button): the single HealthKit owner profile plus
+/// Settings tab: the single HealthKit owner profile plus
 /// Health / scale / Bluetooth settings. Profile changes are kept as a draft
 /// until Save, so a half-edited stepper never reaches Health. Full profile
 /// CRUD is M5b.
 struct ProfileEditorView: View {
     @EnvironmentObject var model: AppModel
-    @Environment(\.dismiss) private var dismiss
     @State private var draft = StoredProfile.makeDefault()
     @State private var confirmingUnpair = false
 
@@ -80,18 +79,13 @@ struct ProfileEditorView: View {
                 }
             }
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if !hasChanges {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { dismiss() }
-                    }
-                } else {
+                if hasChanges {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Revert") { draft = model.profile }
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") { model.saveConfirmedProfile(draft); dismiss() }
+                        Button("Save") { model.saveConfirmedProfile(draft) }
                             .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }

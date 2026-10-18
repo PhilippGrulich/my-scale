@@ -4,19 +4,15 @@ import MyOpenScaleCore
 struct DashboardView: View {
     @EnvironmentObject var model: AppModel
     @State private var selectedMetric: HealthKitSink.MetricKind?
-    @State private var showingHistory = false
-    /// Tapping "To goal" jumps to the Goal tab.
+    /// Tapping "To goal" / the chart header jumps to the Goal / History tab.
     var onShowGoal: () -> Void = {}
+    var onShowHistory: () -> Void = {}
 
     var body: some View {
         NavigationStack {
             weightPage
                 .background(Theme.backgroundGradient.ignoresSafeArea())
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar { SettingsToolbarItem() }
-                .sheet(isPresented: $showingHistory) {
-                    MeasurementHistoryView().environmentObject(model)
-                }
+                .toolbarVisibility(.hidden, for: .navigationBar)
                 .sheet(item: $selectedMetric) { kind in
                     MetricDetailView(kind: kind).environmentObject(model)
                 }
@@ -53,7 +49,7 @@ struct DashboardView: View {
 
                     WeightChartView(history: model.weightHistory,
                                     goalKg: model.profile.goalWeightKg,
-                                    onShowHistory: { showingHistory = true })
+                                    onShowHistory: onShowHistory)
 
                     metricCards
 

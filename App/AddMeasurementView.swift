@@ -1,7 +1,8 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// The one place to add a weigh-in. It opens in the mode that fits the user:
+/// The Weigh in tab — the one place to add a weigh-in. Each time it's opened
+/// it starts in the mode that fits the user:
 ///
 /// - **Scale paired** → `.scale`: live "step on your scale" → reading → result,
 ///   with "Enter manually" as the way out (prominent when Bluetooth is off).
@@ -17,9 +18,10 @@ struct AddMeasurementView: View {
     enum Mode { case scale, manual, pairing }
 
     @EnvironmentObject var model: AppModel
-    @Environment(\.dismiss) private var dismiss
+    /// Called when a weigh-in is saved or finished (the shell then shows Overview).
+    var onFinished: () -> Void = {}
 
-    @State private var mode: Mode
+    @State private var mode: Mode = .manual
     // Manual form
     @State private var weightKg: Double = 75
     @State private var includeBodyFat = false
@@ -29,10 +31,6 @@ struct AddMeasurementView: View {
     @State private var error: String?
 
     private static let weightRange = 20.0...300.0
-
-    init(startIn mode: Mode) {
-        _mode = State(initialValue: mode)
-    }
 
     var body: some View {
         NavigationStack {
@@ -54,7 +52,7 @@ struct AddMeasurementView: View {
         .onChange(of: model.measurementPhase) { old, new in
             switch (mode, old, new) {
             // The result auto-dismisses after a few seconds; close with it.
-            case (.scale, .result, .idle): dismiss()
+            case (.scale, .result, .idle): finish()
             // Stepped on the paired scale while typing → show it live.
             case (.manual, _, .measuring), (.manual, _, .finalizing):
                 if model.hasPairedScale { switchTo(.scale) }
@@ -73,9 +71,6 @@ struct AddMeasurementView: View {
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button("Cancel") { dismiss() }
-        }
         if mode == .manual {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save", action: save)
@@ -83,7 +78,7 @@ struct AddMeasurementView: View {
             }
         } else if mode == .scale, case .result = model.measurementPhase {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { dismiss() }
+                Button("Done") { finish() }
             }
         }
     }
@@ -91,6 +86,10 @@ struct AddMeasurementView: View {
     // MARK: - Mode transitions
 
     private func enter() {
+        mode = model.hasPairedScale ? .scale : .manual
+        date = Date()
+        includeBodyFat = false
+        error = nil
         if let current = model.currentWeightKg { weightKg = (current * 10).rounded() / 10 }
         if let fat = model.latestValue(.bodyFat), fat.isFinite { bodyFatPercent = (fat * 2).rounded() / 2 }
         start(mode)
@@ -99,6 +98,11 @@ struct AddMeasurementView: View {
     private func leave() {
         model.endPairingScan()
         model.dismissOverlay()
+    }
+
+    private func finish() {
+        leave()
+        onFinished()
     }
 
     private func switchTo(_ next: Mode) {
@@ -245,7 +249,7 @@ struct AddMeasurementView: View {
                                    date: date) { result in
             saving = false
             switch result {
-            case .success: dismiss()
+            case .success: finish()
             case .failure(let e): error = HealthKitSink.userMessage(for: e)
             }
         }

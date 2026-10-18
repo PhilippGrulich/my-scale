@@ -1,53 +1,44 @@
 import SwiftUI
 
-/// System tab bar: Goal · Overview · "+" Weigh in (an action, not a page).
-/// Settings (profile, Health, scale) live behind the gear at the top right.
-/// Also owns the app-wide pieces (Add Measurement sheet, passive weigh-in
-/// overlay, Health loading, foreground refresh) so they work on every tab.
+/// System tab bar: Goal · Overview · "+" Weigh in (center) · History · Settings.
+/// Also owns the app-wide pieces (passive weigh-in overlay, Health loading,
+/// foreground refresh) so they work on every tab.
 struct RootTabView: View {
     @EnvironmentObject var model: AppModel
     @Environment(\.scenePhase) private var scenePhase
 
-    enum TabID: Hashable { case goal, overview, measure }
+    enum TabID: Hashable { case goal, overview, measure, history, settings }
     @State private var selection: TabID = .overview
-    @State private var showingAddMeasurement = false
 
     var body: some View {
-        TabView(selection: $selection) {
+        TabView(selection: tabSelection) {
             Tab("Goal", systemImage: "target", value: TabID.goal) {
                 GoalPageView()
             }
             Tab("Overview", systemImage: "gauge.with.dots.needle.67percent", value: TabID.overview) {
-                DashboardView(onShowGoal: { selection = .goal })
+                DashboardView(onShowGoal: { selection = .goal },
+                              onShowHistory: { selection = .history })
             }
-            // Action tab: selecting it opens Add Measurement (see onChange below).
             Tab("Weigh in", systemImage: "plus.circle.fill", value: TabID.measure) {
-                Color.clear
+                AddMeasurementView(onFinished: { selection = .overview })
+            }
+            Tab("History", systemImage: "list.bullet.rectangle", value: TabID.history) {
+                MeasurementHistoryView()
+            }
+            Tab("Settings", systemImage: "gearshape", value: TabID.settings) {
+                ProfileEditorView()
             }
         }
         .tint(Theme.accent)
-        // The "+" tab is an action, not a destination: when it gets selected,
-        // jump straight back to the previous tab and open the sheet.
-        // (Refusing the selection in a custom Binding instead leaves TabView
-        // thinking "+" is selected, so every second tap was ignored.)
-        .onChange(of: selection) { previous, tab in
-            guard tab == .measure else { return }
-            selection = previous
-            showingAddMeasurement = true
-        }
         .tabBarMinimizeBehavior(.onScrollDown)
-        .sheet(isPresented: addMeasurementBinding) {
-            AddMeasurementView(startIn: model.hasPairedScale ? .scale : .manual)
-                .environmentObject(model)
-        }
         // Control Center / Siri / Shortcuts "Start Weigh-In".
         .onChange(of: model.addMeasurementRequested, initial: true) { _, requested in
             guard requested else { return }
             model.addMeasurementRequested = false
-            showingAddMeasurement = true
+            selection = .measure
         }
-        // Passive weigh-ins (stepping on the scale with the app open) still get
-        // the full-screen overlay — unless the sheet is already showing them.
+        // Passive weigh-ins (stepping on the scale with the app open) get the
+        // full-screen overlay — except on the Weigh in tab, which shows them.
         .fullScreenCover(isPresented: overlayBinding) {
             WeighInOverlayView(phase: model.measurementPhase,
                                startedAt: model.liveStartedAt,
@@ -64,25 +55,24 @@ struct RootTabView: View {
         }
     }
 
-    /// Closing the sheet (Done, Cancel, swipe-down) ends its measurement in the
-    /// same update, so the overlay below never re-shows the reading the sheet
-    /// was already displaying.
-    private var addMeasurementBinding: Binding<Bool> {
+    /// Leaving the Weigh in tab ends its measurement/pairing scan in the same
+    /// update, so the overlay never re-shows a reading on the next tab.
+    private var tabSelection: Binding<TabID> {
         Binding(
-            get: { showingAddMeasurement },
-            set: { presented in
-                if !presented {
+            get: { selection },
+            set: { tab in
+                if selection == .measure, tab != .measure {
                     model.endPairingScan()
                     model.dismissOverlay()
                 }
-                showingAddMeasurement = presented
+                selection = tab
             }
         )
     }
 
     private var overlayBinding: Binding<Bool> {
         Binding(
-            get: { model.measurementPhase.isActive && !showingAddMeasurement },
+            get: { model.measurementPhase.isActive && selection != .measure },
             set: { if !$0 { model.dismissOverlay() } }
         )
     }

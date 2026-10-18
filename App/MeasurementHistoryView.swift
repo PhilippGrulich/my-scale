@@ -6,10 +6,8 @@ import MyOpenScaleCore
 /// their source and are read-only — HealthKit only lets us change our own.
 struct MeasurementHistoryView: View {
     @EnvironmentObject var model: AppModel
-    @Environment(\.dismiss) private var dismiss
 
     @State private var pendingDelete: WeightSample?
-    @State private var showingManualEntry = false
     @State private var editing: WeightSample?
 
     private var samples: [WeightSample] {
@@ -74,18 +72,6 @@ struct MeasurementHistoryView: View {
                 }
             }
             .navigationTitle("History")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { showingManualEntry = true } label: {
-                        Image(systemName: "plus")
-                    }
-                    .accessibilityLabel("New measurement")
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
             .sheet(item: $editing) { sample in
                 EditMeasurementView(sample: sample, onDelete: {
                     // Let the edit sheet close before the confirmation shows.
@@ -95,10 +81,6 @@ struct MeasurementHistoryView: View {
                     }
                 })
                 .environmentObject(model)
-            }
-            .sheet(isPresented: $showingManualEntry) {
-                AddMeasurementView(startIn: model.hasPairedScale ? .scale : .manual)
-                    .environmentObject(model)
             }
             .confirmationDialog("Delete this weigh-in?",
                                 isPresented: deleteDialogBinding,
