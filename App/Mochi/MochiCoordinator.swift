@@ -178,22 +178,34 @@ final class MochiCoordinator: ObservableObject {
     /// What the Goal page's Mochi currently shows, and when it was produced.
     @Published private(set) var goalPresentation: MochiPresentation?
     private(set) var goalProducedAt: Date?
+    /// The goal and its state the line was made for (see `goalKey`).
+    private var goalProducedFor: String?
 
-    /// Same freshness rule as the home greeting: none yet, older than 30 minutes, or from another day.
-    func isGoalStale(now: Date = Date()) -> Bool {
-        guard goalPresentation != nil, let at = goalProducedAt else { return true }
+    /// Same freshness rule as the home greeting (none yet, older than 30 minutes, or from
+    /// another day), and also stale once the goal or its state changed since, e.g. while Mochi was off.
+    func isGoalStale(profile: StoredProfile, status: MochiGoalStatus, now: Date = Date()) -> Bool {
+        guard goalPresentation != nil, let at = goalProducedAt,
+              goalProducedFor == Self.goalKey(profile: profile, status: status) else { return true }
         return now.timeIntervalSince(at) > Self.homeFreshness || !calendar.isDate(at, inSameDayAs: now)
     }
 
     /// Goal page appear / foreground: a new line only when the current one is stale.
     func refreshGoalIfStale(history: [WeightSample], profile: StoredProfile, status: MochiGoalStatus, now: Date = Date()) {
-        if isGoalStale(now: now) { refreshGoal(history: history, profile: profile, status: status, now: now) }
+        if isGoalStale(profile: profile, status: status, now: now) {
+            refreshGoal(history: history, profile: profile, status: status, now: now)
+        }
+    }
+
+    /// Changes whenever a different kind of goal line fits: goal, first weight, reached.
+    private static func goalKey(profile: StoredProfile, status: MochiGoalStatus) -> String {
+        "\(profile.weightGoal.signature())|\(status.currentKg != nil)|\(status.reached)"
     }
 
     /// A new goal-focused line (tap, or the goal or its state changed).
     func refreshGoal(history: [WeightSample], profile: StoredProfile, status: MochiGoalStatus, now: Date = Date()) {
         goalPresentation = goalPresentation(history: history, profile: profile, status: status, now: now)
         goalProducedAt = now
+        goalProducedFor = Self.goalKey(profile: profile, status: status)
     }
 
     /// The Goal page's line: an invite without a goal, progress on the way, praise once reached.
@@ -213,14 +225,16 @@ final class MochiCoordinator: ObservableObject {
 
         let event: String
         var pose = MochiPose.idle
-        if goal.targetKg == nil || status.currentKg == nil {
+        if goal.targetKg == nil {
             event = "goalNone"
+        } else if status.currentKg == nil {
+            event = "goalNoData"
         } else if status.reached {
             event = "goalReachedHome"
             pose = .doubleThumbs
         } else {
             event = "goalProgress"
-            if let progress = status.progress, progress >= 0.75 { pose = .doubleThumbs }
+            if goal.type != .maintain, let progress = status.progress, progress >= 0.75 { pose = .doubleThumbs }
         }
         let text = line(event, goalType: goal.type, tags: context.tags, streakDays: stats.streakDays,
                         values: values, now: now) ?? ""

@@ -2247,6 +2247,34 @@
       "goals": [
         "maintain"
       ]
+    },
+    {
+      "id": "goalNoData.1",
+      "text": "Step on the scale or add a weight and I'll track your goal 💚",
+      "events": [
+        "goalNoData"
+      ]
+    },
+    {
+      "id": "goalNoData.2",
+      "text": "Your goal is set! Now I just need a first weigh-in 🐾",
+      "events": [
+        "goalNoData"
+      ]
+    },
+    {
+      "id": "goalNoData.3",
+      "text": "Goal saved. One weigh-in and we're off 🎯",
+      "events": [
+        "goalNoData"
+      ]
+    },
+    {
+      "id": "goalNoData.4",
+      "text": "I'm ready when you are. First weight, please 🍡",
+      "events": [
+        "goalNoData"
+      ]
     }
   ]
 }

@@ -2247,6 +2247,34 @@
       "goals": [
         "maintain"
       ]
+    },
+    {
+      "id": "goalNoData.1",
+      "text": "Wieg dich oder trag ein Gewicht ein, dann verfolge ich dein Ziel 💚",
+      "events": [
+        "goalNoData"
+      ]
+    },
+    {
+      "id": "goalNoData.2",
+      "text": "Dein Ziel steht! Jetzt fehlt nur noch das erste Wiegen 🐾",
+      "events": [
+        "goalNoData"
+      ]
+    },
+    {
+      "id": "goalNoData.3",
+      "text": "Ziel gespeichert. Einmal wiegen und los geht's 🎯",
+      "events": [
+        "goalNoData"
+      ]
+    },
+    {
+      "id": "goalNoData.4",
+      "text": "Ich bin bereit, wenn du es bist. Erstes Gewicht, bitte 🍡",
+      "events": [
+        "goalNoData"
+      ]
     }
   ]
 }

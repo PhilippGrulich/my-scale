@@ -39,7 +39,7 @@ final class MochiLibraryFileTests: XCTestCase {
         let minimums: [String: Int] = ["toward": 25, "away": 20, "newBest": 8, "streak": 8, "goodWeek": 6, "daysInRange": 4,
             "milestonePercent": 6, "milestoneKg": 6, "goalReached": 6, "welcomeBack": 8, "notYou": 4, "home": 30, "homeIdle": 6,
             "birthday": 4, "anniversary": 4, "saved": 6, "reminder1": 5, "reminder2": 5, "reminder4": 5, "reminder8": 5, "reminderWeekly": 5,
-            "goalNone": 6, "goalProgress": 12, "goalReachedHome": 6]
+            "goalNone": 6, "goalNoData": 3, "goalProgress": 12, "goalReachedHome": 6]
         let en = try load("en")
         for (event, min) in minimums { XCTAssertGreaterThanOrEqual(en.lines.filter { $0.events.contains(event) }.count, min, event) }
     }
@@ -47,7 +47,7 @@ final class MochiLibraryFileTests: XCTestCase {
     func testEveryGoalTypeHasPlaceholderFreeFallback() throws {
         // With no values at all, every reaction event must still find a line for every goal type.
         for event in ["toward", "away", "newBest", "goodWeek", "goalReached", "notYou", "home",
-                      "goalNone", "goalProgress", "goalReachedHome"] {
+                      "goalNone", "goalNoData", "goalProgress", "goalReachedHome"] {
             for goal in GoalType.allCases where !(goal == .maintain && event == "newBest") {
                 var rng = SystemRandomNumberGenerator()
                 let s = MochiSituation(event: event, goalType: goal, tags: [], streakDays: 0, values: [:])
@@ -67,7 +67,8 @@ final class MochiLibraryFileTests: XCTestCase {
             }
             return n
         }
-        let greetings: Set = ["home", "homeIdle", "birthday", "anniversary", "goalNone", "goalProgress", "goalReachedHome"]
+        let greetings: Set = ["home", "homeIdle", "birthday", "anniversary", "goalNone", "goalNoData",
+                              "goalProgress", "goalReachedHome"]
         let reactions: Set = ["toward", "away", "newBest", "streak", "goodWeek", "daysInRange",
                               "milestonePercent", "milestoneKg", "goalReached"]
         for lang in ["en", "de"] {
