@@ -5,6 +5,8 @@ struct DashboardView: View {
     @EnvironmentObject var model: AppModel
     @State private var selectedMetric: BodyMetric?
     @State private var showingBMI = false
+    /// Height of the Mochi corner row (Mochi off: unused).
+    @State private var mochiCornerHeight = MochiCornerView.size
     /// Tapping "To goal" / the chart header jumps to the Goal / History tab.
     var onShowGoal: () -> Void = {}
     var onShowHistory: () -> Void = {}
@@ -38,11 +40,13 @@ struct DashboardView: View {
                                        measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
                                            ?? model.lastOwnReading?.capturedAt)
                             .frame(maxWidth: .infinity)
-                            // The corner row (Mochi, and a bubble capped at two lines) sits above the number.
-                            .padding(.top, model.mochi.settings.enabled ? 68 : 0)
+                            // The corner row (Mochi and its wrapped bubble) sits above the number.
+                            .padding(.top, model.mochi.settings.enabled ? mochiCornerHeight + 4 : 0)
+                            .animation(.snappy, value: mochiCornerHeight)
                         MochiHomeCorner(mochi: model.mochi,
                                         display: model.currentWeightKg?.formatted(1) ?? "– –",
-                                        onTap: { model.refreshMochiHome() })
+                                        onTap: { model.refreshMochiHome() },
+                                        onHeightChange: { mochiCornerHeight = $0 })
                     }
                     .padding(.top, 12)
 

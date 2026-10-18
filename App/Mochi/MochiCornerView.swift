@@ -9,29 +9,54 @@ struct MochiCornerView: View {
     /// Tummy display: the latest weight.
     var display: String = "– –"
     let onTap: () -> Void
+    /// Reports the corner's height (Mochi, or the wrapped bubble when taller) so the
+    /// dashboard can reserve exactly that much room above the weight.
+    var onHeightChange: (CGFloat) -> Void = { _ in }
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var bubbleVisible = false
     @State private var bubbleTrigger = 0
     @State private var bobbing = false
 
-    private static let size: CGFloat = 64
+    static let size: CGFloat = 64
+    private static let bubbleTop: CGFloat = 8
     private static let appearDelay: Duration = .milliseconds(600)
     private static let visibleFor: Duration = .seconds(5)
+
+    private var text: String? {
+        guard let text = presentation?.text, !text.isEmpty else { return nil }
+        return text
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 4) {
             MochiView(pose: presentation?.pose ?? .idle, display: display, size: Self.size, onTap: tap)
                 .offset(y: reduceMotion ? 0 : (bobbing ? -3 : 3))
-            if bubbleVisible, let text = presentation?.text, !text.isEmpty {
-                MochiSpeechBubble(text: text, maxWidth: 200, lineLimit: 2)
-                    .padding(.top, 8)
-                    .accessibilityElement(children: .combine)
+            if let text {
+                // The hidden copy holds the bubble's full wrapped size even while it is faded out,
+                // so the reserved space only changes with the line, not with every fade.
+                ZStack(alignment: .topLeading) {
+                    MochiSpeechBubble(text: text, maxWidth: .infinity).hidden()
+                    if bubbleVisible {
+                        MochiSpeechBubble(text: text, maxWidth: .infinity)
+                            .accessibilityElement(children: .combine)
+                    }
+                }
+                .padding(.top, Self.bubbleTop)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .onAppear {
-            guard !reduceMotion else { return }
-            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) { bobbing = true }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { onHeightChange($0) }
+        .onAppear { startBobbing() }
+        .onChange(of: reduceMotion) { _, reduce in
+            if reduce {
+                // Stop the repeating bob without animating to rest.
+                var still = Transaction()
+                still.disablesAnimations = true
+                withTransaction(still) { bobbing = false }
+            } else {
+                startBobbing()
+            }
         }
         .onChange(of: presentation) { _, _ in bubbleTrigger += 1 }
         .task(id: bubbleTrigger) {
@@ -43,6 +68,11 @@ struct MochiCornerView: View {
             guard !Task.isCancelled else { return }
             withAnimation(.easeIn(duration: 0.4)) { bubbleVisible = false }
         }
+    }
+
+    private func startBobbing() {
+        guard !reduceMotion else { return }
+        withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) { bobbing = true }
     }
 
     private func tap() {
@@ -57,11 +87,13 @@ struct MochiHomeCorner: View {
     @ObservedObject var mochi: MochiCoordinator
     let display: String
     let onTap: () -> Void
+    var onHeightChange: (CGFloat) -> Void = { _ in }
 
     var body: some View {
         if mochi.settings.enabled {
             MochiCornerView(presentation: mochi.homePresentation, display: display,
-                            onTap: { mochi.playTapHaptic(); onTap() })
+                            onTap: { mochi.playTapHaptic(); onTap() },
+                            onHeightChange: onHeightChange)
         }
     }
 }

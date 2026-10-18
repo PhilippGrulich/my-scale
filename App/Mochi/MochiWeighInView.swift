@@ -12,13 +12,15 @@ struct MochiWeighInView: View {
     let onAccept: () -> Void
     let onDismiss: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var isListening: Bool { bleStatus == .scanning }
 
     var body: some View {
         VStack(spacing: 20) {
             // One Mochi across phases, so pose changes crossfade instead of popping.
             MochiView(pose: pose, display: display, size: size)
-                .animation(.snappy, value: size)
+                .animation(reduceMotion ? nil : .snappy, value: size)
 
             if let bubble {
                 MochiSpeechBubble(text: bubble)

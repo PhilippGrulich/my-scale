@@ -18,7 +18,7 @@ struct GoalFieldsView: View {
                                                    set: { draft.goalType = $0 })) {
                 Text("Lose weight").tag(GoalType.lose)
                 Text("Gain weight").tag(GoalType.gain)
-                Text("Stay at my weight").tag(GoalType.maintain)
+                Text("Maintain").tag(GoalType.maintain)
             }
             .pickerStyle(.segmented)
 

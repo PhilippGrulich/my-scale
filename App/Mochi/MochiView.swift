@@ -15,7 +15,7 @@ struct MochiView: View {
 
     var body: some View {
         ZStack {
-            MochiStage(pose: pose, display: display, size: size, still: reduceMotion)
+            MochiStage(pose: pose, display: shownDisplay, size: size, still: reduceMotion)
                 .id(pose)
                 .transition(.opacity)
         }
@@ -42,6 +42,12 @@ struct MochiView: View {
         .accessibilityAction { tap() }
     }
 
+    /// The tummy text: the given one, else "hi!" while waving hello and "– –" otherwise.
+    private var shownDisplay: String {
+        guard display.isEmpty else { return display }
+        return pose == .helloWave ? String(localized: "hi!") : "– –"
+    }
+
     private func tap() {
         if !reduceMotion { taps += 1 }
         onTap?()
@@ -62,7 +68,8 @@ private struct MochiStage: View {
     @State private var start = Date()
 
     var body: some View {
-        TimelineView(.animation) { context in
+        // 30 fps is plenty for these loops; a still Mochi (Reduce Motion) doesn't redraw at all.
+        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: still)) { context in
             MochiFigure(pose: pose, display: display, size: size,
                         time: max(0, context.date.timeIntervalSince(start)), still: still)
         }

@@ -24,6 +24,8 @@ struct MochiSpeechBubble: View {
                 MochiBubbleShape(tail: Self.tail)
                     .fill(Color.white)
                     .flipsForRightToLeftLayoutDirection(true)
+                    // One outline, so the shadow traces bubble and tail together.
+                    .compositingGroup()
                     .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
             )
             .frame(maxWidth: maxWidth, alignment: .leading)
@@ -33,18 +35,21 @@ struct MochiSpeechBubble: View {
 }
 
 /// Rounded rectangle with a small curved tail on its left edge (flipped for right-to-left layouts).
-private struct MochiBubbleShape: Shape {
+/// Bubble and tail are unioned into a single outline, so there is no seam or hole between them.
+struct MochiBubbleShape: Shape {
     let tail: CGFloat
 
     func path(in rect: CGRect) -> Path {
-        var p = Path()
         let box = CGRect(x: rect.minX + tail, y: rect.minY, width: rect.width - tail, height: rect.height)
-        p.addRoundedRect(in: box, cornerSize: CGSize(width: 14, height: 14), style: .continuous)
+        let bubble = Path(roundedRect: box, cornerSize: CGSize(width: 14, height: 14), style: .continuous)
+        // A 12 pt base that starts well inside the box, curving out to the tip at the left edge.
         let cy = rect.minY + min(rect.height / 2, 20)
-        p.move(to: CGPoint(x: box.minX + 6, y: cy - 8))
-        p.addQuadCurve(to: CGPoint(x: rect.minX, y: cy + 6), control: CGPoint(x: box.minX - tail * 0.2, y: cy - 2))
-        p.addQuadCurve(to: CGPoint(x: box.minX + 6, y: cy + 5), control: CGPoint(x: box.minX, y: cy + 6))
-        p.closeSubpath()
-        return p
+        let inset = box.minX + 8
+        var tailPath = Path()
+        tailPath.move(to: CGPoint(x: inset, y: cy - 7))
+        tailPath.addQuadCurve(to: CGPoint(x: rect.minX, y: cy + 6), control: CGPoint(x: box.minX - tail * 0.1, y: cy - 1))
+        tailPath.addQuadCurve(to: CGPoint(x: inset, y: cy + 5), control: CGPoint(x: box.minX + 1, y: cy + 6))
+        tailPath.closeSubpath()
+        return bubble.union(tailPath)
     }
 }
