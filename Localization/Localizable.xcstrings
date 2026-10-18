@@ -825,6 +825,26 @@
         }
       }
     },
+    "Continue with Mochi": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter mit Mochi"
+          }
+        }
+      }
+    },
+    "Continue without Mochi": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter ohne Mochi"
+          }
+        }
+      }
+    },
     "Core training": {
       "localizations": {
         "de": {
@@ -1306,12 +1326,12 @@
         }
       }
     },
-    "Hi, I'm Mochi! Want me to help you reach your goal?": {
+    "Hi, I'm Mochi! Let's get you set up together 💚": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hi, ich bin Mochi! Soll ich dir helfen, dein Ziel zu erreichen?"
+            "value": "Hi, ich bin Mochi! Lass uns alles zusammen einrichten 💚"
           }
         }
       }
@@ -1372,6 +1392,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "So wird er berechnet"
+          }
+        }
+      }
+    },
+    "I need Bluetooth to find your scale 💚": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich brauche Bluetooth, um deine Waage zu finden 💚"
           }
         }
       }
@@ -1486,16 +1516,6 @@
         }
       }
     },
-    "Let's get you set up!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lass uns alles einrichten!"
-          }
-        }
-      }
-    },
     "Live frames (%lld)": {
       "localizations": {
         "de": {
@@ -1532,6 +1552,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Niedrig"
+          }
+        }
+      }
+    },
+    "Maintain": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halten"
           }
         }
       }
@@ -1738,16 +1768,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Noch keine Messungen"
-          }
-        }
-      }
-    },
-    "No thanks": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nein, danke"
           }
         }
       }
@@ -2515,16 +2535,6 @@
         }
       }
     },
-    "Stay at my weight": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gewicht halten"
-          }
-        }
-      }
-    },
     "Stay still on the scale.": {
       "localizations": {
         "de": {
@@ -3244,16 +3254,6 @@
         }
       }
     },
-    "Yes, let's go!": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ja, los geht’s!"
-          }
-        }
-      }
-    },
     "Yes, pair this scale": {
       "localizations": {
         "de": {
@@ -3303,6 +3303,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Du kannst sie unter „Neue Messung“ wieder koppeln."
+          }
+        }
+      }
+    },
+    "You can set things up with Mochi, your little scale buddy, or on your own.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst alles mit Mochi, deinem kleinen Waagen-Kumpel, einrichten – oder allein."
           }
         }
       }
@@ -3571,6 +3581,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "ab %@ kg"
+          }
+        }
+      }
+    },
+    "hi!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hi!"
           }
         }
       }

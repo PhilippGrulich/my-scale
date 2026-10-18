@@ -1,27 +1,30 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// First-launch welcome flow: meet Mochi (yes / no) → intro → connect Apple Health
-/// (pre-fill) → confirm details & goal → find & remember the scale → reminders (Mochi
-/// only) → done. Driven entirely by `AppModel` (which already owns Health + BLE).
+/// First-launch welcome flow: welcome (continue with or without Mochi) → connect Apple
+/// Health (pre-fill) → confirm details & goal → find & remember the scale → reminders
+/// (Mochi only) → done. Driven entirely by `AppModel` (which already owns Health + BLE).
 /// With Mochi on, Mochi and a speech bubble replace each step's header icon; with
 /// Mochi off, the steps look as they always did. `onFinish` flips the app to the dashboard.
 struct OnboardingView: View {
     @EnvironmentObject var model: AppModel
     let onFinish: () -> Void
 
-    enum Step: String { case meetMochi, welcome, health, profile, scale, reminders, done }
+    enum Step: String { case welcome, health, profile, scale, reminders, done }
+    /// The Welcome screen's choice; mirrors `model.mochi.settings.enabled` once made.
+    enum MochiChoice { case undecided, with, without }
 
-    @State private var step: Step = .meetMochi
+    @State private var step: Step = .welcome
     @State private var draft = StoredProfile.makeDefault()
     @State private var healthBusy = false
-    /// Mirrors `model.mochi.settings.enabled` as decided on the first step.
-    @State private var mochiEnabled = false
-    /// "No thanks" was tapped: Mochi waves sadly, then fades out.
-    @State private var declined = false
+    @State private var choice: MochiChoice = .undecided
+    /// "Continue without Mochi" was tapped: Mochi waves sadly, then fades out.
+    @State private var declining = false
     @State private var mochiFading = false
 
     private static let declineHold: Duration = .milliseconds(2500)
+
+    private var mochiEnabled: Bool { choice == .with }
 
     var body: some View {
         ZStack {
@@ -31,6 +34,7 @@ struct OnboardingView: View {
                 .frame(maxWidth: 520)
         }
         .animation(.snappy, value: step)
+        .animation(.snappy, value: choice)
         #if DEBUG
         .onAppear(perform: applyDebugLaunchStep)
         #endif
@@ -39,7 +43,6 @@ struct OnboardingView: View {
     @ViewBuilder
     private var content: some View {
         switch step {
-        case .meetMochi: meetMochiStep
         case .welcome: welcomeStep
         case .health: healthStep
         case .profile: profileStep
@@ -51,49 +54,23 @@ struct OnboardingView: View {
 
     // MARK: - Steps
 
-    private var meetMochiStep: some View {
-        VStack(spacing: 0) {
-            Spacer()
-            HStack(alignment: .center, spacing: 4) {
-                MochiView(pose: declined ? .sadWave : .helloWave, size: 130,
-                          onTap: declined ? { leaveDecline() } : nil)
-                MochiSpeechBubble(text: declined
-                                  ? String(localized: "Okay! If you ever want me, I'm in Settings 💚")
-                                  : String(localized: "Hi, I'm Mochi! Want me to help you reach your goal?"),
-                                  maxWidth: 210)
-                    .id(declined)
-                    .accessibilityElement(children: .combine)
-            }
-            .opacity(mochiFading ? 0 : 1)
-            Spacer()
-            VStack(spacing: 12) {
-                primaryButton("Yes, let's go!") { acceptMochi() }
-                secondaryButton("No thanks") { declineMochi() }
-            }
-            .opacity(declined ? 0 : 1)
-            .disabled(declined)
-        }
-        .padding(.vertical, 40)
-        .contentShape(Rectangle())
-        .onTapGesture { if declined { leaveDecline() } }
-        .task(id: declined) {
-            guard declined else { return }
-            try? await Task.sleep(for: Self.declineHold)
-            guard !Task.isCancelled else { return }
-            leaveDecline()
-        }
-    }
-
+    /// The normal Welcome screen. Until the user picks, a small Mochi sits next to the
+    /// choice; with Mochi it takes over the header and waves hello, without it waves sadly,
+    /// fades out, and the plain Welcome remains. Either way "Get Started" then carries on.
     private var welcomeStep: some View {
         VStack(spacing: 0) {
             Spacer()
             header(icon: "scalemass.fill",
-                   mochi: .helloWave, says: "Let's get you set up!",
+                   mochi: .helloWave, says: "Hi, I'm Mochi! Let's get you set up together 💚",
                    title: "Welcome",
                    subtitle: "Step on your body-composition scale and your weigh-ins flow straight into Apple Health — body fat, lean mass and BMI computed on-device. No accounts, no cloud.")
             Spacer()
             VStack(spacing: 12) {
-                primaryButton("Get Started") { step = .health }
+                if choice == .undecided {
+                    mochiChoice
+                } else {
+                    primaryButton("Get Started") { step = .health }
+                }
                 Text("Body-composition values are estimates, not medical advice. Works with the Xiaomi Mi Body Composition Scale 2 — not affiliated with or endorsed by Xiaomi.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
@@ -101,6 +78,47 @@ struct OnboardingView: View {
             }
         }
         .padding(.vertical, 40)
+        .task(id: declining) {
+            guard declining else { return }
+            try? await Task.sleep(for: Self.declineHold)
+            guard !Task.isCancelled else { return }
+            leaveDecline()
+        }
+    }
+
+    /// Small Mochi introducing the choice (or saying goodbye), and the two ways to continue.
+    private var mochiChoice: some View {
+        VStack(spacing: 12) {
+            HStack(alignment: .center, spacing: 6) {
+                MochiView(pose: declining ? .sadWave : .helloWave, size: 76,
+                          onTap: declining ? { leaveDecline() } : nil)
+                Group {
+                    if declining {
+                        MochiSpeechBubble(text: String(localized: "Okay! If you ever want me, I'm in Settings 💚"),
+                                          maxWidth: 240)
+                    } else {
+                        Text("You can set things up with Mochi, your little scale buddy, or on your own.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .id(declining)
+                .accessibilityElement(children: .combine)
+            }
+            .opacity(mochiFading ? 0 : 1)
+            // Tapping Mochi or its goodbye skips the wait (not the whole screen: the
+            // "without" button's own tap must not end the sad wave at once).
+            .contentShape(Rectangle())
+            .onTapGesture { if declining { leaveDecline() } }
+            VStack(spacing: 12) {
+                primaryButton("Continue with Mochi") { acceptMochi() }
+                secondaryButton("Continue without Mochi") { declineMochi() }
+            }
+            .opacity(declining ? 0 : 1)
+            .disabled(declining)
+        }
     }
 
     private var healthStep: some View {
@@ -155,9 +173,14 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             Spacer()
             if mochiEnabled {
-                mochiHost(model.scaleCandidate == nil ? .waiting : .thumbsUp,
-                          says: "Hop on your scale, I'll look for it!")
-                    .padding(.bottom, 24)
+                if bleUnavailable {
+                    mochiHost(.idle, says: "I need Bluetooth to find your scale 💚")
+                        .padding(.bottom, 24)
+                } else {
+                    mochiHost(model.scaleCandidate == nil ? .waiting : .thumbsUp,
+                              says: "Hop on your scale, I'll look for it!")
+                        .padding(.bottom, 24)
+                }
             }
             if bleUnavailable {
                 header(icon: "antenna.radiowaves.left.and.right.slash",
@@ -252,23 +275,23 @@ struct OnboardingView: View {
         // Reminders stay off until the reminders step asks (an app kill in between leaves them off).
         model.mochi.settings.remindersEnabled = false
         model.mochi.settings.enabled = true
-        mochiEnabled = true
-        step = .welcome
+        choice = .with
     }
 
     private func declineMochi() {
         model.mochi.settings.enabled = false
-        mochiEnabled = false
-        withAnimation(.easeInOut(duration: 0.3)) { declined = true }
+        withAnimation(.easeInOut(duration: 0.3)) { declining = true }
     }
 
-    /// End of the sad wave (timer or tap): fade Mochi out (opacity only), then carry on.
+    /// End of the sad wave (timer or tap): fade Mochi out (opacity only), then the plain Welcome stays.
     private func leaveDecline() {
-        guard step == .meetMochi, declined, !mochiFading else { return }
+        guard step == .welcome, declining, !mochiFading else { return }
         withAnimation(.easeOut(duration: 0.5)) {
             mochiFading = true
         } completion: {
-            step = .welcome
+            declining = false
+            mochiFading = false
+            choice = .without
         }
     }
 
@@ -285,15 +308,17 @@ struct OnboardingView: View {
 
     #if DEBUG
     /// `-onboardingStep <step>|declined` on launch jumps to that step (simulator screenshots);
-    /// `-mochiEnabled YES|NO` alongside it sets Mochi on or off.
+    /// `-mochiEnabled YES|NO` alongside it makes the Welcome choice (with / without Mochi).
+    /// `welcome` without `-mochiEnabled` shows the undecided choice; `declined` the sad wave.
     private func applyDebugLaunchStep() {
         let defaults = UserDefaults.standard
         guard let raw = defaults.string(forKey: "onboardingStep") else { return }
         if defaults.object(forKey: "mochiEnabled") != nil {
             model.mochi.settings.enabled = defaults.bool(forKey: "mochiEnabled")
+            choice = model.mochi.settings.enabled ? .with : .without
         }
-        mochiEnabled = model.mochi.settings.enabled
         if raw == "declined" {
+            choice = .undecided
             declineMochi()
         } else if let jump = Step(rawValue: raw) {
             if jump == .profile || jump == .done { draft = model.profile }
