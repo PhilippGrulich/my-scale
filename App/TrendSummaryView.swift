@@ -8,7 +8,8 @@ struct TrendSummaryView: View {
     let currentKg: Double?
     let goalKg: Double?
 
-    private var monthChange: Double? { WeightHistory.changeKg(history, lastDays: 30, now: Date()) }
+    // Trend-based so one water-heavy morning does not flip the arrow.
+    private var monthChange: Double? { WeightHistory.trendChangeKg(history, lastDays: 30, now: Date()) }
     private var weeklyRate: Double? { WeightHistory.weeklyRateKg(history, lastDays: 30, now: Date()) }
     private var eta: Double? {
         guard let c = currentKg, let g = goalKg, let r = weeklyRate else { return nil }

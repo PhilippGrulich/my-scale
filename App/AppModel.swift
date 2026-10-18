@@ -237,6 +237,20 @@ final class AppModel: ObservableObject {
     /// Refresh weight history from Apple Health. Keeps the last good data on a
     /// transient failure; empty results are "no data", not an error.
     func loadWeightHistory() {
+        #if DEBUG
+        // `-demoWeightHistory YES` on launch: synthetic ±0.5 kg daily noise on a
+        // slow downward drift, to eyeball the chart in the simulator (no Health data).
+        if UserDefaults.standard.bool(forKey: "demoWeightHistory") {
+            var rng = SystemRandomNumberGenerator()
+            weightHistory = (0..<200).reversed().compactMap { day -> WeightSample? in
+                guard day % 9 != 4 else { return nil }   // skip a few days
+                let kg = 82 - Double(200 - day) * 0.008 + Double.random(in: -0.5...0.5, using: &rng)
+                return WeightSample(id: UUID(), date: Date().addingTimeInterval(-Double(day) * 86_400 - 3600),
+                                    weightKg: (kg * 10).rounded() / 10)
+            }
+            return
+        }
+        #endif
         healthKit.readWeightHistory { [weak self] result in
             guard let self else { return }
             switch result {
