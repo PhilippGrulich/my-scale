@@ -4,6 +4,16 @@ options:
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
+  # Built with Xcode 27 / the iOS 27 + watchOS 27 SDKs. Deployment targets stay
+  # at iOS 26 / watchOS 11 so existing devices keep working.
+  xcodeVersion: "27.0"
+
+settings:
+  base:
+    # App targets stay in Swift 5 language mode for now: the CoreBluetooth /
+    # HealthKit callback code isn't strict-concurrency clean yet. The pure
+    # MyOpenScaleCore package already builds in Swift 6 mode.
+    SWIFT_VERSION: "5.0"
 
 packages:
   MyOpenScaleCore:

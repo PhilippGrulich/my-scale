@@ -13,7 +13,7 @@ concurrency:
 jobs:
   core-tests:
     name: MiScaleCore (swift test)
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +30,7 @@ jobs:
   # project exists and depends on MiScaleCore:
   #
   #   app-build:
-  #     runs-on: macos-14
+  #     runs-on: macos-15
   #     steps:
   #       - uses: actions/checkout@v4
   #       - run: xcodebuild build -scheme MiScaleApp \
