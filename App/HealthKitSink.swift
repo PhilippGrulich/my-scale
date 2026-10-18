@@ -49,6 +49,11 @@ final class HealthKitSink {
             HKObjectType.quantityType(forIdentifier: .bodyFatPercentage),
             HKObjectType.quantityType(forIdentifier: .leanBodyMass),
             HKObjectType.quantityType(forIdentifier: .bodyMassIndex),
+            // Activity context for the History feed.
+            HKObjectType.workoutType(),
+            HKObjectType.quantityType(forIdentifier: .stepCount),
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned),
+            HKObjectType.quantityType(forIdentifier: .dietaryEnergyConsumed),
         ]).compactMap { $0 })
     }
 
@@ -466,6 +471,89 @@ final class HealthKitSink {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: - Activity (History feed)
+
+    /// A workout from any app (Apple Watch, Strava, …).
+    struct WorkoutEntry: Identifiable, Equatable {
+        let id: UUID
+        let start: Date
+        let end: Date
+        let activityType: HKWorkoutActivityType
+        let activeKcal: Double?
+        let sourceName: String
+        var duration: TimeInterval { end.timeIntervalSince(start) }
+    }
+
+    /// Per-day totals; nil = no data that day.
+    struct DailyTotals: Equatable {
+        var steps: Double?
+        var activeKcal: Double?
+        var eatenKcal: Double?
+    }
+
+    /// Workouts since `start`, newest first. Empty when denied/unavailable.
+    func readWorkouts(since start: Date, completion: @escaping ([WorkoutEntry]) -> Void) {
+        guard Self.isAvailable else { DispatchQueue.main.async { completion([]) }; return }
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: nil, options: [])
+        let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate,
+                                  limit: HKObjectQueryNoLimit, sortDescriptors: [sort]) { _, samples, _ in
+            let energy = HKQuantityType(.activeEnergyBurned)
+            let result = (samples as? [HKWorkout] ?? []).map { w in
+                WorkoutEntry(id: w.uuid, start: w.startDate, end: w.endDate,
+                             activityType: w.workoutActivityType,
+                             activeKcal: w.statistics(for: energy)?.sumQuantity()?.doubleValue(for: .kilocalorie()),
+                             sourceName: w.sourceRevision.source.name)
+            }
+            DispatchQueue.main.async { completion(result) }
+        }
+        store.execute(query)
+    }
+
+    /// Daily sums of steps, active energy and eaten energy since `start`,
+    /// keyed by the start of each local day.
+    func readDailyTotals(since start: Date, completion: @escaping ([Date: DailyTotals]) -> Void) {
+        guard Self.isAvailable else { DispatchQueue.main.async { completion([:]) }; return }
+        let calendar = Calendar.current
+        let anchor = calendar.startOfDay(for: start)
+        let kinds: [(HKQuantityTypeIdentifier, HKUnit, WritableKeyPath<DailyTotals, Double?>)] = [
+            (.stepCount, .count(), \.steps),
+            (.activeEnergyBurned, .kilocalorie(), \.activeKcal),
+            (.dietaryEnergyConsumed, .kilocalorie(), \.eatenKcal),
+        ]
+        let group = DispatchGroup()
+        let lock = NSLock()
+        var totals: [Date: DailyTotals] = [:]
+        for (id, unit, keyPath) in kinds {
+            group.enter()
+            let query = HKStatisticsCollectionQuery(
+                quantityType: HKQuantityType(id),
+                quantitySamplePredicate: HKQuery.predicateForSamples(withStart: anchor, end: nil, options: []),
+                options: .cumulativeSum, anchorDate: anchor, intervalComponents: DateComponents(day: 1))
+            query.initialResultsHandler = { _, collection, _ in
+                collection?.enumerateStatistics(from: anchor, to: Date()) { stats, _ in
+                    guard let sum = stats.sumQuantity()?.doubleValue(for: unit), sum > 0 else { return }
+                    let day = calendar.startOfDay(for: stats.startDate)
+                    lock.lock()
+                    totals[day, default: DailyTotals()][keyPath: keyPath] = sum
+                    lock.unlock()
+                }
+                group.leave()
+            }
+            store.execute(query)
+        }
+        group.notify(queue: .main) { completion(totals) }
+    }
+
+    /// Ask for the activity read types (only new types prompt; already
+    /// answered ones return immediately). Completion on the main queue.
+    func requestActivityAuthorization(_ completion: @escaping () -> Void) {
+        guard Self.isAvailable else { DispatchQueue.main.async(execute: completion); return }
+        store.requestAuthorization(toShare: shareTypes, read: readTypes) { _, _ in
+            DispatchQueue.main.async(execute: completion)
         }
     }
 

@@ -1,4 +1,5 @@
 import Foundation
+import HealthKit
 import SwiftUI
 import UIKit
 import WidgetKit
@@ -68,6 +69,10 @@ final class AppModel: ObservableObject {
     /// for a new measurement; `RootTabView` opens the Add Measurement sheet and
     /// clears it.
     @Published var addMeasurementRequested = false
+    /// Activity context for the History feed (from Apple Health, any app).
+    @Published private(set) var workouts: [HealthKitSink.WorkoutEntry] = []
+    @Published private(set) var dailyTotals: [Date: HealthKitSink.DailyTotals] = [:]
+    private var activityAuthRequested = false
     /// Newest body-fat / lean / BMI value in Apple Health from any source (this
     /// app, another scale's app, a manual Health entry).
     @Published private(set) var latestMetrics: [HealthKitSink.MetricKind: HealthKitSink.MetricSample] = [:]
@@ -442,6 +447,87 @@ final class AppModel: ObservableObject {
 
     /// Delete a stored weigh-in from Apple Health (the samples this app wrote at
     /// that time) and from the in-app history. Refreshes the chart on success.
+    // MARK: - Activity (History feed)
+
+    /// How far back the History feed shows workouts / steps / calories.
+    static let activityDays = 90
+
+    /// Load workouts and daily totals. The first call asks Apple Health for the
+    /// activity read types (only those not answered yet show a prompt).
+    func loadActivity() {
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "demoWeightHistory") { loadDemoActivity(); return }
+        #endif
+        let since = Date().addingTimeInterval(-Double(Self.activityDays) * 86_400)
+        let load = { [weak self] in
+            guard let self else { return }
+            self.healthKit.readWorkouts(since: since) { [weak self] in self?.workouts = $0 }
+            self.healthKit.readDailyTotals(since: since) { [weak self] in self?.dailyTotals = $0 }
+        }
+        guard !activityAuthRequested else { load(); return }
+        activityAuthRequested = true
+        healthKit.requestActivityAuthorization(load)
+    }
+
+    /// One History card: everything that happened on a calendar day.
+    struct ActivityDay: Identifiable {
+        let day: Date
+        var weighIns: [WeightSample] = []
+        var workouts: [HealthKitSink.WorkoutEntry] = []
+        var totals: HealthKitSink.DailyTotals?
+        var id: Date { day }
+    }
+
+    /// Weigh-ins (all of them) plus workouts and daily totals, grouped by local
+    /// day, newest first. Days with nothing at all don't appear.
+    var activityFeed: [ActivityDay] {
+        let cal = Calendar.current
+        var days: [Date: ActivityDay] = [:]
+        for s in weightHistory {
+            let d = cal.startOfDay(for: s.date)
+            days[d, default: ActivityDay(day: d)].weighIns.append(s)
+        }
+        for w in workouts {
+            let d = cal.startOfDay(for: w.start)
+            days[d, default: ActivityDay(day: d)].workouts.append(w)
+        }
+        for (d, t) in dailyTotals {
+            days[d, default: ActivityDay(day: d)].totals = t
+        }
+        return days.values
+            .map { day in
+                var day = day
+                day.weighIns.sort { $0.date > $1.date }
+                day.workouts.sort { $0.start > $1.start }
+                return day
+            }
+            .sorted { $0.day > $1.day }
+    }
+
+    #if DEBUG
+    private func loadDemoActivity() {
+        let cal = Calendar.current
+        var totals: [Date: HealthKitSink.DailyTotals] = [:]
+        var demo: [HealthKitSink.WorkoutEntry] = []
+        let types: [HKWorkoutActivityType] = [.running, .walking, .cycling, .traditionalStrengthTraining, .yoga]
+        for offset in 0..<40 {
+            guard let day = cal.date(byAdding: .day, value: -offset, to: cal.startOfDay(for: Date())) else { continue }
+            totals[day] = HealthKitSink.DailyTotals(steps: Double(Int.random(in: 3_000...14_000)),
+                                                    activeKcal: Double(Int.random(in: 250...900)),
+                                                    eatenKcal: offset % 3 == 0 ? nil : Double(Int.random(in: 1_700...2_600)))
+            if offset % 2 == 0 {
+                let start = day.addingTimeInterval(Double(Int.random(in: 7...19)) * 3600)
+                let minutes = Double(Int.random(in: 20...75))
+                demo.append(.init(id: UUID(), start: start, end: start.addingTimeInterval(minutes * 60),
+                                  activityType: types[offset / 2 % types.count],
+                                  activeKcal: minutes * Double(Int.random(in: 6...11)), sourceName: "Apple Watch"))
+            }
+        }
+        dailyTotals = totals
+        workouts = demo
+    }
+    #endif
+
     /// Several observer callbacks arrive per change (one per metric type, and
     /// for our own writes too); coalesce them into one reload.
     private func scheduleHealthReload() {

@@ -10,6 +10,16 @@
     "%@ %%": {
       "shouldTranslate": false
     },
+    "%@ %% fat": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %% Fett"
+          }
+        }
+      }
+    },
     "%@ %% to go.": {
       "localizations": {
         "de": {
@@ -36,6 +46,19 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ und mehr"
+          }
+        }
+      }
+    },
+    "%@ kcal": {
+      "shouldTranslate": false
+    },
+    "%@ kcal active": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal aktiv"
           }
         }
       }
@@ -143,6 +166,16 @@
         }
       }
     },
+    "%@ steps": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Schritte"
+          }
+        }
+      }
+    },
     "%@ · %@": {
       "localizations": {
         "en": {
@@ -175,6 +208,12 @@
       "shouldTranslate": false
     },
     "%lld dBm": {
+      "shouldTranslate": false
+    },
+    "%lld kcal": {
+      "shouldTranslate": false
+    },
+    "%lld min": {
       "shouldTranslate": false
     },
     "%lld of %lld": {
@@ -288,6 +327,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ein Wert für das Fett um deine inneren Organe. Es hängt stärker mit Gesundheitsrisiken zusammen als Fett unter der Haut: 1–9 ist gesund, 10–14 hoch, ab 15 sehr hoch."
+          }
+        }
+      }
+    },
+    "Activity": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivität"
           }
         }
       }
@@ -736,6 +785,26 @@
         }
       }
     },
+    "Core training": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core-Training"
+          }
+        }
+      }
+    },
+    "Cross training": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cross-Training"
+          }
+        }
+      }
+    },
     "Currently %@ %%.": {
       "localizations": {
         "de": {
@@ -746,12 +815,32 @@
         }
       }
     },
+    "Cycling": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radfahren"
+          }
+        }
+      }
+    },
     "Daily ups and downs inside this range are normal.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Tägliche Schwankungen innerhalb dieses Bereichs sind normal."
+          }
+        }
+      }
+    },
+    "Dance": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tanzen"
           }
         }
       }
@@ -826,6 +915,16 @@
         }
       }
     },
+    "Eaten": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gegessen"
+          }
+        }
+      }
+    },
     "Edit": {
       "localizations": {
         "de": {
@@ -852,6 +951,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zielgewicht bearbeiten"
+          }
+        }
+      }
+    },
+    "Elliptical": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crosstrainer"
           }
         }
       }
@@ -912,6 +1021,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Weiblich"
+          }
+        }
+      }
+    },
+    "Football": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fußball"
           }
         }
       }
@@ -985,6 +1104,9 @@
           }
         }
       }
+    },
+    "HIIT": {
+      "shouldTranslate": false
     },
     "Health unavailable": {
       "localizations": {
@@ -1110,6 +1232,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hoch"
+          }
+        }
+      }
+    },
+    "Hiking": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wandern"
           }
         }
       }
@@ -1274,6 +1406,16 @@
         }
       }
     },
+    "Manual entry": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manueller Eintrag"
+          }
+        }
+      }
+    },
     "Me": {
       "localizations": {
         "de": {
@@ -1330,6 +1472,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Meilensteine"
+          }
+        }
+      }
+    },
+    "Mind & body": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Achtsamkeit"
           }
         }
       }
@@ -1637,6 +1789,9 @@
         }
       }
     },
+    "Pilates": {
+      "shouldTranslate": false
+    },
     "Plan": {
       "localizations": {
         "de": {
@@ -1753,6 +1908,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verwerfen"
+          }
+        }
+      }
+    },
+    "Rowing": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rudern"
+          }
+        }
+      }
+    },
+    "Running": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laufen"
           }
         }
       }
@@ -2067,6 +2242,16 @@
         }
       }
     },
+    "Stairs": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treppensteigen"
+          }
+        }
+      }
+    },
     "Start": {
       "localizations": {
         "de": {
@@ -2157,6 +2342,26 @@
         }
       }
     },
+    "Strength training": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krafttraining"
+          }
+        }
+      }
+    },
+    "Swimming": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schwimmen"
+          }
+        }
+      }
+    },
     "Sync failed — tap to retry": {
       "localizations": {
         "de": {
@@ -2226,6 +2431,9 @@
           }
         }
       }
+    },
+    "Tennis": {
+      "shouldTranslate": false
     },
     "That needs %@ kg per week — more than 1 kg per week is hard to keep up.": {
       "localizations": {
@@ -2357,6 +2565,16 @@
         }
       }
     },
+    "Today": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute"
+          }
+        }
+      }
+    },
     "Trend": {
       "localizations": {
         "de": {
@@ -2479,6 +2697,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warte auf deine Waage … Bleib ruhig stehen, sobald du drauf bist – die Messung startet automatisch."
+          }
+        }
+      }
+    },
+    "Walking": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gehen"
           }
         }
       }
@@ -2733,6 +2961,16 @@
         }
       }
     },
+    "Workout": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Training"
+          }
+        }
+      }
+    },
     "Yes, pair this scale": {
       "localizations": {
         "de": {
@@ -2742,6 +2980,19 @@
           }
         }
       }
+    },
+    "Yesterday": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestern"
+          }
+        }
+      }
+    },
+    "Yoga": {
+      "shouldTranslate": false
     },
     "You": {
       "localizations": {
