@@ -78,7 +78,7 @@ struct AddMeasurementView: View {
     private var title: LocalizedStringKey {
         switch mode {
         case .scale: return "New measurement"
-        case .manual: return "Add weight"
+        case .manual: return ""   // the rolling circle is the page; no title
         case .pairing: return "Pair scale"
         }
     }

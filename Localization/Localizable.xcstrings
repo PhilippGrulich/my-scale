@@ -381,16 +381,6 @@
         }
       }
     },
-    "Add weight": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eintragen"
-          }
-        }
-      }
-    },
     "Age": {
       "localizations": {
         "de": {
