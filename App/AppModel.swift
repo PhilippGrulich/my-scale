@@ -155,7 +155,7 @@ final class AppModel: ObservableObject {
             Task { @MainActor in self?.rejectReading(id) }
         }
         notifications.onReminderTap = { [weak self] in
-            Task { @MainActor in self?.startMeasurement() }
+            Task { @MainActor in self?.addMeasurementRequested = true }
         }
 
         scanner.onStatusChange = { [weak self] status in
