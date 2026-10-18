@@ -126,4 +126,34 @@ final class MochiReactionEngineTests: XCTestCase {
         XCTAssertEqual(r.event, .notYou); XCTAssertEqual(r.pose, .idle); XCTAssertNil(r.changeKg)
         XCTAssertEqual(r.event.lineEvent, "notYou")
     }
+
+    func testNoKgMilestonePastTarget() {
+        let g = lose(70, start: 80)
+        var st = MochiProgressState.fresh(for: g)
+        st.goalReachedFired = true
+        st.firedMilestones = Set((1...10).map { "kg:\($0)" } + ["pct:25", "pct:50", "pct:75"])
+        st.bestKg = 69.0
+        let (r, st2) = react(68.9, history: [s(daysAgo: 1, 69.0)], goal: g, state: st)
+        XCTAssertFalse(r.event.lineEvent.hasPrefix("milestone"))
+        XCTAssertFalse(st2.firedMilestones.contains("kg:11"))
+    }
+
+    func testRangeStreakCanBeEarnedAgainAfterBreak() {
+        let g = WeightGoal(type: .maintain, targetKg: 70, startKg: nil)
+        var st = MochiProgressState.fresh(for: g)
+        var history: [WeightSample] = []
+        var events: [Int: MochiEvent] = [:]
+        for day in 0...14 {
+            let kg = day == 7 ? 72.5 : 70.0
+            let at = base.addingTimeInterval(Double(day) * 86_400)
+            let (r, next) = MochiReactionEngine.react(newKg: kg, at: at, history: history, goal: g, state: st, calendar: cal)
+            events[day] = r.event
+            st = next
+            history.append(WeightSample(id: UUID(), date: at, weightKg: kg))
+        }
+        XCTAssertEqual(events[6], .daysInRange(7))
+        XCTAssertEqual(events[8], .goalReached)
+        XCTAssertEqual(events[14], .daysInRange(7))
+        XCTAssertEqual(events.values.filter { $0 == .daysInRange(7) }.count, 2)
+    }
 }

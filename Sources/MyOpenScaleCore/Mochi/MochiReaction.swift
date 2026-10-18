@@ -162,6 +162,8 @@ public enum MochiReactionEngine {
         var rangeEvent: MochiEvent?
         if goal.type == .maintain {
             let n = stats.daysInRangeStreak
+            // A broken run lets the maintainer earn the same marks again.
+            state.firedRangeStreaks = state.firedRangeStreaks.filter { $0 <= n }
             if rangeStreakMarks.contains(n) && !state.firedRangeStreaks.contains(n) {
                 state.firedRangeStreaks.insert(n)
                 rangeEvent = .daysInRange(n)
@@ -219,7 +221,7 @@ public enum MochiReactionEngine {
 
     /// Marks every newly crossed milestone as fired and returns the event for the most significant one.
     private static func milestone(newKg: Double, goal: WeightGoal, state: inout MochiProgressState) -> MochiEvent? {
-        guard goal.type != .maintain, goal.targetKg != nil, let start = goal.startKg else { return nil }
+        guard goal.type != .maintain, let target = goal.targetKg, let start = goal.startKg else { return nil }
 
         var newPercents: [Int] = []
         if let fraction = goal.progressFraction(newKg) {
@@ -230,7 +232,8 @@ public enum MochiReactionEngine {
 
         var newKgMarks: [Int] = []
         let progressKg = goal.type == .lose ? start - newKg : newKg - start
-        let wholeKg = Int(floor(progressKg + epsilon))
+        // Capped at the goal size so readings past the target are not milestones.
+        let wholeKg = min(Int(floor(progressKg + epsilon)), Int(floor(abs(target - start) + epsilon)))
         if wholeKg >= 1 {
             for mark in 1...wholeKg where state.firedMilestones.insert("kg:\(mark)").inserted {
                 newKgMarks.append(mark)
