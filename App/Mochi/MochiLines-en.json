@@ -1,0 +1,1952 @@
+{
+  "version": 1,
+  "lines": [
+    {
+      "id": "toward.1",
+      "text": "Nailed it! 👍",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.2",
+      "text": "Look at you go! ✨",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.3",
+      "text": "Yay! Right on track 💚",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.4",
+      "text": "That's the way! Mochi is so proud 🥹",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.5",
+      "text": "Step by step, we're getting there 🐾",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.6",
+      "text": "You make me bounce with joy! 🎈",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.7",
+      "text": "Good one, {name}! 💪",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.8",
+      "text": "Thumbs up from me! 👍✨",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.9",
+      "text": "Ooh, I like where this is going 😊",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.10",
+      "text": "Showing up looks good on you 💫",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.11",
+      "text": "High five! ✋ (I have tiny hands)",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.12",
+      "text": "Another good one for the books 📖",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.13",
+      "text": "Hehe, that tickled! And it looks great 🤭",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.14",
+      "text": "Team us is doing great 💚",
+      "events": [
+        "toward"
+      ]
+    },
+    {
+      "id": "toward.lose.1",
+      "text": "{change} kg! Nice and steady 💚",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "toward.lose.2",
+      "text": "Moving the right way, {name} ✨",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "toward.lose.3",
+      "text": "Right where you want to be heading 🧭",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "toward.gain.1",
+      "text": "{change} kg, you're growing strong 💪",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "toward.gain.2",
+      "text": "Building up nicely, {name}! 🌱",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "toward.gain.3",
+      "text": "Growing strong, just like we planned 💪",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "toward.maintain.1",
+      "text": "Steady as a rock 🪨💚",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "toward.maintain.2",
+      "text": "Perfectly balanced, as all things should be ⚖️",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "toward.maintain.3",
+      "text": "Right where you like it, {name} 💚",
+      "events": [
+        "toward"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "toward.monday.1",
+      "text": "Strong start to the week! 💪",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "monday"
+      ]
+    },
+    {
+      "id": "toward.monday.2",
+      "text": "Monday? More like Yay-day! ☀️",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "monday"
+      ]
+    },
+    {
+      "id": "toward.friday.1",
+      "text": "Ending the week on a high note 🎶",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "friday"
+      ]
+    },
+    {
+      "id": "toward.friday.2",
+      "text": "Happy Friday! You earned a little dance 💃",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "friday"
+      ]
+    },
+    {
+      "id": "toward.weekend.1",
+      "text": "Weekend and still on it? Wow 🌟",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "weekend"
+      ]
+    },
+    {
+      "id": "toward.weekend.2",
+      "text": "Lazy weekend, happy scale 😌",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "weekend"
+      ]
+    },
+    {
+      "id": "toward.earlyMorning.1",
+      "text": "Early bird gets the thumbs up! 🐦👍",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "time:earlyMorning"
+      ]
+    },
+    {
+      "id": "toward.morning.1",
+      "text": "What a lovely way to start the day ☀️",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "time:morning"
+      ]
+    },
+    {
+      "id": "toward.evening.1",
+      "text": "A nice way to end the day 🌙",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "time:evening"
+      ]
+    },
+    {
+      "id": "toward.night.1",
+      "text": "Night owl, nice result! 🦉",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "time:night"
+      ]
+    },
+    {
+      "id": "toward.spring.1",
+      "text": "Blooming like spring 🌸",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "season:spring"
+      ]
+    },
+    {
+      "id": "toward.summer.1",
+      "text": "Sunny result for a sunny day 🌞",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "season:summer"
+      ]
+    },
+    {
+      "id": "toward.autumn.1",
+      "text": "Cosy autumn, cosy progress 🍂",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "season:autumn"
+      ]
+    },
+    {
+      "id": "toward.winter.1",
+      "text": "Warm fuzzy feelings on a cold day ❄️💚",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "season:winter"
+      ]
+    },
+    {
+      "id": "toward.christmas.1",
+      "text": "Best present: you showing up! 🎄",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "holiday:christmas"
+      ]
+    },
+    {
+      "id": "toward.newYear.1",
+      "text": "Starting the year on the right foot 🎆",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "holiday:newYear"
+      ]
+    },
+    {
+      "id": "toward.easter.1",
+      "text": "Hoppy Easter! 🐰💚",
+      "events": [
+        "toward"
+      ],
+      "tags": [
+        "holiday:easter"
+      ]
+    },
+    {
+      "id": "away.1",
+      "text": "Totally okay! Bodies wiggle around 💚",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.2",
+      "text": "One day is just one day. Hug? 🤗",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.3",
+      "text": "I'm still your biggest fan 💚",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.4",
+      "text": "Little bumps are part of the journey 🛤️",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.5",
+      "text": "Thanks for hopping on anyway! That's what counts 💪",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.6",
+      "text": "Numbers dance around. You're doing fine 💃",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.7",
+      "text": "Squishy hug incoming! 🤗",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.8",
+      "text": "Water, sleep, the weather… it all wiggles the scale 🌦️",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.9",
+      "text": "The trend matters, not one day 📈💚",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.10",
+      "text": "No worries, {name}. I believe in you 💚",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.11",
+      "text": "Tomorrow is a fresh new page 📄✨",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.12",
+      "text": "You showed up, and I love that 🥰",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.13",
+      "text": "Deep breath. We've got this together 🌬️💚",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.14",
+      "text": "Even Mochi has squishy days 🍡",
+      "events": [
+        "away"
+      ]
+    },
+    {
+      "id": "away.lose.1",
+      "text": "A tiny bump up. Totally normal! 💚",
+      "events": [
+        "away"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "away.lose.2",
+      "text": "{change} kg is just a little wobble 🍮",
+      "events": [
+        "away"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "away.gain.1",
+      "text": "A small dip, no biggie! You'll grow back 🌱",
+      "events": [
+        "away"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "away.gain.2",
+      "text": "{change} kg is just a little wobble 🍮",
+      "events": [
+        "away"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "away.maintain.1",
+      "text": "A little drift, no stress. We'll float back 🎈",
+      "events": [
+        "away"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "away.maintain.2",
+      "text": "Balance is a dance, not a statue 💃",
+      "events": [
+        "away"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "away.monday.1",
+      "text": "Weekends happen! Fresh week, let's go 💪",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "monday"
+      ]
+    },
+    {
+      "id": "away.monday.2",
+      "text": "Hope the weekend was lovely! New week, new chances ✨",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "monday"
+      ]
+    },
+    {
+      "id": "away.weekend.1",
+      "text": "Enjoy your weekend, the trend will sort itself out 🌈",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "weekend"
+      ]
+    },
+    {
+      "id": "away.christmas.1",
+      "text": "It's Christmas! Enjoy every cosy moment 🎄💚",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "holiday:christmas"
+      ]
+    },
+    {
+      "id": "away.newYear.1",
+      "text": "New year, same Mochi cheering for you 🎆",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "holiday:newYear"
+      ]
+    },
+    {
+      "id": "away.easter.1",
+      "text": "Easter is for joy, not numbers 🐣💚",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "holiday:easter"
+      ]
+    },
+    {
+      "id": "away.night.1",
+      "text": "Late-night numbers are extra wiggly 🌙 Sleep well!",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "time:night"
+      ]
+    },
+    {
+      "id": "away.winter.1",
+      "text": "Winter is for cosy days. Be kind to yourself ❄️💚",
+      "events": [
+        "away"
+      ],
+      "tags": [
+        "season:winter"
+      ]
+    },
+    {
+      "id": "newBest.1",
+      "text": "New best! ⭐ Star eyes activated!",
+      "events": [
+        "newBest"
+      ]
+    },
+    {
+      "id": "newBest.2",
+      "text": "A brand new record! 🏆",
+      "events": [
+        "newBest"
+      ]
+    },
+    {
+      "id": "newBest.3",
+      "text": "Best one yet, {name}! 🤩",
+      "events": [
+        "newBest"
+      ]
+    },
+    {
+      "id": "newBest.4",
+      "text": "Whoa, personal best! I'm sparkling ✨",
+      "events": [
+        "newBest"
+      ]
+    },
+    {
+      "id": "newBest.5",
+      "text": "New record unlocked 🔓⭐",
+      "events": [
+        "newBest"
+      ]
+    },
+    {
+      "id": "newBest.6",
+      "text": "You've never been closer to your goal! 🎯",
+      "events": [
+        "newBest"
+      ]
+    },
+    {
+      "id": "newBest.lose.1",
+      "text": "New low at {weight} kg! 🌟",
+      "events": [
+        "newBest"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "newBest.lose.2",
+      "text": "Lightest since we started! 🪶",
+      "events": [
+        "newBest"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "newBest.gain.1",
+      "text": "New high at {weight} kg! 💪🌟",
+      "events": [
+        "newBest"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "newBest.gain.2",
+      "text": "Strongest since we started! 💪",
+      "events": [
+        "newBest"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "streak.1",
+      "text": "{streak} days in a row! 🔥",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.2",
+      "text": "{streak}-day streak! You're on fire 🔥",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.3",
+      "text": "{streak} days together in a row, I love it 🥰",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.4",
+      "text": "Streak: {streak} days! Keep it rolling 🛼",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.5",
+      "text": "{streak} days! You're a habit hero 🦸",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.6",
+      "text": "{name}, {streak} days in a row! Wow 🤩",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.7",
+      "text": "Day {streak} of our streak! Mochi is beaming ☀️",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.8",
+      "text": "{streak} days! That's real dedication 💚",
+      "events": [
+        "streak"
+      ]
+    },
+    {
+      "id": "streak.long.1",
+      "text": "{streak} days?! You're a legend 👑",
+      "events": [
+        "streak"
+      ],
+      "minStreak": 30
+    },
+    {
+      "id": "streak.long.2",
+      "text": "{streak} days strong. I'm speechless… almost 🥹",
+      "events": [
+        "streak"
+      ],
+      "minStreak": 30
+    },
+    {
+      "id": "goodWeek.1",
+      "text": "What a week! 🎉",
+      "events": [
+        "goodWeek"
+      ]
+    },
+    {
+      "id": "goodWeek.2",
+      "text": "This week was a good one, {name} 💚",
+      "events": [
+        "goodWeek"
+      ]
+    },
+    {
+      "id": "goodWeek.3",
+      "text": "The whole week is trending your way 📈",
+      "events": [
+        "goodWeek"
+      ]
+    },
+    {
+      "id": "goodWeek.4",
+      "text": "Better than last week! Double thumbs 👍👍",
+      "events": [
+        "goodWeek"
+      ]
+    },
+    {
+      "id": "goodWeek.5",
+      "text": "A week to be proud of ✨",
+      "events": [
+        "goodWeek"
+      ]
+    },
+    {
+      "id": "goodWeek.lose.1",
+      "text": "Lighter than last week! 🪶",
+      "events": [
+        "goodWeek"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goodWeek.gain.1",
+      "text": "Stronger than last week! 💪",
+      "events": [
+        "goodWeek"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goodWeek.maintain.1",
+      "text": "A week of beautiful balance ⚖️💚",
+      "events": [
+        "goodWeek"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goodWeek.friday.1",
+      "text": "Friday and what a week behind you! 🥳",
+      "events": [
+        "goodWeek"
+      ],
+      "tags": [
+        "friday"
+      ]
+    },
+    {
+      "id": "daysInRange.1",
+      "text": "{days} days in your range! ⚖️✨",
+      "events": [
+        "daysInRange"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "daysInRange.2",
+      "text": "{days} days of steady balance. Wow 💚",
+      "events": [
+        "daysInRange"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "daysInRange.3",
+      "text": "Right in your zone for {days} days 🎯",
+      "events": [
+        "daysInRange"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "daysInRange.4",
+      "text": "{days} days in range, {name}! You're a natural 🌿",
+      "events": [
+        "daysInRange"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "daysInRange.5",
+      "text": "{days} days of keeping it cool 😎",
+      "events": [
+        "daysInRange"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "milestonePercent.1",
+      "text": "{percent}% of the way there! 🎉",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestonePercent.2",
+      "text": "{percent}% done! Party time 🎊",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestonePercent.3",
+      "text": "Woohoo, {percent}% of your goal! 🥳",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestonePercent.4",
+      "text": "{name}, you're {percent}% there! 🌟",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestonePercent.5",
+      "text": "{percent}% complete. I'm doing a happy wiggle 🍡",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestonePercent.6",
+      "text": "Look how far you've come: {percent}%! 🗺️",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestonePercent.7",
+      "text": "{percent}%! Only {left} kg to go 🎯",
+      "events": [
+        "milestonePercent"
+      ]
+    },
+    {
+      "id": "milestoneKg.1",
+      "text": "{change} kg since we started! 🎉",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "milestoneKg.2",
+      "text": "Another whole kilo! {change} kg so far 🎊",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "milestoneKg.3",
+      "text": "{change} kg! Streamers for you 🎊",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "milestoneKg.4",
+      "text": "Milestone! {change} kg on your journey 🗺️",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "milestoneKg.5",
+      "text": "{change} kg! At this pace, about {weeks} weeks to go 🗓️",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "milestoneKg.6",
+      "text": "Another kilo milestone, {name}! 🥳",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "milestoneKg.7",
+      "text": "{change} kg done, {left} kg to go! 💪",
+      "events": [
+        "milestoneKg"
+      ]
+    },
+    {
+      "id": "goalReached.1",
+      "text": "YOU DID IT! 🎉🎉🎉",
+      "events": [
+        "goalReached"
+      ]
+    },
+    {
+      "id": "goalReached.2",
+      "text": "Goal reached! I'm crying happy tears 🥹",
+      "events": [
+        "goalReached"
+      ]
+    },
+    {
+      "id": "goalReached.3",
+      "text": "{name}, you made it! Party everywhere 🎊",
+      "events": [
+        "goalReached"
+      ]
+    },
+    {
+      "id": "goalReached.lose.1",
+      "text": "Goal reached at {weight} kg! So proud of you 🏆",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalReached.lose.2",
+      "text": "You reached {target} kg! Happy dance time 💃",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalReached.lose.3",
+      "text": "Target reached! What a journey 🏁",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalReached.gain.1",
+      "text": "Goal reached at {weight} kg! Strong and proud 💪🏆",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalReached.gain.2",
+      "text": "You grew all the way to {target} kg! 🌳",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalReached.gain.3",
+      "text": "Target reached! You built that 💪",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalReached.maintain.1",
+      "text": "Back in your range! Welcome home 🏡",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalReached.maintain.2",
+      "text": "And we're back in balance ⚖️🎉",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalReached.maintain.3",
+      "text": "Right back in your zone, {name}! 🎯",
+      "events": [
+        "goalReached"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "welcomeBack.1",
+      "text": "Welcome back! So happy to see you 💚",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.2",
+      "text": "You're back! 🥰",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.3",
+      "text": "Hiii, I missed you! 👋",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.4",
+      "text": "{name}! Yay, you're here 🎈",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.5",
+      "text": "Oh hello again! 💚",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.6",
+      "text": "Look who's back! 🤗",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.7",
+      "text": "My favourite human is back! 🍡",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.8",
+      "text": "Welcome back, I saved you a hug 🤗",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.9",
+      "text": "There you are! 👋✨",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "welcomeBack.10",
+      "text": "Yay, reunited! 💚",
+      "events": [
+        "welcomeBack"
+      ]
+    },
+    {
+      "id": "notYou.1",
+      "text": "That wasn't you? I'll keep it secret 🤫",
+      "events": [
+        "notYou"
+      ]
+    },
+    {
+      "id": "notYou.2",
+      "text": "Oh, a visitor! Hello there 👋",
+      "events": [
+        "notYou"
+      ]
+    },
+    {
+      "id": "notYou.3",
+      "text": "Someone else? My lips are sealed 🤐",
+      "events": [
+        "notYou"
+      ]
+    },
+    {
+      "id": "notYou.4",
+      "text": "Not yours? No problem, I won't count it 💚",
+      "events": [
+        "notYou"
+      ]
+    },
+    {
+      "id": "notYou.5",
+      "text": "A guest! Mochi says hi 🍡",
+      "events": [
+        "notYou"
+      ]
+    },
+    {
+      "id": "notYou.6",
+      "text": "Got it, that one stays off your story 📖",
+      "events": [
+        "notYou"
+      ]
+    },
+    {
+      "id": "home.1",
+      "text": "Hi! 👋",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.2",
+      "text": "Hey {name}! 💚",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.3",
+      "text": "Nice to see you! 🍡",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.4",
+      "text": "I'm right here if you need me 💚",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.5",
+      "text": "Squish me anytime 🤭",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.6",
+      "text": "Ready when you are! ✨",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.7",
+      "text": "Having a good day? 😊",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.8",
+      "text": "Hello hello! 🎈",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.9",
+      "text": "You're doing great, you know? 💚",
+      "events": [
+        "home"
+      ]
+    },
+    {
+      "id": "home.earlyMorning.1",
+      "text": "Early bird! Good morning 🐦",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:earlyMorning"
+      ]
+    },
+    {
+      "id": "home.earlyMorning.2",
+      "text": "*yawn* You're up early! 🥱",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:earlyMorning"
+      ]
+    },
+    {
+      "id": "home.morning.1",
+      "text": "Good morning, {name}! ☀️",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:morning"
+      ]
+    },
+    {
+      "id": "home.morning.2",
+      "text": "Morning! Did you sleep well? 😴",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:morning"
+      ]
+    },
+    {
+      "id": "home.morning.3",
+      "text": "Good morning! ☀️",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:morning"
+      ]
+    },
+    {
+      "id": "home.midday.1",
+      "text": "Hello, lunchtime friend! 🌤️",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:midday"
+      ]
+    },
+    {
+      "id": "home.midday.2",
+      "text": "Halfway through the day! 🕛",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:midday"
+      ]
+    },
+    {
+      "id": "home.afternoon.1",
+      "text": "Good afternoon! ☕",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:afternoon"
+      ]
+    },
+    {
+      "id": "home.afternoon.2",
+      "text": "Afternoon snuggle break? 🤗",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:afternoon"
+      ]
+    },
+    {
+      "id": "home.evening.1",
+      "text": "Good evening, {name} 🌆",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:evening"
+      ]
+    },
+    {
+      "id": "home.evening.2",
+      "text": "Cosy evening vibes 🕯️",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:evening"
+      ]
+    },
+    {
+      "id": "home.night.1",
+      "text": "Still up? Sweet dreams soon 🌙",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:night"
+      ]
+    },
+    {
+      "id": "home.night.2",
+      "text": "Shh… the stars are out ✨",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "time:night"
+      ]
+    },
+    {
+      "id": "home.monday.1",
+      "text": "Happy Monday! New week, new fun 💪",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "monday"
+      ]
+    },
+    {
+      "id": "home.wednesday.1",
+      "text": "Halfway through the week! 🐪",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "weekday:4"
+      ]
+    },
+    {
+      "id": "home.friday.1",
+      "text": "Yay, it's Friday! 🎉",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "friday"
+      ]
+    },
+    {
+      "id": "home.weekend.1",
+      "text": "Weekend mode: on 😎",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "weekend"
+      ]
+    },
+    {
+      "id": "home.sunday.1",
+      "text": "Lazy Sunday cuddles? 🛋️",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "weekday:1"
+      ]
+    },
+    {
+      "id": "home.christmas.1",
+      "text": "Merry Christmas! 🎄",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "holiday:christmas"
+      ]
+    },
+    {
+      "id": "home.christmas.2",
+      "text": "Ho ho ho! Mochi got a tiny hat 🎅",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "holiday:christmas"
+      ]
+    },
+    {
+      "id": "home.newYear.1",
+      "text": "Happy New Year! 🎆",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "holiday:newYear"
+      ]
+    },
+    {
+      "id": "home.easter.1",
+      "text": "Happy Easter! 🐰",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "holiday:easter"
+      ]
+    },
+    {
+      "id": "home.spring.1",
+      "text": "Spring is here! 🌷",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "season:spring"
+      ]
+    },
+    {
+      "id": "home.summer.1",
+      "text": "Summer vibes! 🍉",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "season:summer"
+      ]
+    },
+    {
+      "id": "home.autumn.1",
+      "text": "Crunchy leaves season 🍂",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "season:autumn"
+      ]
+    },
+    {
+      "id": "home.winter.1",
+      "text": "Brr! Stay cosy ❄️",
+      "events": [
+        "home"
+      ],
+      "tags": [
+        "season:winter"
+      ]
+    },
+    {
+      "id": "home.streak.1",
+      "text": "{streak} days in a row! 🔥",
+      "events": [
+        "home"
+      ],
+      "minStreak": 3
+    },
+    {
+      "id": "home.streak.2",
+      "text": "Streak: {streak} days. Proud of you! 💚",
+      "events": [
+        "home"
+      ],
+      "minStreak": 7
+    },
+    {
+      "id": "home.left.1",
+      "text": "Only {left} kg to go! 🎯",
+      "events": [
+        "home"
+      ],
+      "goals": [
+        "lose",
+        "gain"
+      ]
+    },
+    {
+      "id": "home.left.2",
+      "text": "{left} kg left. You've got this 💪",
+      "events": [
+        "home"
+      ],
+      "goals": [
+        "lose",
+        "gain"
+      ]
+    },
+    {
+      "id": "home.weeks.1",
+      "text": "About {weeks} weeks to your goal 🗓️",
+      "events": [
+        "home"
+      ],
+      "goals": [
+        "lose",
+        "gain"
+      ]
+    },
+    {
+      "id": "home.target.1",
+      "text": "{target} kg, here we come! 🚀",
+      "events": [
+        "home"
+      ],
+      "goals": [
+        "lose",
+        "gain"
+      ]
+    },
+    {
+      "id": "home.maintain.1",
+      "text": "Keeping it balanced ⚖️",
+      "events": [
+        "home"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "homeIdle.1",
+      "text": "Zzz… 💤",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "homeIdle.2",
+      "text": "*snooze* Wake me with a weigh-in? 😴",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "homeIdle.3",
+      "text": "Dreaming of you hopping on 💭",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "homeIdle.4",
+      "text": "Just resting my squishy eyes… 😌",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "homeIdle.5",
+      "text": "Zzz… mochi… dreams… 🍡💤",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "homeIdle.6",
+      "text": "Napping until you're back 🛏️",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "homeIdle.7",
+      "text": "Snoozing softly. No rush 💚",
+      "events": [
+        "homeIdle"
+      ]
+    },
+    {
+      "id": "birthday.1",
+      "text": "Happy birthday, {name}! 🎂",
+      "events": [
+        "birthday"
+      ]
+    },
+    {
+      "id": "birthday.2",
+      "text": "It's your day! Party hat on 🥳",
+      "events": [
+        "birthday"
+      ]
+    },
+    {
+      "id": "birthday.3",
+      "text": "Happy birthday! No numbers today, just cake 🍰",
+      "events": [
+        "birthday"
+      ]
+    },
+    {
+      "id": "birthday.4",
+      "text": "Birthday squish for you! 🎉🤗",
+      "events": [
+        "birthday"
+      ]
+    },
+    {
+      "id": "birthday.5",
+      "text": "The world is better with you in it 🎈",
+      "events": [
+        "birthday"
+      ]
+    },
+    {
+      "id": "anniversary.1",
+      "text": "{days} days together! 🎂",
+      "events": [
+        "anniversary"
+      ]
+    },
+    {
+      "id": "anniversary.2",
+      "text": "Happy {days}-day friendversary! 💚",
+      "events": [
+        "anniversary"
+      ]
+    },
+    {
+      "id": "anniversary.3",
+      "text": "We've been a team for {days} days 🤝",
+      "events": [
+        "anniversary"
+      ]
+    },
+    {
+      "id": "anniversary.4",
+      "text": "{days} days with you, {name}. Best days ever 🥰",
+      "events": [
+        "anniversary"
+      ]
+    },
+    {
+      "id": "anniversary.5",
+      "text": "{days} days of us! Let's celebrate 🎉",
+      "events": [
+        "anniversary"
+      ]
+    },
+    {
+      "id": "saved.1",
+      "text": "Got it! {weight} kg saved 💚",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "saved.2",
+      "text": "{weight} kg, safe and sound 🔒",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "saved.3",
+      "text": "Saved {weight} kg. Thanks for hopping on! 🍡",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "saved.4",
+      "text": "{weight} kg tucked away. Mochi's on it 🐾",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "saved.5",
+      "text": "Noted: {weight} kg ✍️",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "saved.6",
+      "text": "{weight} kg logged. Have a lovely day, {name}! ☀️",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "saved.7",
+      "text": "All saved! Open the app to see what I think 👀",
+      "events": [
+        "saved"
+      ]
+    },
+    {
+      "id": "reminder1.1",
+      "text": "Psst… hop on me? 🥺",
+      "events": [
+        "reminder1"
+      ]
+    },
+    {
+      "id": "reminder1.2",
+      "text": "Weigh-in time! I'm ready 🍡",
+      "events": [
+        "reminder1"
+      ]
+    },
+    {
+      "id": "reminder1.3",
+      "text": "Knock knock! It's Mochi 👋",
+      "events": [
+        "reminder1"
+      ]
+    },
+    {
+      "id": "reminder1.4",
+      "text": "{name}, your squishy scale is waiting! 💚",
+      "events": [
+        "reminder1"
+      ]
+    },
+    {
+      "id": "reminder1.5",
+      "text": "Quick hop? I'll be gentle 🤭",
+      "events": [
+        "reminder1"
+      ]
+    },
+    {
+      "id": "reminder1.6",
+      "text": "Ding ding! Daily hello time 🔔",
+      "events": [
+        "reminder1"
+      ]
+    },
+    {
+      "id": "reminder1.streak.1",
+      "text": "Keep our {streak}-day streak going? 🔥",
+      "events": [
+        "reminder1"
+      ],
+      "minStreak": 3
+    },
+    {
+      "id": "reminder2.1",
+      "text": "Haven't seen you in a couple of days. Hi! 👋",
+      "events": [
+        "reminder2"
+      ]
+    },
+    {
+      "id": "reminder2.2",
+      "text": "Mochi's wondering how you are 💭",
+      "events": [
+        "reminder2"
+      ]
+    },
+    {
+      "id": "reminder2.3",
+      "text": "Just a little wave from your scale 👋💚",
+      "events": [
+        "reminder2"
+      ]
+    },
+    {
+      "id": "reminder2.4",
+      "text": "Hop on whenever you like, I'm here 🍡",
+      "events": [
+        "reminder2"
+      ]
+    },
+    {
+      "id": "reminder2.5",
+      "text": "Hi {name}! Fancy a quick hello? 😊",
+      "events": [
+        "reminder2"
+      ]
+    },
+    {
+      "id": "reminder4.1",
+      "text": "Thinking of you 💚",
+      "events": [
+        "reminder4"
+      ]
+    },
+    {
+      "id": "reminder4.2",
+      "text": "No rush at all. Just saying hi 👋",
+      "events": [
+        "reminder4"
+      ]
+    },
+    {
+      "id": "reminder4.3",
+      "text": "I'm keeping your spot warm 🔥🍡",
+      "events": [
+        "reminder4"
+      ]
+    },
+    {
+      "id": "reminder4.4",
+      "text": "Whenever you're ready, I'll be here 💚",
+      "events": [
+        "reminder4"
+      ]
+    },
+    {
+      "id": "reminder4.5",
+      "text": "Hope you're doing well, {name} 🌷",
+      "events": [
+        "reminder4"
+      ]
+    },
+    {
+      "id": "reminder8.1",
+      "text": "I miss you a little 🥺💚",
+      "events": [
+        "reminder8"
+      ]
+    },
+    {
+      "id": "reminder8.2",
+      "text": "Life gets busy, I get it. I'm here 💚",
+      "events": [
+        "reminder8"
+      ]
+    },
+    {
+      "id": "reminder8.3",
+      "text": "No pressure. A hello would make my day 🌼",
+      "events": [
+        "reminder8"
+      ]
+    },
+    {
+      "id": "reminder8.4",
+      "text": "Sending a soft squishy hug 🤗",
+      "events": [
+        "reminder8"
+      ]
+    },
+    {
+      "id": "reminder8.5",
+      "text": "Still your biggest fan, {name} 💚",
+      "events": [
+        "reminder8"
+      ]
+    },
+    {
+      "id": "reminderWeekly.1",
+      "text": "I miss you! No pressure, just say hi 💚",
+      "events": [
+        "reminderWeekly"
+      ]
+    },
+    {
+      "id": "reminderWeekly.2",
+      "text": "Just checking in. Hope you're well 🌷",
+      "events": [
+        "reminderWeekly"
+      ]
+    },
+    {
+      "id": "reminderWeekly.3",
+      "text": "I'll be here whenever you want 💚",
+      "events": [
+        "reminderWeekly"
+      ]
+    },
+    {
+      "id": "reminderWeekly.4",
+      "text": "A little wave from Mochi 👋",
+      "events": [
+        "reminderWeekly"
+      ]
+    },
+    {
+      "id": "reminderWeekly.5",
+      "text": "No numbers needed. Just wanted to say hi 🍡",
+      "events": [
+        "reminderWeekly"
+      ]
+    }
+  ]
+}
