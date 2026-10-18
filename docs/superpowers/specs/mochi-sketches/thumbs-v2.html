@@ -1,0 +1,116 @@
+<style>
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:800px){.row{grid-template-columns:1fr}}
+  .pose{background:#f1fbf7;border-radius:18px;padding:14px;text-align:center}
+  .pose h3{margin:6px 0 2px;font-size:15px}.pose p{margin:0;font-size:12.5px;opacity:.75}
+  .pose svg{width:230px;height:230px;overflow:visible}
+  .closeup{display:flex;justify-content:center;gap:28px;margin:6px 0 18px}
+  .closeup figure{margin:0;text-align:center;font-size:12px;opacity:.85}
+  .closeup svg{width:110px;height:110px;background:#f1fbf7;border-radius:16px}
+  .b{transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes pop{0%,100%{transform:translateY(0) rotate(0) scale(1,1)}12%{transform:translateY(0) scale(1.14,.82)}30%{transform:translateY(-22px) rotate(-6deg) scale(.92,1.1)}48%{transform:translateY(0) rotate(-6deg) scale(1.08,.93)}60%,85%{transform:translateY(0) rotate(-6deg) scale(1,1)}}
+  @keyframes thumbPop{0%,20%{transform:scale(.4) rotate(25deg)}38%{transform:scale(1.25) rotate(-12deg)}50%,85%{transform:scale(1) rotate(-4deg)}100%{transform:scale(1) rotate(0)}}
+  @keyframes spark{0%,30%{opacity:0;transform:scale(.2)}45%{opacity:1;transform:scale(1.2)}70%{opacity:0;transform:scale(.6) translateY(-8px)}100%{opacity:0}}
+  @keyframes bulb{0%,30%,100%{fill:#ffd166;transform:scale(1)}40%{fill:#fff3b0;transform:scale(1.6)}60%{transform:scale(1)}}
+  @keyframes hop{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:scale(1.12,.86)}40%{transform:translateY(-26px) scale(.9,1.12)}60%{transform:translateY(0) scale(1.1,.9)}75%{transform:translateY(-8px)}88%{transform:translateY(0)}}
+  @keyframes pumpL{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-16deg)}}
+  @keyframes pumpR{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(16deg)}}
+  @keyframes star{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.3) rotate(25deg)}}
+  .pop{animation:pop 2.2s ease-in-out infinite}
+  .thumbPop{transform-box:fill-box;transform-origin:30% 100%;animation:thumbPop 2.2s ease-in-out infinite}
+  .spark{transform-box:fill-box;transform-origin:50% 50%;animation:spark 2.2s ease-out infinite}
+  .bulb{transform-box:fill-box;transform-origin:50% 50%;animation:bulb 2.2s ease-in-out infinite}
+  .hop{animation:hop 1.6s ease-in-out infinite}
+  .pumpL{transform-box:fill-box;transform-origin:100% 100%;animation:pumpL .8s ease-in-out infinite}
+  .pumpR{transform-box:fill-box;transform-origin:0% 100%;animation:pumpR .8s ease-in-out infinite}
+  .star{transform-box:fill-box;transform-origin:50% 50%;animation:star .8s ease-in-out infinite}
+</style>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="mbody2" viewBox="0 0 200 200">
+    <path d="M30 150 Q22 70 100 60 Q178 70 170 150 Q168 176 100 176 Q32 176 30 150Z" fill="#21B88C"/>
+    <path d="M48 96 Q70 70 100 68" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".3"/>
+    <path d="M100 60 Q98 40 110 34" stroke="#21B88C" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="72" y="150" width="56" height="12" rx="6" fill="#f4fffb" opacity=".9"/>
+  </symbol>
+  <!-- Thumbs-up hand, local coords: fist ~ (0..34, 0..28), thumb up on the LEFT edge -->
+  <symbol id="thumbR" viewBox="-4 -30 44 62" overflow="visible">
+    <!-- thumb: short, chunky, leaning slightly back, sitting on the fist's top-left -->
+    <path d="M4 4 Q1 -22 12 -24 Q20 -24 18 -10 L16 4 Z" fill="#21B88C"/>
+    <path d="M9 -18 Q8 -10 9 -4" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".45"/>
+    <!-- fist: wide rounded mitten -->
+    <rect x="0" y="0" width="36" height="28" rx="12" fill="#21B88C"/>
+    <!-- curled finger creases, horizontal, on the front of the fist -->
+    <path d="M18 8 H31 M18 15 H32 M18 22 H30" stroke="#178f6c" stroke-width="2.6" stroke-linecap="round"/>
+  </symbol>
+</defs></svg>
+
+<h2>Fixed thumbs up</h2>
+<p class="subtitle">Good catch, the old one had a single finger sticking straight up from the middle of the hand. Now it's a chunky fist with the thumb on the side and curled fingers.</p>
+
+<div class="closeup">
+  <figure>
+    <svg viewBox="-10 -40 64 80"><rect x="0" y="0" width="26" height="26" rx="10" fill="#21B88C"/><rect x="7" y="-24" width="12" height="30" rx="6" fill="#21B88C"/></svg>
+    <figcaption>Before ✗</figcaption>
+  </figure>
+  <figure>
+    <svg viewBox="-10 -40 64 80"><use href="#thumbR" x="-4" y="-30" width="44" height="62"/></svg>
+    <figcaption>After ✓</figcaption>
+  </figure>
+</div>
+
+<div class="row">
+  <div class="pose" data-choice="thumbs-pop" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 220 200">
+      <ellipse cx="100" cy="184" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b pop">
+        <use href="#mbody2" width="200" height="200"/>
+        <circle class="bulb" cx="112" cy="32" r="8" fill="#ffd166"/>
+        <path d="M66 112 Q77 98 88 112" stroke="#1d2b36" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <circle cx="124" cy="106" r="11" fill="#1d2b36"/><circle cx="128" cy="101" r="4" fill="#fff"/><circle cx="120" cy="111" r="2" fill="#fff"/>
+        <path d="M80 124 Q100 156 122 124 Z" fill="#1d2b36"/>
+        <path d="M90 138 Q100 150 112 138 Q101 132 90 138Z" fill="#ff8fa3"/>
+        <ellipse cx="60" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <ellipse cx="142" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <path d="M32 132 Q18 140 20 152" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+        <g class="thumbPop">
+          <path d="M164 132 Q180 126 184 110" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <use href="#thumbR" x="166" y="66" width="44" height="62"/>
+        </g>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">72.4</text>
+      </g>
+      <g class="spark"><path d="M186 30 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill="#ffd166"/></g>
+      <g class="spark" style="animation-delay:.15s"><path d="M156 20 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#ff8fa3"/></g>
+      <g class="spark" style="animation-delay:.3s"><path d="M214 66 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#2a8fd8"/></g>
+    </svg>
+    <h3>A · "Nailed it!" pop</h3>
+    <p>For a normal weigh-in: hop, tilt, the thumb pops out with sparkles, a wink, and the antenna lights up.</p>
+  </div>
+
+  <div class="pose" data-choice="thumbs-double" onclick="toggleSelect(this)">
+    <svg viewBox="-20 0 240 200">
+      <ellipse cx="100" cy="184" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b hop">
+        <use href="#mbody2" width="200" height="200"/>
+        <circle class="bulb" cx="112" cy="32" r="8" fill="#ffd166"/>
+        <g class="star"><path d="M78 96 l4 9 10 1 -8 6 3 10 -9 -6 -9 6 3 -10 -8 -6 10 -1z" fill="#1d2b36"/></g>
+        <g class="star"><path d="M122 96 l4 9 10 1 -8 6 3 10 -9 -6 -9 6 3 -10 -8 -6 10 -1z" fill="#1d2b36"/></g>
+        <path d="M82 128 Q100 154 118 128 Z" fill="#1d2b36"/>
+        <ellipse cx="60" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <ellipse cx="140" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <g class="pumpL">
+          <path d="M36 132 Q20 126 16 110" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <!-- mirrored hand for the left side -->
+          <g transform="translate(34 66) scale(-1 1)"><use href="#thumbR" x="0" y="0" width="44" height="62"/></g>
+        </g>
+        <g class="pumpR">
+          <path d="M164 132 Q180 126 184 110" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <use href="#thumbR" x="166" y="66" width="44" height="62"/>
+        </g>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">72.4</text>
+      </g>
+    </svg>
+    <h3>B · Double thumbs, star eyes</h3>
+    <p>For streaks and good weeks: star eyes, both thumbs pumping, a double hop.</p>
+  </div>
+</div>

@@ -1,0 +1,141 @@
+<style>
+  .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:900px){.row{grid-template-columns:1fr}}
+  .pose{background:#f1fbf7;border-radius:18px;padding:14px;text-align:center}
+  .pose h3{margin:6px 0 2px;font-size:15px}.pose p{margin:0;font-size:12.5px;opacity:.75}
+  .pose svg{width:200px;height:200px;overflow:visible}
+  .b{transform-box:fill-box;transform-origin:50% 100%}
+  @keyframes pop{0%,100%{transform:translateY(0) rotate(0) scale(1,1)}12%{transform:translateY(0) scale(1.14,.82)}30%{transform:translateY(-22px) rotate(-6deg) scale(.92,1.1)}48%{transform:translateY(0) rotate(-6deg) scale(1.08,.93)}60%,85%{transform:translateY(0) rotate(-6deg) scale(1,1)}}
+  @keyframes thumbPop{0%,20%{transform:scale(.3) rotate(30deg)}38%{transform:scale(1.35) rotate(-14deg)}50%,85%{transform:scale(1) rotate(-6deg)}100%{transform:scale(1) rotate(0)}}
+  @keyframes spark{0%,30%{opacity:0;transform:scale(.2)}45%{opacity:1;transform:scale(1.2)}70%{opacity:0;transform:scale(.6) translateY(-8px)}100%{opacity:0}}
+  @keyframes wink{0%,32%,82%,100%{transform:scaleY(1)}38%,76%{transform:scaleY(.08)}}
+  @keyframes bulb{0%,30%,100%{fill:#ffd166;transform:scale(1)}40%{fill:#fff3b0;transform:scale(1.6)}60%{transform:scale(1)}}
+  @keyframes hop{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:scale(1.12,.86)}40%{transform:translateY(-26px) scale(.9,1.12)}60%{transform:translateY(0) scale(1.1,.9)}75%{transform:translateY(-8px)}88%{transform:translateY(0)}}
+  @keyframes pumpL{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-22deg)}}
+  @keyframes pumpR{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(22deg)}}
+  @keyframes star{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.3) rotate(25deg)}}
+  @keyframes bubble{0%,10%{opacity:0;transform:scale(.6)}18%,88%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.9)}}
+  @keyframes cornerBob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-2px) scale(1.03,.97)}}
+  .pop{animation:pop 2.2s ease-in-out infinite}
+  .thumbPop{transform-box:fill-box;transform-origin:20% 100%;animation:thumbPop 2.2s ease-in-out infinite}
+  .spark{transform-box:fill-box;transform-origin:50% 50%;animation:spark 2.2s ease-out infinite}
+  .wink{transform-box:fill-box;transform-origin:50% 50%;animation:wink 2.2s ease-in-out infinite}
+  .bulb{transform-box:fill-box;transform-origin:50% 50%;animation:bulb 2.2s ease-in-out infinite}
+  .hop{animation:hop 1.6s ease-in-out infinite}
+  .pumpL{transform-box:fill-box;transform-origin:100% 100%;animation:pumpL .8s ease-in-out infinite}
+  .pumpR{transform-box:fill-box;transform-origin:0% 100%;animation:pumpR .8s ease-in-out infinite}
+  .star{transform-box:fill-box;transform-origin:50% 50%;animation:star .8s ease-in-out infinite}
+  /* phone */
+  .phone{width:300px;margin:0 auto;border-radius:38px;border:10px solid #1d2b36;background:linear-gradient(160deg,#d8f3ea 0%,#eef5fb 40%,#fff 70%);height:560px;position:relative;overflow:hidden;font-family:ui-rounded,system-ui,-apple-system}
+  .notch{width:90px;height:24px;background:#1d2b36;border-radius:14px;margin:8px auto 0}
+  .corner{position:absolute;top:44px;left:14px;display:flex;align-items:flex-start;gap:6px}
+  .corner svg{width:64px;height:64px;animation:cornerBob 3s ease-in-out infinite;transform-origin:50% 100%}
+  .speech{background:#fff;border-radius:14px 14px 14px 4px;padding:7px 10px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-top:8px;max-width:170px;transform-origin:0 50%;animation:bubble 5s ease-in-out infinite}
+  .hero{margin-top:118px;text-align:center}
+  .hero .n{font-size:58px;font-weight:800;color:#1d2b36;line-height:1}
+  .hero .u{font-size:18px;color:#6b7a86;font-weight:600}
+  .hero .s{font-size:12px;color:#6b7a86;margin-top:4px}
+  .card{margin:14px 16px 0;background:rgba(255,255,255,.75);border-radius:18px;height:58px;display:flex;align-items:center;justify-content:space-around;font-size:12px;color:#4a5a66}
+  .card.big{height:130px;align-items:flex-end;padding:10px}
+  .tabbar{position:absolute;bottom:12px;left:16px;right:16px;height:52px;border-radius:26px;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:space-around;font-size:18px}
+  .tabbar .mid{width:46px;height:46px;border-radius:50%;background:#21B88C;color:#fff;display:flex;align-items:center;justify-content:center}
+</style>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="mbody" viewBox="0 0 200 200">
+    <path d="M30 150 Q22 70 100 60 Q178 70 170 150 Q168 176 100 176 Q32 176 30 150Z" fill="#21B88C"/>
+    <path d="M48 96 Q70 70 100 68" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".3"/>
+    <path d="M100 60 Q98 40 110 34" stroke="#21B88C" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="72" y="150" width="56" height="12" rx="6" fill="#f4fffb" opacity=".9"/>
+  </symbol>
+</defs></svg>
+
+<h2>A more expressive thumbs up, and Mochi on the home screen</h2>
+<p class="subtitle">Two new thumbs-up takes (pick one), and Mochi tucked into the top-left corner.</p>
+
+<div class="row">
+  <div class="pose" data-choice="thumbs-pop" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200">
+      <ellipse cx="100" cy="184" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b pop">
+        <use href="#mbody"/>
+        <circle class="bulb" cx="112" cy="32" r="8" fill="#ffd166"/>
+        <!-- winking eye ^ -->
+        <path d="M66 112 Q77 98 88 112" stroke="#1d2b36" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- big sparkly eye -->
+        <g class="wink"><circle cx="124" cy="106" r="11" fill="#1d2b36"/><circle cx="128" cy="101" r="4" fill="#fff"/><circle cx="120" cy="111" r="2" fill="#fff"/></g>
+        <!-- open grin with tongue -->
+        <path d="M80 124 Q100 156 122 124 Z" fill="#1d2b36"/>
+        <path d="M90 138 Q100 150 112 138 Q101 132 90 138Z" fill="#ff8fa3"/>
+        <ellipse cx="60" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <ellipse cx="142" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <path d="M32 132 Q18 140 20 152" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+        <g class="thumbPop">
+          <path d="M164 130 Q184 124 188 102" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <rect x="176" y="80" width="26" height="26" rx="10" fill="#21B88C"/>
+          <rect x="183" y="56" width="12" height="30" rx="6" fill="#21B88C"/>
+          <path d="M186 62 L186 74" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+        </g>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">72.4</text>
+      </g>
+      <g class="spark"><path d="M176 30 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill="#ffd166"/></g>
+      <g class="spark" style="animation-delay:.15s"><path d="M150 18 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#ff8fa3"/></g>
+      <g class="spark" style="animation-delay:.3s"><path d="M200 60 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#2a8fd8"/></g>
+    </svg>
+    <h3>A · "Nailed it!" pop</h3>
+    <p>Squash, hop and tilt. The thumb pops out with sparkles, plus a wink, a tongue-out grin, and the antenna lighting up.</p>
+  </div>
+
+  <div class="pose" data-choice="thumbs-double" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200">
+      <ellipse cx="100" cy="184" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b hop">
+        <use href="#mbody"/>
+        <circle class="bulb" cx="112" cy="32" r="8" fill="#ffd166"/>
+        <!-- star eyes -->
+        <g class="star"><path d="M78 96 l4 9 10 1 -8 6 3 10 -9 -6 -9 6 3 -10 -8 -6 10 -1z" fill="#1d2b36"/></g>
+        <g class="star"><path d="M122 96 l4 9 10 1 -8 6 3 10 -9 -6 -9 6 3 -10 -8 -6 10 -1z" fill="#1d2b36"/></g>
+        <path d="M82 128 Q100 154 118 128 Z" fill="#1d2b36"/>
+        <ellipse cx="60" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <ellipse cx="140" cy="130" rx="11" ry="6" fill="#ff8fa3" opacity=".85"/>
+        <g class="pumpL">
+          <path d="M36 128 Q16 120 12 100" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <rect x="-2" y="78" width="26" height="26" rx="10" fill="#21B88C"/>
+          <rect x="5" y="54" width="12" height="30" rx="6" fill="#21B88C"/>
+        </g>
+        <g class="pumpR">
+          <path d="M164 128 Q184 120 188 100" stroke="#21B88C" stroke-width="13" fill="none" stroke-linecap="round"/>
+          <rect x="176" y="78" width="26" height="26" rx="10" fill="#21B88C"/>
+          <rect x="183" y="54" width="12" height="30" rx="6" fill="#21B88C"/>
+        </g>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">72.4</text>
+      </g>
+    </svg>
+    <h3>B · Double thumbs, star eyes</h3>
+    <p>Star-struck eyes, both thumbs pumping, a happy double hop. Louder, maybe kept for streaks and good weeks.</p>
+  </div>
+
+  <div class="pose" data-choice="home-corner" onclick="toggleSelect(this)" style="background:transparent">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="corner">
+        <svg viewBox="0 0 200 200">
+          <use href="#mbody"/>
+          <circle cx="112" cy="32" r="8" fill="#ffd166"/>
+          <circle cx="78" cy="110" r="8" fill="#1d2b36"/><circle cx="80" cy="107" r="3" fill="#fff"/>
+          <circle cx="122" cy="110" r="8" fill="#1d2b36"/><circle cx="124" cy="107" r="3" fill="#fff"/>
+          <path d="M86 126 Q100 144 114 126 Z" fill="#1d2b36"/>
+          <ellipse cx="62" cy="130" rx="10" ry="6" fill="#ff8fa3" opacity=".8"/>
+          <ellipse cx="138" cy="130" rx="10" ry="6" fill="#ff8fa3" opacity=".8"/>
+        </svg>
+        <div class="speech">Morning! 3 days in a row 🔥 Keep it up!</div>
+      </div>
+      <div class="hero"><div class="n">72.4 <span class="u">kg</span></div><div class="s">Measured today, 7:12</div></div>
+      <div class="card">−0.6 this week · 2.4 kg to goal</div>
+      <div class="card big">chart</div>
+      <div class="tabbar"><span>🏠</span><span class="mid">＋</span><span>👤</span></div>
+    </div>
+    <h3 style="margin-top:10px">Home: Mochi in the top-left corner</h3>
+    <p>Small, gently bobbing, with a speech bubble that pops in when it has something to say, then fades away.</p>
+  </div>
+</div>

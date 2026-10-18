@@ -18,3 +18,6 @@ build/
 
 # App Store Connect API keys — never commit
 AuthKey_*.p8*
+
+# Brainstorm companion scratch
+.superpowers/

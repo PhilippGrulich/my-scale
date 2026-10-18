@@ -1,0 +1,157 @@
+<style>
+  .poses{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+  .pose{background:#f1fbf7;border-radius:18px;padding:12px 10px 14px;text-align:center}
+  .pose h3{margin:6px 0 2px;font-size:15px}
+  .pose p{margin:0;font-size:12.5px;opacity:.75}
+  .pose svg{width:150px;height:150px;overflow:visible}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1,1)}30%{transform:translateY(0) scale(1.08,.9)}55%{transform:translateY(-14px) scale(.95,1.06)}80%{transform:translateY(0) scale(1.04,.96)}}
+  @keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(-28deg)}75%{transform:rotate(18deg)}}
+  @keyframes thumb{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-6px) rotate(-10deg)}}
+  @keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.04,.97)}}
+  @keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(14px,-26px)}}
+  @keyframes confetti{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(60px) rotate(260deg)}}
+  @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+  @keyframes ring{0%,100%{transform:rotate(0)}10%,30%{transform:rotate(-18deg)}20%,40%{transform:rotate(18deg)}50%{transform:rotate(0)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+  .b{transform-box:fill-box;transform-origin:50% 100%}
+  .bounce{animation:bounce 1.4s ease-in-out infinite}
+  .breathe{animation:breathe 3s ease-in-out infinite}
+  .wiggle{animation:wiggle 1.2s ease-in-out infinite}
+  .arm{transform-box:fill-box}
+  .waveL{transform-origin:100% 100%;animation:wave 1s ease-in-out infinite}
+  .thumb{transform-origin:0% 100%;animation:thumb 1.2s ease-in-out infinite}
+  .z{animation:zz 2.4s ease-out infinite}
+  .z2{animation-delay:.8s}.z3{animation-delay:1.6s}
+  .cf{animation:confetti 1.6s ease-in infinite}
+  .ring{transform-box:fill-box;transform-origin:50% 0%;animation:ring 1.6s ease-in-out infinite}
+  .heart{transform-box:fill-box;transform-origin:50% 50%;animation:pulse 1s ease-in-out infinite}
+</style>
+
+<h2>Mochi's moves</h2>
+<p class="subtitle">A first set of animated poses. Tell me which you love, which to drop, and what's missing.</p>
+
+<!-- shared body as a symbol -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="body" viewBox="0 0 200 200">
+      <path d="M30 150 Q22 70 100 60 Q178 70 170 150 Q168 176 100 176 Q32 176 30 150Z" fill="#21B88C"/>
+      <path d="M48 96 Q70 70 100 68" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".3"/>
+      <path d="M100 60 Q98 40 110 34" stroke="#21B88C" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <circle cx="112" cy="32" r="8" fill="#ffd166"/>
+      <ellipse cx="64" cy="128" rx="9" ry="5" fill="#ff8fa3" opacity=".75"/>
+      <ellipse cx="136" cy="128" rx="9" ry="5" fill="#ff8fa3" opacity=".75"/>
+      <rect x="72" y="150" width="56" height="12" rx="6" fill="#f4fffb" opacity=".9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="poses">
+
+  <!-- Hello wave -->
+  <div class="pose" data-choice="wave" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b bounce">
+        <use href="#body"/>
+        <circle cx="78" cy="110" r="7" fill="#1d2b36"/><circle cx="80" cy="107" r="2.4" fill="#fff"/>
+        <circle cx="122" cy="110" r="7" fill="#1d2b36"/><circle cx="124" cy="107" r="2.4" fill="#fff"/>
+        <path d="M88 128 Q100 142 112 128 Z" fill="#1d2b36"/>
+        <g class="arm waveL"><path d="M34 120 Q14 104 18 84" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/></g>
+        <path d="M168 132 Q182 140 180 152" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">hi!</text>
+      </g>
+    </svg>
+    <h3>👋 Hello wave</h3><p>First open, and when you come back after a while</p>
+  </div>
+
+  <!-- Thumbs up -->
+  <div class="pose" data-choice="thumbs" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b breathe">
+        <use href="#body"/>
+        <path d="M70 112 Q78 104 86 112" stroke="#1d2b36" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <circle cx="122" cy="110" r="7" fill="#1d2b36"/><circle cx="124" cy="107" r="2.4" fill="#fff"/>
+        <path d="M88 128 Q100 140 112 128" stroke="#1d2b36" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M32 132 Q18 140 20 152" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <g class="arm thumb">
+          <path d="M166 128 Q184 120 186 104" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <rect x="178" y="88" width="18" height="18" rx="7" fill="#21B88C"/>
+          <rect x="183" y="72" width="8" height="20" rx="4" fill="#21B88C"/>
+        </g>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">72.4</text>
+      </g>
+    </svg>
+    <h3>👍 Thumbs up + wink</h3><p>After a normal weigh-in: "Nice, logged!"</p>
+  </div>
+
+  <!-- Celebrate -->
+  <div class="pose" data-choice="celebrate" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <rect class="cf" x="40" y="10" width="7" height="12" rx="2" fill="#ffd166"/>
+      <rect class="cf" style="animation-delay:.4s" x="150" y="4" width="7" height="12" rx="2" fill="#ff8fa3"/>
+      <rect class="cf" style="animation-delay:.9s" x="96" y="0" width="7" height="12" rx="2" fill="#2a8fd8"/>
+      <rect class="cf" style="animation-delay:1.2s" x="70" y="14" width="7" height="12" rx="2" fill="#7dfcc9"/>
+      <g class="b bounce">
+        <use href="#body"/>
+        <path d="M70 112 Q78 102 86 112" stroke="#1d2b36" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M114 112 Q122 102 130 112" stroke="#1d2b36" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M86 126 Q100 148 114 126 Z" fill="#1d2b36"/>
+        <path d="M34 118 Q16 96 22 72" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M166 118 Q184 96 178 72" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <text x="100" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#178f6c">−0.6</text>
+      </g>
+    </svg>
+    <h3>🎉 Jump + confetti</h3><p>New low, a milestone, or a goal reached</p>
+  </div>
+
+  <!-- Comfort -->
+  <div class="pose" data-choice="comfort" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b breathe">
+        <use href="#body"/>
+        <circle cx="78" cy="112" r="7" fill="#1d2b36"/><circle cx="80" cy="109" r="2.4" fill="#fff"/>
+        <circle cx="122" cy="112" r="7" fill="#1d2b36"/><circle cx="124" cy="109" r="2.4" fill="#fff"/>
+        <path d="M92 130 Q100 136 108 130" stroke="#1d2b36" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M34 122 Q60 150 84 146" stroke="#178f6c" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M166 122 Q140 150 116 146" stroke="#178f6c" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path class="heart" d="M100 48 C92 38 80 46 88 56 L100 66 L112 56 C120 46 108 38 100 48Z" fill="#ff8fa3"/>
+      </g>
+    </svg>
+    <h3>🤗 Self-hug + heart</h3><p>Up day: "Totally normal wobble, the trend counts 💚"</p>
+  </div>
+
+  <!-- Reminder -->
+  <div class="pose" data-choice="reminder" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <g class="b wiggle" style="transform-origin:50% 100%">
+        <use href="#body"/>
+        <circle cx="78" cy="110" r="8" fill="#1d2b36"/><circle cx="80" cy="107" r="2.6" fill="#fff"/>
+        <circle cx="122" cy="110" r="8" fill="#1d2b36"/><circle cx="124" cy="107" r="2.6" fill="#fff"/>
+        <ellipse cx="100" cy="132" rx="6" ry="7" fill="#1d2b36"/>
+        <path d="M32 132 Q18 140 20 152" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M166 124 Q182 112 180 94" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <g class="ring"><path d="M172 70 Q172 54 182 54 Q192 54 192 70 L195 80 L169 80Z" fill="#ffd166"/><circle cx="182" cy="84" r="3.5" fill="#ffd166"/></g>
+      </g>
+    </svg>
+    <h3>🔔 Bell ring</h3><p>Reminder: "Psst… hop on me? 🥺"</p>
+  </div>
+
+  <!-- Sleepy -->
+  <div class="pose" data-choice="sleepy" onclick="toggleSelect(this)">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="62" ry="7" fill="#000" opacity=".07"/>
+      <text class="z" x="140" y="56" font-size="18" font-weight="700" fill="#2a8fd8">z</text>
+      <text class="z z2" x="150" y="50" font-size="14" font-weight="700" fill="#2a8fd8">z</text>
+      <text class="z z3" x="158" y="44" font-size="11" font-weight="700" fill="#2a8fd8">z</text>
+      <g class="b breathe">
+        <use href="#body"/>
+        <path d="M70 110 Q78 116 86 110" stroke="#1d2b36" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M114 110 Q122 116 130 110" stroke="#1d2b36" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="100" cy="132" rx="5" ry="4" fill="#1d2b36"/>
+        <path d="M32 132 Q18 140 20 152" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M168 132 Q182 140 180 152" stroke="#21B88C" stroke-width="12" fill="none" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <h3>😴 Snoozing</h3><p>Idle on the home screen when you haven't weighed in for days</p>
+  </div>
+
+</div>
+<p class="subtitle" style="margin-top:18px">Plus small touches: Mochi squishes when you tap it, and blinks now and then.</p>
