@@ -17,16 +17,6 @@
     "%@ kg": {
       "shouldTranslate": false
     },
-    "%@ kg / 30d": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ kg / 30 T"
-          }
-        }
-      }
-    },
     "%@ kg on %@ will be removed from Apple Health.": {
       "localizations": {
         "de": {
@@ -53,18 +43,18 @@
         }
       }
     },
-    "%@ kg to goal": {
+    "%@ kg · %@": {
+      "shouldTranslate": false
+    },
+    "%@ kg/wk": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "noch %@ kg bis zum Ziel"
+            "value": "%@ kg/Wo."
           }
         }
       }
-    },
-    "%@ kg · %@": {
-      "shouldTranslate": false
     },
     "%@%@ kg": {
       "shouldTranslate": false
@@ -94,6 +84,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "1 J"
+          }
+        }
+      }
+    },
+    "30-day trend": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30-Tage-Trend"
           }
         }
       }
@@ -647,6 +647,16 @@
         }
       }
     },
+    "Measured %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemessen %@"
+          }
+        }
+      }
+    },
     "Measuring body composition…": {
       "localizations": {
         "de": {
@@ -1100,6 +1110,16 @@
         }
       }
     },
+    "Since last": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seit letzter"
+          }
+        }
+      }
+    },
     "Skip for now": {
       "localizations": {
         "de": {
@@ -1256,6 +1276,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Das war ich"
+          }
+        }
+      }
+    },
+    "To goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bis zum Ziel"
           }
         }
       }
@@ -1509,12 +1539,22 @@
         }
       }
     },
-    "since last": {
+    "since %@": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "seit letzter Messung"
+            "value": "seit %@"
+          }
+        }
+      }
+    },
+    "steady": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stabil"
           }
         }
       }

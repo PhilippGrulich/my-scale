@@ -12,8 +12,9 @@ struct DashboardView: View {
                 GlassEffectContainer(spacing: 16) {
                     VStack(spacing: 16) {
                         WeightHeroView(weightKg: model.currentWeightKg,
-                                       trendDeltaKg: model.trendDeltaKg)
-                            .padding(.top, 8)
+                                       measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
+                                           ?? model.lastOwnReading?.capturedAt)
+                            .padding(.top, 12)
 
                         TrendSummaryView(history: model.weightHistory,
                                          currentKg: model.currentWeightKg,
@@ -52,8 +53,7 @@ struct DashboardView: View {
                 }
             }
             .background(Theme.backgroundGradient.ignoresSafeArea())
-            .navigationTitle("MyOpenScale")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbarVisibility(.hidden, for: .navigationBar)
             .sheet(isPresented: $showingHistory) {
                 MeasurementHistoryView().environmentObject(model)
             }

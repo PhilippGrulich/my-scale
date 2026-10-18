@@ -1,24 +1,27 @@
 import SwiftUI
 
-/// Big current-weight number with a trend delta vs. the previous reading.
+/// Big current-weight number with when it was measured. The change figures
+/// live in `TrendSummaryView` underneath.
 struct WeightHeroView: View {
     let weightKg: Double?
-    let trendDeltaKg: Double?
+    let measuredAt: Date?
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 2) {
             if let w = weightKg {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(w, format: .number.precision(.fractionLength(1)))
-                        .font(.system(size: 68, weight: .bold, design: .rounded))
+                        .font(.system(size: 76, weight: .bold, design: .rounded))
                         .contentTransition(.numericText(value: w))
                         .foregroundStyle(.primary)
                     Text("kg")
                         .font(.title2.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
-                if let d = trendDeltaKg {
-                    trendRow(d)
+                if let measuredAt {
+                    Text("Measured \(measuredAt, format: .relative(presentation: .named))")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 } else {
                     Text("Your latest weight")
                         .font(.subheadline)
@@ -26,7 +29,7 @@ struct WeightHeroView: View {
                 }
             } else {
                 Text("—")
-                    .font(.system(size: 68, weight: .bold, design: .rounded))
+                    .font(.system(size: 76, weight: .bold, design: .rounded))
                     .foregroundStyle(.secondary)
                 Text("No weigh-ins yet")
                     .font(.subheadline)
@@ -35,21 +38,5 @@ struct WeightHeroView: View {
         }
         .frame(maxWidth: .infinity)
         .animation(.snappy, value: weightKg)
-        .animation(.snappy, value: trendDeltaKg)
-    }
-
-    @ViewBuilder
-    private func trendRow(_ delta: Double) -> some View {
-        let down = delta <= 0
-        HStack(spacing: 4) {
-            Image(systemName: down ? "arrow.down.right" : "arrow.up.right")
-                .symbolEffect(.bounce, value: delta)
-            Text("\(delta.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always()))) kg")
-                .contentTransition(.numericText(value: delta))
-            Text("since last")
-                .foregroundStyle(.secondary)
-        }
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(down ? Color.green : Color.orange)
     }
 }
