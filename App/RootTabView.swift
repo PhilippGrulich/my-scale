@@ -1,27 +1,28 @@
 import SwiftUI
 
-/// Bottom tab bar: overview · "+" weigh-in action (center) · profile. Owns the
+/// Bottom tab bar: goal · "+" weigh-in action (center) · overview. Settings
+/// (profile, Health, scale) live behind the gear button at the top right. Owns the
 /// app-wide pieces (Add Measurement sheet, passive weigh-in overlay, Health
 /// loading, foreground refresh) so they work no matter which tab is open.
 struct RootTabView: View {
     @EnvironmentObject var model: AppModel
     @Environment(\.scenePhase) private var scenePhase
 
-    enum TabID: Hashable { case overview, measure, profile }
+    enum TabID: Hashable { case goal, measure, overview }
     @State private var selection: TabID = .overview
     @State private var showingAddMeasurement = false
 
     var body: some View {
         TabView(selection: $selection) {
-            Tab("Overview", systemImage: "gauge.with.dots.needle.67percent", value: TabID.overview) {
-                DashboardView()
+            Tab("Goal", systemImage: "target", value: TabID.goal) {
+                GoalPageView()
             }
             // Action tab: selecting it opens Add Measurement (see onChange below).
             Tab("Weigh in", systemImage: "plus.circle.fill", value: TabID.measure) {
                 Color.clear
             }
-            Tab("Profile", systemImage: "person.crop.circle", value: TabID.profile) {
-                ProfileEditorView()
+            Tab("Overview", systemImage: "gauge.with.dots.needle.67percent", value: TabID.overview) {
+                DashboardView(onShowGoal: { selection = .goal })
             }
         }
         .tint(Theme.accent)

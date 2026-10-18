@@ -14,6 +14,11 @@ struct StoredProfile: Codable, Equatable {
     var weightMaxKg: Double
     /// Optional target weight for the goal/ETA UI. nil = no goal set.
     var goalWeightKg: Double?
+    /// Weight and date when the current goal was set — the 0 % point of the
+    /// goal progress ring. Set by `AppModel.saveProfile` whenever the goal
+    /// changes (optional, so older saved profiles still decode).
+    var goalStartKg: Double?
+    var goalSetAt: Date?
 
     /// A sensible default so the app is usable on first launch without setup.
     static func makeDefault() -> StoredProfile {

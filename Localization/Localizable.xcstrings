@@ -20,6 +20,26 @@
     "%@ kg": {
       "shouldTranslate": false
     },
+    "%@ kg above your current weight.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg über deinem aktuellen Gewicht."
+          }
+        }
+      }
+    },
+    "%@ kg below your current weight.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg unter deinem aktuellen Gewicht."
+          }
+        }
+      }
+    },
     "%@ kg on %@ will be removed from Apple Health.": {
       "localizations": {
         "de": {
@@ -60,6 +80,9 @@
       }
     },
     "%@%@ kg": {
+      "shouldTranslate": false
+    },
+    "%lld %%": {
       "shouldTranslate": false
     },
     "%lld cm": {
@@ -131,6 +154,16 @@
         }
       }
     },
+    "Add a first weigh-in to set a goal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trag zuerst eine Messung ein, um ein Ziel festzulegen."
+          }
+        }
+      }
+    },
     "Add weight": {
       "localizations": {
         "de": {
@@ -163,6 +196,38 @@
     },
     "Apple Health": {
       "shouldTranslate": false
+    },
+    "At %@ kg per week you'll reach %@ kg around %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit %1$@ kg pro Woche erreichst du %2$@ kg voraussichtlich am %3$@."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "At %1$@ kg per week you'll reach %2$@ kg around %3$@."
+          }
+        }
+      }
+    },
+    "At %@ kg per week, reaching %@ kg would take more than two years.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit %1$@ kg pro Woche würde es mehr als zwei Jahre dauern, %2$@ kg zu erreichen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "At %1$@ kg per week, reaching %2$@ kg would take more than two years."
+          }
+        }
+      }
     },
     "Authorization not granted": {
       "localizations": {
@@ -320,6 +385,16 @@
         }
       }
     },
+    "Change goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel ändern"
+          }
+        }
+      }
+    },
     "Confirm your details": {
       "localizations": {
         "de": {
@@ -360,12 +435,32 @@
         }
       }
     },
+    "Connections": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbindungen"
+          }
+        }
+      }
+    },
     "Continue": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Weiter"
+          }
+        }
+      }
+    },
+    "Current": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuell"
           }
         }
       }
@@ -460,6 +555,16 @@
         }
       }
     },
+    "Edit your goal weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zielgewicht bearbeiten"
+          }
+        }
+      }
+    },
     "Enter manually": {
       "localizations": {
         "de": {
@@ -500,6 +605,16 @@
         }
       }
     },
+    "Forecast": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prognose"
+          }
+        }
+      }
+    },
     "Get Started": {
       "localizations": {
         "de": {
@@ -526,6 +641,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ziel %@ kg"
+          }
+        }
+      }
+    },
+    "Goal reached": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel erreicht"
           }
         }
       }
@@ -943,6 +1068,16 @@
         }
       }
     },
+    "Pick a target weight and see your progress, a forecast and the path there.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle ein Zielgewicht und sieh deinen Fortschritt, eine Prognose und deinen Weg dorthin."
+          }
+        }
+      }
+    },
     "Pre-filled from Apple Health where available — adjust anything that's off.": {
       "localizations": {
         "de": {
@@ -959,16 +1094,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Angabe"
-          }
-        }
-      }
-    },
-    "Profile": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil"
           }
         }
       }
@@ -1183,6 +1308,16 @@
         }
       }
     },
+    "Set": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Festlegen"
+          }
+        }
+      }
+    },
     "Set Up": {
       "localizations": {
         "de": {
@@ -1193,12 +1328,32 @@
         }
       }
     },
+    "Set a goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setz dir ein Ziel"
+          }
+        }
+      }
+    },
     "Set a weight goal": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Zielgewicht festlegen"
+          }
+        }
+      }
+    },
+    "Set goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel festlegen"
           }
         }
       }
@@ -1403,12 +1558,32 @@
         }
       }
     },
+    "Tap to set": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Festlegen tippen"
+          }
+        }
+      }
+    },
     "Target weight": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Zielgewicht"
+          }
+        }
+      }
+    },
+    "That's your current weight.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das ist dein aktuelles Gewicht."
           }
         }
       }
@@ -1569,6 +1744,16 @@
         }
       }
     },
+    "Weigh in for a few more days to get a forecast.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich noch ein paar Tage, um eine Prognose zu erhalten."
+          }
+        }
+      }
+    },
     "Weigh in on the scale": {
       "localizations": {
         "de": {
@@ -1679,6 +1864,26 @@
         }
       }
     },
+    "You've reached your goal. Keep your weight here, or set a new goal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast dein Ziel erreicht. Halte dein Gewicht oder setz dir ein neues Ziel."
+          }
+        }
+      }
+    },
+    "Your 30-day trend is currently moving away from your goal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein 30-Tage-Trend entfernt sich gerade von deinem Ziel."
+          }
+        }
+      }
+    },
     "Your Details": {
       "localizations": {
         "de": {
@@ -1709,6 +1914,16 @@
         }
       }
     },
+    "Your path": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Weg"
+          }
+        }
+      }
+    },
     "Your weigh-ins are recognised automatically from your weight and body-composition signature — no weight range to configure.": {
       "localizations": {
         "de": {
@@ -1721,6 +1936,16 @@
     },
     "kg": {
       "shouldTranslate": false
+    },
+    "kg to go": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kg bis zum Ziel"
+          }
+        }
+      }
     },
     "needs review": {
       "localizations": {

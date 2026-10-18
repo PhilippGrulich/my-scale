@@ -1,11 +1,13 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// Profile tab: edits the single HealthKit owner profile in place. Changes are
-/// kept as a draft until Save (shown only when something changed), so a
-/// half-edited stepper never reaches Health. Full profile CRUD is M5b.
+/// Settings sheet (gear button): the single HealthKit owner profile plus
+/// Health / scale / Bluetooth settings. Profile changes are kept as a draft
+/// until Save, so a half-edited stepper never reaches Health. Full profile
+/// CRUD is M5b.
 struct ProfileEditorView: View {
     @EnvironmentObject var model: AppModel
+    @Environment(\.dismiss) private var dismiss
     @State private var draft = StoredProfile.makeDefault()
     @State private var confirmingUnpair = false
 
@@ -32,7 +34,7 @@ struct ProfileEditorView: View {
                     }
                 }
 
-                Section("Settings") {
+                Section("Connections") {
                     SyncBadgeView(auth: model.healthAuth,
                                   lastStatus: model.lastOwnReading?.healthKitStatus,
                                   lastError: model.lastSyncError,
@@ -77,14 +79,19 @@ struct ProfileEditorView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Profile")
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if hasChanges {
+                if !hasChanges {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                } else {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Revert") { draft = model.profile }
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") { model.saveConfirmedProfile(draft) }
+                        Button("Save") { model.saveConfirmedProfile(draft); dismiss() }
                             .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }

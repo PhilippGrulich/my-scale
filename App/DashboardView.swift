@@ -5,60 +5,68 @@ struct DashboardView: View {
     @EnvironmentObject var model: AppModel
     @State private var selectedMetric: HealthKitSink.MetricKind?
     @State private var showingHistory = false
+    /// Tapping "To goal" jumps to the Goal tab.
+    var onShowGoal: () -> Void = {}
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                GlassEffectContainer(spacing: 16) {
-                    VStack(spacing: 16) {
-                        WeightHeroView(weightKg: model.currentWeightKg,
-                                       measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
-                                           ?? model.lastOwnReading?.capturedAt)
-                            .padding(.top, 12)
-
-                        TrendSummaryView(history: model.weightHistory,
-                                         currentKg: model.currentWeightKg,
-                                         goalKg: model.profile.goalWeightKg)
-
-                        // Discoverable when there's no data yet (e.g. App Review
-                        // without the physical scale); hides once you have readings.
-                        if model.weightHistory.isEmpty && model.readings.isEmpty {
-                            Button { model.showSampleReading() } label: {
-                                Label("See a sample reading", systemImage: "eye")
-                                    .font(.subheadline.weight(.medium))
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.glass)
-                            .tint(.secondary)
-                        }
-
-                        reviewSection
-
-                        WeightChartView(history: model.weightHistory,
-                                        goalKg: model.profile.goalWeightKg,
-                                        onShowHistory: { showingHistory = true })
-
-                        metricCards
-
-                        Text("Body-composition values are estimates, not medical advice.")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 4)
-
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 24)
+            weightPage
+                .background(Theme.backgroundGradient.ignoresSafeArea())
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { SettingsToolbarItem() }
+                .sheet(isPresented: $showingHistory) {
+                    MeasurementHistoryView().environmentObject(model)
                 }
-            }
-            .background(Theme.backgroundGradient.ignoresSafeArea())
-            .toolbarVisibility(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showingHistory) {
-                MeasurementHistoryView().environmentObject(model)
-            }
-            .sheet(item: $selectedMetric) { kind in
-                MetricDetailView(kind: kind).environmentObject(model)
+                .sheet(item: $selectedMetric) { kind in
+                    MetricDetailView(kind: kind).environmentObject(model)
+                }
+        }
+    }
+
+    private var weightPage: some View {
+        ScrollView {
+            GlassEffectContainer(spacing: 16) {
+                VStack(spacing: 16) {
+                    WeightHeroView(weightKg: model.currentWeightKg,
+                                   measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
+                                       ?? model.lastOwnReading?.capturedAt)
+                        .padding(.top, 12)
+
+                    TrendSummaryView(history: model.weightHistory,
+                                     currentKg: model.currentWeightKg,
+                                     goalKg: model.profile.goalWeightKg,
+                                     onEditGoal: onShowGoal)
+
+                    // Discoverable when there's no data yet (e.g. App Review
+                    // without the physical scale); hides once you have readings.
+                    if model.weightHistory.isEmpty && model.readings.isEmpty {
+                        Button { model.showSampleReading() } label: {
+                            Label("See a sample reading", systemImage: "eye")
+                                .font(.subheadline.weight(.medium))
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.glass)
+                        .tint(.secondary)
+                    }
+
+                    reviewSection
+
+                    WeightChartView(history: model.weightHistory,
+                                    goalKg: model.profile.goalWeightKg,
+                                    onShowHistory: { showingHistory = true })
+
+                    metricCards
+
+                    Text("Body-composition values are estimates, not medical advice.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 4)
+
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
         }
     }

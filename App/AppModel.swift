@@ -310,6 +310,12 @@ final class AppModel: ObservableObject {
     }
 
     func saveProfile(_ updated: StoredProfile) {
+        var updated = updated
+        // A new or changed goal starts its progress from today's weight.
+        if updated.goalWeightKg != profile.goalWeightKg {
+            updated.goalStartKg = updated.goalWeightKg == nil ? nil : currentWeightKg
+            updated.goalSetAt = updated.goalWeightKg == nil ? nil : Date()
+        }
         profile = updated
         ProfileStore.save(updated)
     }

@@ -141,6 +141,17 @@ final class WeightHistoryTests: XCTestCase {
         XCTAssertEqual(rate, -0.5, accuracy: 0.05)
     }
 
+    func testGoalProgressForLosingAndGaining() {
+        XCTAssertEqual(WeightHistory.goalProgress(startKg: 80, currentKg: 78, goalKg: 76)!, 0.5, accuracy: 1e-9)
+        XCTAssertEqual(WeightHistory.goalProgress(startKg: 60, currentKg: 61, goalKg: 64)!, 0.25, accuracy: 1e-9)
+    }
+
+    func testGoalProgressClampsAndHandlesNoDistance() {
+        XCTAssertEqual(WeightHistory.goalProgress(startKg: 80, currentKg: 81, goalKg: 76), 0)   // wrong way
+        XCTAssertEqual(WeightHistory.goalProgress(startKg: 80, currentKg: 75, goalKg: 76), 1)   // passed it
+        XCTAssertNil(WeightHistory.goalProgress(startKg: 80, currentKg: 80, goalKg: 80))
+    }
+
     func testWeeksToGoalOnlyWhenMovingToward() {
         // Losing 0.5/wk, want to drop 3 kg ⇒ ~6 weeks.
         XCTAssertEqual(WeightHistory.weeksToGoal(currentKg: 80, goalKg: 77, weeklyRateKg: -0.5)!, 6, accuracy: 1e-9)

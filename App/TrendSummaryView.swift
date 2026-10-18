@@ -11,6 +11,8 @@ struct TrendSummaryView: View {
     let history: [WeightSample]
     let currentKg: Double?
     let goalKg: Double?
+    /// Tapping the goal column (or "Set goal" when there is none) edits it.
+    var onEditGoal: (() -> Void)? = nil
 
     private var sorted: [WeightSample] { history.sorted { $0.date < $1.date } }
     private var previous: WeightSample? { sorted.count >= 2 ? sorted[sorted.count - 2] : nil }
@@ -18,12 +20,14 @@ struct TrendSummaryView: View {
     private var monthChange: Double? { WeightHistory.trendChangeKg(history, lastDays: 30, now: Date()) }
     private var weeklyRate: Double? { WeightHistory.weeklyRateKg(history, lastDays: 30, now: Date()) }
     private var eta: Double? {
-        guard let c = currentKg, let g = goalKg, let r = weeklyRate else { return nil }
-        return WeightHistory.weeksToGoal(currentKg: c, goalKg: g, weeklyRateKg: r)
+        guard let c = currentKg, let g = goalKg, let r = weeklyRate,
+              let weeks = WeightHistory.weeksToGoal(currentKg: c, goalKg: g, weeklyRateKg: r),
+              weeks <= 104 else { return nil }   // beyond 2 years isn't a forecast
+        return weeks
     }
 
     var body: some View {
-        if lastChange != nil || monthChange != nil || (currentKg != nil && goalKg != nil) {
+        if lastChange != nil || monthChange != nil || currentKg != nil {
             HStack(alignment: .top, spacing: 0) {
                 if let d = lastChange, let prev = previous {
                     stat(title: "Since last",
@@ -40,13 +44,26 @@ struct TrendSummaryView: View {
                          tint: towardGoal(m) ? Theme.accent : .orange,
                          detail: weeklyRate.map { abs($0) < 0.05 ? Text("steady") : Text("\(signed($0)) kg/wk") })
                 }
-                if let c = currentKg, let g = goalKg {
-                    divider
-                    stat(title: "To goal",
-                         value: "\(abs(g - c).formatted(1)) kg",
-                         icon: "target",
-                         tint: Theme.accentSecondary,
-                         detail: eta.map { Text(etaText($0)) } ?? Text("Goal \(g.formatted(1)) kg"))
+                if let c = currentKg {
+                    if lastChange != nil || monthChange != nil { divider }
+                    Button { onEditGoal?() } label: {
+                        if let g = goalKg {
+                            stat(title: "To goal",
+                                 value: "\(abs(g - c).formatted(1)) kg",
+                                 icon: "target",
+                                 tint: Theme.accentSecondary,
+                                 detail: eta.map { Text(etaText($0)) } ?? Text("Goal \(g.formatted(1)) kg"))
+                        } else {
+                            stat(title: "Goal",
+                                 value: String(localized: "Set"),
+                                 icon: "target",
+                                 tint: Theme.accentSecondary,
+                                 detail: Text("Tap to set"))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(onEditGoal == nil)
+                    .accessibilityHint("Edit your goal weight")
                 }
             }
             .padding(.vertical, 14)

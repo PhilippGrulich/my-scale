@@ -205,6 +205,15 @@ public enum WeightHistory {
         return (n * sxy - sx * sy) / denom * 7
     }
 
+    /// How far along the way from `startKg` to `goalKg` the user is, 0…1.
+    /// Works for losing and gaining; moving the wrong way clamps to 0, passing
+    /// the goal clamps to 1. nil when start and goal are (nearly) the same.
+    public static func goalProgress(startKg: Double, currentKg: Double, goalKg: Double) -> Double? {
+        let total = goalKg - startKg
+        guard abs(total) >= 0.1 else { return nil }
+        return min(1, max(0, (currentKg - startKg) / total))
+    }
+
     /// Estimated weeks to reach `goalKg` from `currentKg` at the recent weekly
     /// rate. nil when there's no goal, already there, or the trend moves away
     /// from the goal (rate sign doesn't reduce the remaining distance).
