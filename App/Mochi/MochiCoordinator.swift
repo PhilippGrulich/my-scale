@@ -165,19 +165,31 @@ final class MochiCoordinator: ObservableObject {
 
     /// Body of a weigh-in reminder for `stage`.
     func reminderBody(stage: ReminderStage, profile: StoredProfile) -> String {
+        var history = MochiStateStore.lineHistory
+        let body = reminderBody(stage: stage, profile: profile, history: &history)
+        MochiStateStore.lineHistory = history
+        return body
+    }
+
+    /// Same, but recording the pick into `history` only; the caller decides whether to persist it.
+    private func reminderBody(stage: ReminderStage, profile: StoredProfile, history: inout MochiLineHistory) -> String {
         let now = Date()
-        let history = historyProvider()
-        let stats = MochiStats.compute(history: history, now: now, firstLaunch: MochiStateStore.firstLaunch,
+        let weights = historyProvider()
+        let stats = MochiStats.compute(history: weights, now: now, firstLaunch: MochiStateStore.firstLaunch,
                                        goal: profile.weightGoal, calendar: calendar)
         var values = MochiPlaceholders.values(profile: profile, currentKg: nil, history: [], stats: nil, now: now)
         if stats.streakDays > 0 { values["streak"] = String(stats.streakDays) }
         return line(stage.lineEvent, goalType: profile.weightGoal.type, tags: tags(now: now, profile: profile),
-                    streakDays: stats.streakDays, values: values, now: now)
+                    streakDays: stats.streakDays, values: values, now: now, history: &history)
             ?? String(localized: "Time for a quick weigh-in?")
     }
 
     /// Recomputes the pending reminders: none when Mochi or reminders are off.
-    func rescheduleReminders(history: [WeightSample], profile: StoredProfile, now: Date = Date()) {
+    ///
+    /// `lastWeighInOverride` is a weigh-in not (yet) in `history`, e.g. when the Health write
+    /// or read failed; the later of the two counts as the last weigh-in.
+    func rescheduleReminders(history: [WeightSample], profile: StoredProfile, now: Date = Date(),
+                             lastWeighInOverride: Date? = nil) {
         guard settings.enabled, settings.remindersEnabled else {
             reminderScheduler.cancelAll()
             return
@@ -191,10 +203,13 @@ final class MochiCoordinator: ObservableObject {
                 ?? ReminderPlanner.usualMinuteOfDay(history: history, calendar: calendar)
                 ?? ReminderPlanner.defaultMinuteOfDay
         }
-        let planned = ReminderPlanner.plan(lastWeighIn: history.map(\.date).max(), now: now,
+        let planned = ReminderPlanner.plan(lastWeighIn: ([lastWeighInOverride].compactMap { $0 } + history.map(\.date)).max(), now: now,
                                            mode: settings.reminderMode, minuteOfDay: minute,
                                            count: 8, calendar: calendar)
-        let reminders = planned.map { ($0, title: "Mochi", body: reminderBody(stage: $0.stage, profile: profile)) }
+        // Bodies are picked against a scratch copy of the line history: they avoid repeating
+        // within this schedule, but are never recorded as shown (nothing was delivered yet).
+        var scratch = MochiStateStore.lineHistory
+        let reminders = planned.map { ($0, title: "Mochi", body: reminderBody(stage: $0.stage, profile: profile, history: &scratch)) }
         reminderScheduler.replace(with: reminders)
     }
 
@@ -208,14 +223,22 @@ final class MochiCoordinator: ObservableObject {
     /// Picks and renders a line for `event`, remembering it so it is not repeated soon.
     private func line(_ event: String, goalType: GoalType, tags: Set<String>, streakDays: Int,
                       values: [String: String], now: Date) -> String? {
+        var history = MochiStateStore.lineHistory
+        let text = line(event, goalType: goalType, tags: tags, streakDays: streakDays,
+                        values: values, now: now, history: &history)
+        MochiStateStore.lineHistory = history
+        return text
+    }
+
+    /// As above, but records into the caller's `history` and persists nothing.
+    private func line(_ event: String, goalType: GoalType, tags: Set<String>, streakDays: Int,
+                      values: [String: String], now: Date, history: inout MochiLineHistory) -> String? {
         let situation = MochiSituation(event: event, goalType: goalType, tags: tags,
                                        streakDays: streakDays, values: values)
-        var history = MochiStateStore.lineHistory
         guard let pick = MochiMessageSelector.select(from: library.lines, situation: situation,
                                                      history: history, now: now, random: &random)
         else { return nil }
         history.record(pick.line.id, at: now)
-        MochiStateStore.lineHistory = history
         return pick.text
     }
 

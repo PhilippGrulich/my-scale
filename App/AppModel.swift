@@ -97,6 +97,8 @@ final class AppModel: ObservableObject {
     private let scanner: BLEScanner
     private let healthKit = HealthKitSink()
     private let notifications = NotificationManager()
+    /// Capture time of the newest weigh-in attributed to the owner this session.
+    private var lastOwnWeighInAt: Date?
 
     /// The remembered scale (peripheral.identifier). When set, only readings from
     /// this peripheral are accepted; others are ignored entirely.
@@ -340,7 +342,7 @@ final class AppModel: ObservableObject {
                                     weightKg: (kg * 10).rounded() / 10,
                                     impedanceOhms: 490 + Int.random(in: -15...15, using: &rng) + (200 - day) / 20)
             }
-            mochi.rescheduleReminders(history: weightHistory, profile: profile)
+            rescheduleMochiReminders()
             return
         }
         #endif
@@ -354,12 +356,23 @@ final class AppModel: ObservableObject {
                 self.lastSyncError = nil
                 // Also covers a just-written weigh-in (the write reloads history) and
                 // Watch weigh-ins that arrive through Health.
-                self.mochi.rescheduleReminders(history: samples, profile: self.profile)
+                self.rescheduleMochiReminders()
                 self.updateWidgetSnapshot()
             case .failure(let error):
                 self.lastSyncError = error.localizedDescription
             }
         }
+    }
+
+    private func noteOwnWeighIn(at date: Date) {
+        lastOwnWeighInAt = max(lastOwnWeighInAt ?? date, date)
+        rescheduleMochiReminders()
+    }
+
+    /// Reschedule Mochi's reminders. The newest own weigh-in counts even if it never reached
+    /// the Health history (failed write or read), so no reminder fires on a day already weighed in.
+    private func rescheduleMochiReminders() {
+        mochi.rescheduleReminders(history: weightHistory, profile: profile, lastWeighInOverride: lastOwnWeighInAt)
     }
 
     /// Publish the latest weight to the widget snapshot (read by the Home/Lock
@@ -442,6 +455,7 @@ final class AppModel: ObservableObject {
         let reading = readings[idx]
         persistReadings()
         learnMe(weightKg: reading.weightKg, impedanceOhms: reading.impedanceOhms)
+        noteOwnWeighIn(at: reading.capturedAt)
         if mochi.settings.enabled {
             // The reading is now the owner's: Mochi reacts on the home screen. History is
             // from before the reading (the engine appends it itself).
@@ -838,6 +852,7 @@ final class AppModel: ObservableObject {
             learnMe(weightKg: reading.weightKg, impedanceOhms: reading.impedanceOhms)
             logged.healthKitStatus = .pending
             finish(with: logged)
+            noteOwnWeighIn(at: logged.capturedAt)
             writeReadingToHealth(logged)
             if inBackground {
                 if mochi.settings.enabled, let presentation = weighInPresentation {
