@@ -1326,6 +1326,16 @@
         }
       }
     },
+    "Hi %@ — add your weight anytime in the Weigh in tab and it will appear here and in Apple Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hallo %@! Trag dein Gewicht jederzeit im Tab „Wiegen“ ein – es erscheint hier und in Apple Health."
+          }
+        }
+      }
+    },
     "Hi %@ — step on your scale anytime and your weigh-ins will appear here and in Apple Health.": {
       "localizations": {
         "de": {
@@ -3377,12 +3387,12 @@
         }
       }
     },
-    "You can pair it again from New measurement.": {
+    "You can pair it again from the Weigh in tab.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Du kannst sie unter „Neue Messung“ wieder koppeln."
+            "value": "Du kannst sie im Tab „Wiegen“ wieder koppeln."
           }
         }
       }

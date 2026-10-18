@@ -54,7 +54,7 @@ struct ProfileEditorView: View {
                                         titleVisibility: .visible) {
                         Button("Unpair", role: .destructive) { model.unpairScale() }
                     } message: {
-                        Text("You can pair it again from New measurement.")
+                        Text("You can pair it again from the Weigh in tab.")
                     }
                     // Bluetooth only runs for a paired scale, so there's nothing to show without one.
                     if model.hasPairedScale {

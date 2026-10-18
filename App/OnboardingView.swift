@@ -313,7 +313,9 @@ struct OnboardingView: View {
             header(icon: "checkmark.circle.fill",
                    mochi: .confetti, says: "We're a team now! 🎉",
                    title: "You're all set",
-                   subtitle: "Hi \(draft.name) — step on your scale anytime and your weigh-ins will appear here and in Apple Health.")
+                   subtitle: model.hasPairedScale
+                   ? "Hi \(draft.name) — step on your scale anytime and your weigh-ins will appear here and in Apple Health."
+                   : "Hi \(draft.name) — add your weight anytime in the Weigh in tab and it will appear here and in Apple Health.")
             Spacer()
             primaryButton("Start") { onFinish() }
         }
