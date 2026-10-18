@@ -321,6 +321,16 @@
         }
       }
     },
+    "A gentle nudge around your usual weigh-in time. You can change it anytime in Settings.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein sanfter Stups ungefähr zu deiner üblichen Wiegezeit. Du kannst das jederzeit in den Einstellungen ändern."
+          }
+        }
+      }
+    },
     "A rating for the fat around your inner organs. It is more strongly linked to health risks than fat under the skin: 1–9 is healthy, 10–14 high, 15 and above very high.": {
       "localizations": {
         "de": {
@@ -377,6 +387,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alter"
+          }
+        }
+      }
+    },
+    "Age, height and biological sex for body composition. Each weigh-in is saved back to Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alter, Größe und biologisches Geschlecht für die Körperzusammensetzung. Jede Messung wird in Health gesichert."
           }
         }
       }
@@ -651,6 +671,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Knochenmasse"
+          }
+        }
+      }
+    },
+    "Can I nudge you when it's time to weigh in?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Darf ich dich erinnern, wenn es Zeit zum Wiegen ist?"
           }
         }
       }
@@ -1276,6 +1306,16 @@
         }
       }
     },
+    "Hi, I'm Mochi! Want me to help you reach your goal?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi, ich bin Mochi! Soll ich dir helfen, dein Ziel zu erreichen?"
+          }
+        }
+      }
+    },
     "High": {
       "localizations": {
         "de": {
@@ -1316,12 +1356,32 @@
         }
       }
     },
+    "Hop on your scale, I'll look for it!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steig auf deine Waage, ich suche sie!"
+          }
+        }
+      }
+    },
     "How it's calculated": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "So wird er berechnet"
+          }
+        }
+      }
+    },
+    "I'll read a few details from Apple Health so the maths is right.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich lese ein paar Angaben aus Apple Health, damit die Rechnung stimmt."
           }
         }
       }
@@ -1426,12 +1486,32 @@
         }
       }
     },
+    "Let's get you set up!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lass uns alles einrichten!"
+          }
+        }
+      }
+    },
     "Live frames (%lld)": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Live-Frames (%lld)"
+          }
+        }
+      }
+    },
+    "Looking for your scale…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche deine Waage …"
           }
         }
       }
@@ -1662,6 +1742,16 @@
         }
       }
     },
+    "No thanks": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nein, danke"
+          }
+        }
+      }
+    },
     "No valid samples to write.": {
       "localizations": {
         "de": {
@@ -1768,6 +1858,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Adipositas"
+          }
+        }
+      }
+    },
+    "Okay! If you ever want me, I'm in Settings 💚": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Okay! Wenn du mich brauchst, bin ich in den Einstellungen 💚"
           }
         }
       }
@@ -2565,6 +2665,16 @@
         }
       }
     },
+    "Tell me a bit about you!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erzähl mir ein bisschen von dir!"
+          }
+        }
+      }
+    },
     "Tennis": {
       "shouldTranslate": false
     },
@@ -2894,6 +3004,16 @@
         }
       }
     },
+    "We're a team now! 🎉": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir sind jetzt ein Team! 🎉"
+          }
+        }
+      }
+    },
     "Weigh In": {
       "localizations": {
         "de": {
@@ -3124,12 +3244,32 @@
         }
       }
     },
+    "Yes, let's go!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ja, los geht’s!"
+          }
+        }
+      }
+    },
     "Yes, pair this scale": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Ja, diese Waage koppeln"
+          }
+        }
+      }
+    },
+    "Yes, remind me": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ja, erinnere mich"
           }
         }
       }

@@ -68,6 +68,7 @@ struct RootTabView: View {
                 return
             }
             #endif
+            // Needed for weigh-in-saved alerts; a no-op if onboarding's reminders step already asked.
             model.requestNotificationAuthorization()
         }
     }

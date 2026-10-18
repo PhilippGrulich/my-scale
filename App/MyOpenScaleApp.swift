@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct MyOpenScaleApp: App {
     @StateObject private var model = AppModel()
-    @State private var showOnboarding = !OnboardingStore.isCompleted
+    @State private var showOnboarding = MyOpenScaleApp.needsOnboarding
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -29,6 +29,14 @@ struct MyOpenScaleApp: App {
                 if MeasurementHandoff.consumePending() { model.addMeasurementRequested = true }
             }
         }
+    }
+
+    private static var needsOnboarding: Bool {
+        #if DEBUG
+        // `-onboardingStep <step>` on launch always shows onboarding (see `OnboardingView`).
+        if UserDefaults.standard.string(forKey: "onboardingStep") != nil { return true }
+        #endif
+        return !OnboardingStore.isCompleted
     }
 
     @ViewBuilder private var appContent: some View {

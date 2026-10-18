@@ -261,8 +261,9 @@ final class AppModel: ObservableObject {
         }
     }
 
-    /// Ask for notification permission (so background weigh-ins can alert). Called
-    /// once the dashboard is showing, i.e. after onboarding.
+    /// Ask for notification permission (so background weigh-ins can alert). Called from
+    /// onboarding's Mochi reminders step and once the dashboard is showing; the system
+    /// only prompts the first time.
     func requestNotificationAuthorization() {
         notifications.requestAuthorization()
     }
