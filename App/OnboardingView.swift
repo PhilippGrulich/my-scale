@@ -2,8 +2,8 @@ import SwiftUI
 import MyOpenScaleCore
 
 /// First-launch welcome flow: welcome (continue with or without Mochi) → connect Apple
-/// Health (pre-fill) → confirm details & goal → find & remember the scale → reminders
-/// (Mochi only) → done. Driven entirely by `AppModel` (which already owns Health + BLE).
+/// Health (pre-fill) → confirm details & goal → smart scale? (pair it, or carry on with
+/// manual entry) → reminders (Mochi only) → done. Driven entirely by `AppModel` (which already owns Health + BLE).
 /// With Mochi on, Mochi and a speech bubble replace each step's header icon; with
 /// Mochi off, the steps look as they always did. `onFinish` flips the app to the dashboard.
 struct OnboardingView: View {
@@ -21,6 +21,8 @@ struct OnboardingView: View {
     /// "Continue without Mochi" was tapped: Mochi waves sadly, then fades out.
     @State private var declining = false
     @State private var mochiFading = false
+    /// The scale step's "Pair my scale" was tapped: Bluetooth is on and we're looking.
+    @State private var scaleSearching = false
 
     private static let declineHold: Duration = .milliseconds(3500)
 
@@ -71,7 +73,7 @@ struct OnboardingView: View {
                 } else {
                     primaryButton("Get Started") { step = .health }
                 }
-                Text("Body-composition values are estimates, not medical advice. Works with the Xiaomi Mi Body Composition Scale 2 — not affiliated with or endorsed by Xiaomi.")
+                Text("Body-composition values are estimates, not medical advice.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -169,7 +171,57 @@ struct OnboardingView: View {
         .padding(.bottom, 32)
     }
 
+    /// Asks first — nothing touches Bluetooth (or its permission prompt) until "Pair my
+    /// scale"; "No scale" carries on to manual entry.
+    @ViewBuilder
     private var scaleStep: some View {
+        if scaleSearching { scaleSearchStep } else { scaleChoiceStep }
+    }
+
+    private var scaleChoiceStep: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            header(icon: "scalemass.fill",
+                   mochi: .helloWave, says: "Got a scale? I can read it for you!",
+                   title: "Do you have a smart scale?",
+                   subtitle: "Pair it once and every weigh-in, with body fat, lean mass and BMI, goes to Apple Health by itself.")
+            supportedScale
+                .padding(.top, 24)
+            Spacer()
+            VStack(spacing: 12) {
+                primaryButton("Pair my scale") {
+                    scaleSearching = true
+                    model.beginPairingScan()
+                }
+                secondaryButton("No scale — I'll add weights by hand") { step = stepAfterScale }
+            }
+        }
+        .padding(.vertical, 40)
+    }
+
+    /// The one supported scale, and that we're not Xiaomi.
+    private var supportedScale: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "scalemass.fill")
+                .font(.title2)
+                .foregroundStyle(Theme.accent)
+                .frame(width: 36)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Works with: Xiaomi Mi Body Composition Scale 2")
+                    .font(.subheadline.weight(.semibold))
+                Text("Not affiliated with or endorsed by Xiaomi.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(14)
+        .glassEffect(in: .rect(cornerRadius: 18))
+        .accessibilityElement(children: .combine)
+    }
+
+    private var scaleSearchStep: some View {
         VStack(spacing: 0) {
             Spacer()
             if mochiEnabled {
@@ -228,7 +280,6 @@ struct OnboardingView: View {
             }
         }
         .padding(.vertical, 40)
-        .onAppear { model.beginPairingScan() }
         .onDisappear { model.endPairingScan() }
     }
 
@@ -307,9 +358,10 @@ struct OnboardingView: View {
     }
 
     #if DEBUG
-    /// `-onboardingStep <step>|declined` on launch jumps to that step (simulator screenshots);
-    /// `-mochiEnabled YES|NO` alongside it makes the Welcome choice (with / without Mochi).
-    /// `welcome` without `-mochiEnabled` shows the undecided choice; `declined` the sad wave.
+    /// `-onboardingStep <step>|declined|scaleSearch` on launch jumps to that step (simulator
+    /// screenshots); `-mochiEnabled YES|NO` alongside it makes the Welcome choice (with /
+    /// without Mochi). `welcome` without `-mochiEnabled` shows the undecided choice; `declined`
+    /// the sad wave; `scaleSearch` the scale step after "Pair my scale" (starts Bluetooth).
     private func applyDebugLaunchStep() {
         let defaults = UserDefaults.standard
         guard let raw = defaults.string(forKey: "onboardingStep") else { return }
@@ -320,6 +372,10 @@ struct OnboardingView: View {
         if raw == "declined" {
             choice = .undecided
             declineMochi()
+        } else if raw == "scaleSearch" {
+            step = .scale
+            scaleSearching = true
+            model.beginPairingScan()
         } else if let jump = Step(rawValue: raw) {
             if jump == .profile || jump == .done { draft = model.profile }
             step = jump
@@ -333,12 +389,7 @@ struct OnboardingView: View {
         draft.name.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
-    private var bleUnavailable: Bool {
-        switch model.bleStatus {
-        case .unsupported, .unauthorized, .poweredOff: return true
-        default: return false
-        }
-    }
+    private var bleUnavailable: Bool { model.bleStatus.isUnavailable }
 
     private func goToProfile() {
         draft = model.profile

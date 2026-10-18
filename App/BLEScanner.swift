@@ -14,6 +14,9 @@ struct ObservedFrame: Identifiable {
 
 /// High-level Bluetooth availability for the UI.
 enum BLEStatus: Equatable {
+    /// Bluetooth was never started: no scale is paired and the user hasn't asked
+    /// to pair one, so there is no central manager (and no permission prompt).
+    case notInUse
     case unknown
     case unsupported
     case unauthorized
@@ -23,12 +26,22 @@ enum BLEStatus: Equatable {
 
     var label: String {
         switch self {
+        case .notInUse: return String(localized: "Not in use")
         case .unknown: return String(localized: "Starting…")
         case .unsupported: return String(localized: "Bluetooth LE not supported on this device")
         case .unauthorized: return String(localized: "Bluetooth permission denied — enable in Settings")
         case .poweredOff: return String(localized: "Bluetooth is off")
         case .scanning: return String(localized: "Scanning for scale…")
         case .idle: return String(localized: "Idle")
+        }
+    }
+
+    /// Bluetooth can't scan (denied, off, or no BLE) — the "Bluetooth needed" state.
+    /// Not while it's still starting or before it was ever used.
+    var isUnavailable: Bool {
+        switch self {
+        case .unsupported, .unauthorized, .poweredOff: return true
+        default: return false
         }
     }
 }
@@ -40,8 +53,9 @@ enum BLEStatus: Equatable {
 /// `MeasurementFinalizer`. Finalized weigh-ins are delivered via `onReading`.
 ///
 /// Delegate callbacks run on the main queue (`queue: nil`) so publishing to the
-/// `@MainActor` `AppModel` needs no extra hops. Foreground-only by design —
-/// background BLE / state restoration is the v2 hook point (plan §3).
+/// `@MainActor` `AppModel` needs no extra hops. Creating one creates the
+/// `CBCentralManager` (and so the first-run Bluetooth permission prompt), which
+/// is why `AppModel` only makes one once a scale is paired or being paired.
 final class BLEScanner: NSObject {
 
     /// Body Composition service. iOS strips the UUID prefix from the service-data
@@ -81,7 +95,9 @@ final class BLEScanner: NSObject {
     }
 
     func start() {
-        guard central.state == .poweredOn else { return }
+        // Not ready (still starting, off, denied): report that instead, so a
+        // second pairing attempt after `stop()` doesn't read as "Idle".
+        guard central.state == .poweredOn else { status = Self.status(for: central.state); return }
         // On a restoration relaunch the system may already be scanning; only
         // (re)issue the scan if it isn't, but always (re)arm the tick timer so
         // the finalizers' settle/stale/cooldown still advance. startTickTimer()
@@ -99,9 +115,21 @@ final class BLEScanner: NSObject {
     }
 
     func stop() {
-        if central.state == .poweredOn { central.stopScan() }
         stopTickTimer()
+        guard central.state == .poweredOn else { return }
+        central.stopScan()
         status = .idle
+    }
+
+    /// The UI status for a central manager that isn't scanning.
+    private static func status(for state: CBManagerState) -> BLEStatus {
+        switch state {
+        case .poweredOn: return .idle
+        case .poweredOff: return .poweredOff
+        case .unauthorized: return .unauthorized
+        case .unsupported: return .unsupported
+        default: return .unknown
+        }
     }
 
     // MARK: - Tick
@@ -157,12 +185,8 @@ extension BLEScanner: CBCentralManagerDelegate {
         case .poweredOff:
             status = .poweredOff
             stopTickTimer()
-        case .unauthorized:
-            status = .unauthorized
-        case .unsupported:
-            status = .unsupported
         default:
-            status = .unknown
+            status = Self.status(for: central.state)
         }
     }
 

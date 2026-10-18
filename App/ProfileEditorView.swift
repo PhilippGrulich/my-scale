@@ -28,7 +28,18 @@ struct ProfileEditorView: View {
                                   onAuthorize: { model.requestHealthAuthorization() },
                                   inline: true)
                     HStack {
-                        Label("Scale", systemImage: "scalemass")
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Scale")
+                                if !model.hasPairedScale {
+                                    Text("Works with Xiaomi Mi Body Composition Scale 2")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        } icon: {
+                            Image(systemName: "scalemass")
+                        }
                         Spacer()
                         if model.hasPairedScale {
                             Button("Unpair", role: .destructive) { confirmingUnpair = true }
@@ -45,13 +56,16 @@ struct ProfileEditorView: View {
                     } message: {
                         Text("You can pair it again from New measurement.")
                     }
-                    HStack {
-                        Label("Bluetooth", systemImage: "dot.radiowaves.left.and.right")
-                        Spacer()
-                        Text(model.bleStatus.label)
-                            .font(.subheadline)
-                            .foregroundStyle(model.bleStatus == .scanning ? Theme.accent : .secondary)
-                            .multilineTextAlignment(.trailing)
+                    // Bluetooth only runs for a paired scale, so there's nothing to show without one.
+                    if model.hasPairedScale {
+                        HStack {
+                            Label("Bluetooth", systemImage: "dot.radiowaves.left.and.right")
+                            Spacer()
+                            Text(model.bleStatus.label)
+                                .font(.subheadline)
+                                .foregroundStyle(model.bleStatus == .scanning ? Theme.accent : .secondary)
+                                .multilineTextAlignment(.trailing)
+                        }
                     }
                 }
 

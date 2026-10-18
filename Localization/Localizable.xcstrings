@@ -635,16 +635,6 @@
         }
       }
     },
-    "Body-composition values are estimates, not medical advice. Works with the Xiaomi Mi Body Composition Scale 2 — not affiliated with or endorsed by Xiaomi.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Werte zur Körperzusammensetzung sind Schätzungen und keine medizinische Beratung. Funktioniert mit der Xiaomi Mi Body Composition Scale 2 – nicht mit Xiaomi verbunden oder von Xiaomi unterstützt."
-          }
-        }
-      }
-    },
     "Body-fat goal": {
       "localizations": {
         "de": {
@@ -965,6 +955,16 @@
         }
       }
     },
+    "Do you have a smart scale?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hast du eine smarte Waage?"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "de": {
@@ -1191,6 +1191,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ziel"
+          }
+        }
+      }
+    },
+    "Got a scale? I can read it for you!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hast du eine Waage? Ich lese sie für dich ab!"
           }
         }
       }
@@ -1772,6 +1782,16 @@
         }
       }
     },
+    "No scale — I'll add weights by hand": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Waage – ich trage mein Gewicht selbst ein"
+          }
+        }
+      }
+    },
     "No valid samples to write.": {
       "localizations": {
         "de": {
@@ -1808,6 +1828,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Normal"
+          }
+        }
+      }
+    },
+    "Not affiliated with or endorsed by Xiaomi.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht mit Xiaomi verbunden oder von Xiaomi unterstützt."
+          }
+        }
+      }
+    },
+    "Not in use": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht in Gebrauch"
           }
         }
       }
@@ -1968,6 +2008,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Waage koppeln"
+          }
+        }
+      }
+    },
+    "Pair it once and every weigh-in, with body fat, lean mass and BMI, goes to Apple Health by itself.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einmal koppeln, und jede Messung landet mit Körperfett, fettfreier Masse und BMI von selbst in Apple Health."
+          }
+        }
+      }
+    },
+    "Pair my scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meine Waage koppeln"
           }
         }
       }
@@ -3250,6 +3310,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Training"
+          }
+        }
+      }
+    },
+    "Works with Xiaomi Mi Body Composition Scale 2": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funktioniert mit der Xiaomi Mi Body Composition Scale 2"
+          }
+        }
+      }
+    },
+    "Works with: Xiaomi Mi Body Composition Scale 2": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funktioniert mit: Xiaomi Mi Body Composition Scale 2"
           }
         }
       }

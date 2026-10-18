@@ -55,7 +55,7 @@ enum MeasurementPhase: Equatable {
 final class AppModel: ObservableObject {
 
     // Published view state.
-    @Published var bleStatus: BLEStatus = .unknown
+    @Published var bleStatus: BLEStatus = .notInUse
     @Published var healthAuth: HealthKitSink.AuthState = .notRequested
     @Published var profile: StoredProfile
     @Published private(set) var recentFrames: [ObservedFrame] = []
@@ -94,7 +94,10 @@ final class AppModel: ObservableObject {
     /// Mochi companion: reactions, greetings and settings.
     let mochi: MochiCoordinator
 
-    private let scanner: BLEScanner
+    /// Created only once a scale is paired (at launch) or being paired (the user
+    /// tapped "Pair my scale"), so people without a scale never see the
+    /// Bluetooth permission prompt. Nil means Bluetooth is not in use.
+    private var scanner: BLEScanner?
     private let healthKit = HealthKitSink()
     private let notifications = NotificationManager()
     /// Capture time of the newest weigh-in attributed to the owner this session.
@@ -139,7 +142,6 @@ final class AppModel: ObservableObject {
         self.pairedScaleID = PairedScaleStore.load()?.peripheralID
         self.attribution = AttributionStore.load()
         self.readings = Array(ReadingsStore.load().prefix(maxReadings))
-        self.scanner = BLEScanner()
         self.mochi = MochiCoordinator()
         if !HealthKitSink.isAvailable { self.healthAuth = .unavailable }
 
@@ -158,15 +160,9 @@ final class AppModel: ObservableObject {
             Task { @MainActor in self?.addMeasurementRequested = true }
         }
 
-        scanner.onStatusChange = { [weak self] status in
-            Task { @MainActor in self?.bleStatus = status }
-        }
-        scanner.onFrame = { [weak self] frame in
-            Task { @MainActor in self?.appendFrame(frame) }
-        }
-        scanner.onReading = { [weak self] reading, peripheralID in
-            Task { @MainActor in self?.handle(reading, from: peripheralID) }
-        }
+        // A paired scale scans from launch (passive weigh-ins, and iOS restoring our
+        // central manager after a background relaunch needs it created right away).
+        if pairedScaleID != nil { startBluetooth() }
         // Home content waits for the app to be active (see `appIsActive`). A cold launch
         // never changes scenePhase, so catch the moment it becomes active here.
         becameActiveObserver = NotificationCenter.default.addObserver(
@@ -177,6 +173,43 @@ final class AppModel: ObservableObject {
     }
 
     private var becameActiveObserver: NSObjectProtocol?
+
+    // MARK: - Bluetooth
+
+    /// Create the scanner on first use and start scanning. Its central manager
+    /// asks for Bluetooth permission the first time; scanning then begins once
+    /// Bluetooth is on. Idempotent.
+    private func startBluetooth() {
+        if let scanner { scanner.start(); return }
+        let made = BLEScanner()
+        made.onStatusChange = { [weak self, weak made] status in
+            Task { @MainActor in
+                // Ignore a scanner that was already torn down.
+                guard let self, let made, self.scanner === made else { return }
+                self.bleStatus = status
+            }
+        }
+        made.onFrame = { [weak self] frame in
+            Task { @MainActor in self?.appendFrame(frame) }
+        }
+        made.onReading = { [weak self] reading, peripheralID in
+            Task { @MainActor in self?.handle(reading, from: peripheralID) }
+        }
+        scanner = made
+        bleStatus = made.status
+    }
+
+    /// Stop scanning and release the central manager: Bluetooth is "not in use"
+    /// again (no scale paired and none being paired).
+    private func stopBluetooth() {
+        guard let scanner else { return }
+        scanner.onStatusChange = nil
+        scanner.onFrame = nil
+        scanner.onReading = nil
+        scanner.stop()
+        self.scanner = nil
+        bleStatus = .notInUse
+    }
 
     // MARK: - Derived view state
 
@@ -302,18 +335,21 @@ final class AppModel: ObservableObject {
 
     var hasPairedScale: Bool { pairedScaleID != nil }
 
-    /// Begin scanning for a scale to pair (onboarding, or the Add Measurement
-    /// sheet's pairing mode).
+    /// Begin scanning for a scale to pair (onboarding's "Pair my scale", or the
+    /// Weigh in tab's pairing mode). Without a paired scale this is the first
+    /// time Bluetooth is used, so it brings up the permission prompt.
     func beginPairingScan() {
         pairingScanActive = true
         scaleCandidate = nil
-        scanner.start()
+        startBluetooth()
     }
 
-    /// Stop surfacing scale candidates once the pairing step is done.
+    /// Stop surfacing scale candidates once the pairing step is done. If no
+    /// scale got paired, Bluetooth goes back to not in use.
     func endPairingScan() {
         pairingScanActive = false
         scaleCandidate = nil
+        if !hasPairedScale { stopBluetooth() }
     }
 
     /// Remember this peripheral as the user's scale. From now on only readings
@@ -326,10 +362,11 @@ final class AppModel: ObservableObject {
         pairedScaleID = id
     }
 
-    /// Forget the paired scale (developer / re-pair).
+    /// Forget the paired scale (developer / re-pair) and stop scanning.
     func unpairScale() {
         PairedScaleStore.clear()
         pairedScaleID = nil
+        if !pairingScanActive { stopBluetooth() }
     }
 
     /// Read a body metric's history from Apple Health (for the metric detail chart).
@@ -749,8 +786,9 @@ final class AppModel: ObservableObject {
     }
 
     /// Arm a new weigh-in from the UI: show the overlay in its `.waiting` state
-    /// ("step on your scale") and make sure we're scanning. Incoming adverts then
-    /// drive it to `.measuring`/`.finalizing` via `updatePhase`.
+    /// ("step on your scale") and make sure we're scanning (only with a paired
+    /// scale — otherwise Bluetooth stays off). Incoming adverts then drive it to
+    /// `.measuring`/`.finalizing` via `updatePhase`.
     func startMeasurement() {
         dismissTask?.cancel()
         idleTask?.cancel()
@@ -759,7 +797,7 @@ final class AppModel: ObservableObject {
         manualMeasurementActive = true
         awaitingStepOff = false   // user explicitly wants a fresh weigh-in
         measurementPhase = .waiting
-        scanner.start()   // idempotent; ensures the scan is running
+        if hasPairedScale { startBluetooth() }   // idempotent; ensures the scan is running
     }
 
     /// Show a non-persisted **sample** weigh-in so the flow can be evaluated

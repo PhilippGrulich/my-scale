@@ -7,7 +7,8 @@ import MyOpenScaleCore
 /// - **Scale paired** → `.scale`: live "step on your scale" → reading → result,
 ///   with "Enter manually" as the way out (prominent when Bluetooth is off).
 /// - **No scale yet** → `.manual`: a short form saved to Apple Health, with a
-///   "Pair a scale" card that switches to `.pairing` in place.
+///   "Pair a scale" card that switches to `.pairing` in place. Bluetooth stays
+///   off (no permission prompt) until that card is tapped.
 /// - `.pairing` scans while the user stands on the scale; confirming pairs it
 ///   and drops straight into `.scale`, so that same stand becomes the first
 ///   automatic reading.
@@ -122,7 +123,9 @@ struct AddMeasurementView: View {
 
     // MARK: - Scale
 
-    private var bluetoothUsable: Bool { model.bleStatus == .scanning || model.bleStatus == .idle }
+    /// False only when Bluetooth is denied, off or missing — not while it's starting
+    /// (e.g. while the first-run permission prompt is up).
+    private var bluetoothUsable: Bool { !model.bleStatus.isUnavailable }
 
     @ViewBuilder
     private var scaleContent: some View {
@@ -223,7 +226,8 @@ struct AddMeasurementView: View {
     }
 
     /// Paired → one tap back to the live scale. Not paired → invite to pair,
-    /// explaining what it buys (automatic readings + body composition).
+    /// explaining what it buys (automatic readings + body composition) and which
+    /// scale works.
     @ViewBuilder
     private var scaleCallToAction: some View {
         if model.hasPairedScale {
@@ -244,6 +248,9 @@ struct AddMeasurementView: View {
                         Text("Weigh-ins with body fat, lean mass and BMI are then saved automatically.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
+                        Text("Works with Xiaomi Mi Body Composition Scale 2")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
                     }
                     Spacer(minLength: 0)
                     Image(systemName: "chevron.right")
