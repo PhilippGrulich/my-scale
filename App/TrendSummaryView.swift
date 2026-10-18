@@ -68,17 +68,17 @@ struct TrendSummaryView: View {
                     .accessibilityHint("Edit your goal weight")
                 }
             }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 8)
+            // No card: the stats read as part of the weight header above.
+            .padding(.top, 2)
+            .padding(.bottom, 6)
             .frame(maxWidth: .infinity)
-            .glassEffect(in: .rect(cornerRadius: 22))
         }
     }
 
     private var divider: some View {
         Rectangle()
-            .fill(.secondary.opacity(0.25))
-            .frame(width: 1, height: 44)
+            .fill(.secondary.opacity(0.18))
+            .frame(width: 1, height: 36)
             .padding(.top, 4)
     }
 
