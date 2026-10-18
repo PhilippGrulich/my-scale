@@ -10,6 +10,8 @@ struct DashboardView: View {
     /// Tapping "To goal" / the chart header jumps to the Goal / History tab.
     var onShowGoal: () -> Void = {}
     var onShowHistory: () -> Void = {}
+    /// Tapping the big weight opens the Weigh in tab.
+    var onWeighIn: () -> Void = {}
 
     var body: some View {
         NavigationStack {
@@ -36,10 +38,15 @@ struct DashboardView: View {
             GlassEffectContainer(spacing: 16) {
                 VStack(spacing: 16) {
                     ZStack(alignment: .topLeading) {
-                        WeightHeroView(weightKg: model.currentWeightKg,
-                                       measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
-                                           ?? model.lastOwnReading?.capturedAt)
-                            .frame(maxWidth: .infinity)
+                        Button(action: onWeighIn) {
+                            WeightHeroView(weightKg: model.currentWeightKg,
+                                           measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
+                                               ?? model.lastOwnReading?.capturedAt)
+                                .frame(maxWidth: .infinity)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Opens Weigh in")
                             // The corner row (Mochi and its wrapped bubble) sits above the number.
                             .padding(.top, model.mochi.settings.enabled ? mochiCornerHeight + 4 : 0)
                             .animation(.snappy, value: mochiCornerHeight)

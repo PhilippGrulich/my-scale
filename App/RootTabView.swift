@@ -17,7 +17,8 @@ struct RootTabView: View {
             }
             Tab("Overview", systemImage: "gauge.with.dots.needle.67percent", value: TabID.overview) {
                 DashboardView(onShowGoal: { selection = .goal },
-                              onShowHistory: { selection = .history })
+                              onShowHistory: { selection = .history },
+                              onWeighIn: { selection = .measure })
             }
             Tab("Weigh in", systemImage: "plus.circle.fill", value: TabID.measure) {
                 AddMeasurementView(onFinished: { selection = .overview })
