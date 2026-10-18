@@ -64,6 +64,8 @@ final class AppModel: ObservableObject {
     /// When the current in-progress weigh-in began (drives the overlay's
     /// progress + the "save current weight" escape hatch). Nil when idle.
     @Published private(set) var liveStartedAt: Date?
+    /// Mochi's reaction to the weigh-in on the overlay's result. Nil when Mochi is off.
+    @Published private(set) var weighInPresentation: MochiPresentation?
     @Published private(set) var weightHistory: [WeightSample] = []
     /// Set when something outside the UI (Control Center, Siri, Shortcuts) asks
     /// for a new measurement; `RootTabView` opens the Add Measurement sheet and
@@ -433,6 +435,12 @@ final class AppModel: ObservableObject {
         let reading = readings[idx]
         persistReadings()
         learnMe(weightKg: reading.weightKg, impedanceOhms: reading.impedanceOhms)
+        if mochi.settings.enabled {
+            // The reading is now the owner's: Mochi reacts on the home screen. History is
+            // from before the reading (the engine appends it itself).
+            let history = weightHistory.filter { abs($0.date.timeIntervalSince(reading.capturedAt)) >= 60 }
+            mochi.stash(mochi.presentationForWeighIn(reading, history: history, profile: profile))
+        }
         writeReadingToHealth(reading)
     }
 
@@ -657,6 +665,7 @@ final class AppModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 500_000_000)
             if Task.isCancelled { return }
             self.liveStartedAt = nil
+            self.weighInPresentation = nil         // Mochi has no reaction to a sample
             self.measurementPhase = .result(demo)   // show result WITHOUT persist/write/learn
             self.armDismiss(for: demo.id)
         }
@@ -671,6 +680,7 @@ final class AppModel: ObservableObject {
         manualMeasurementActive = false
         awaitingStepOff = false
         measurementPhase = .idle
+        weighInPresentation = nil
     }
 
     /// Finalize the current live (possibly not-yet-stable) weight on demand —
@@ -822,7 +832,16 @@ final class AppModel: ObservableObject {
             logged.healthKitStatus = .pending
             finish(with: logged)
             writeReadingToHealth(logged)
-            if inBackground { notifications.notifySaved(weightKg: reading.weightKg) }
+            if inBackground {
+                if mochi.settings.enabled, let presentation = weighInPresentation {
+                    notifications.notifySaved(title: "Mochi",
+                                              body: mochi.savedNotificationBody(weightKg: reading.weightKg,
+                                                                                profile: profile))
+                    mochi.stash(presentation)
+                } else {
+                    notifications.notifySaved(weightKg: reading.weightKg)
+                }
+            }
         case .other:
             logged.healthKitStatus = .skipped(String(localized: "not you"))
             finish(with: logged)
@@ -863,17 +882,24 @@ final class AppModel: ObservableObject {
         liveStartedAt = nil
         manualMeasurementActive = false   // the weigh-in completed
         awaitingStepOff = true            // ignore "still standing" frames until step-off
+        // Before the Health write, so `weightHistory` doesn't contain this reading yet.
+        weighInPresentation = mochi.settings.enabled
+            ? mochi.presentationForWeighIn(logged, history: weightHistory, profile: profile)
+            : nil
         measurementPhase = .result(logged)
         armDismiss(for: logged.id)
     }
 
     private func armDismiss(for id: UUID) {
         dismissTask?.cancel()
+        // Mochi's line needs a little longer to read.
+        let delay: UInt64 = mochi.settings.enabled ? 6_500_000_000 : 3_500_000_000
         dismissTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 3_500_000_000)
+            try? await Task.sleep(nanoseconds: delay)
             guard let self, !Task.isCancelled else { return }
             if case .result(let r) = self.measurementPhase, r.id == id {
                 self.measurementPhase = .idle
+                self.weighInPresentation = nil
             }
         }
     }

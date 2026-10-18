@@ -43,6 +43,8 @@ struct RootTabView: View {
             WeighInOverlayView(phase: model.measurementPhase,
                                startedAt: model.liveStartedAt,
                                bleStatus: model.bleStatus,
+                               mochiEnabled: model.mochi.settings.enabled,
+                               presentation: model.weighInPresentation,
                                onAccept: { model.acceptCurrentLiveWeight() },
                                onDismiss: { model.dismissOverlay() })
         }
@@ -55,6 +57,17 @@ struct RootTabView: View {
             if ["settings", "profile"].contains(UserDefaults.standard.string(forKey: "startTab")) { selection = .settings }
             #endif
             model.loadWeightHistory()
+            #if DEBUG
+            // `-simulateWeighIn YES` on launch: arm a weigh-in, then simulate one a few
+            // seconds later (waiting → measuring → result, for simulator screenshots).
+            // Skips the notification prompt so it doesn't cover the overlay.
+            if UserDefaults.standard.bool(forKey: "simulateWeighIn") {
+                model.startMeasurement()
+                try? await Task.sleep(for: .seconds(4))
+                model.simulateWeighIn()
+                return
+            }
+            #endif
             model.requestNotificationAuthorization()
         }
     }

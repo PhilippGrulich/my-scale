@@ -8,6 +8,9 @@ struct WeighInOverlayView: View {
     let phase: MeasurementPhase
     let startedAt: Date?
     let bleStatus: BLEStatus
+    /// Mochi takes over the overlay when enabled; otherwise it is the plain overlay.
+    var mochiEnabled = false
+    var presentation: MochiPresentation? = nil
     let onAccept: () -> Void
     let onDismiss: () -> Void
     /// Escape hatch while waiting: no scale at hand / Bluetooth unavailable.
@@ -16,8 +19,15 @@ struct WeighInOverlayView: View {
     var body: some View {
         ZStack {
             Theme.backgroundGradient.ignoresSafeArea()
-            content
-                .padding(28)
+            Group {
+                if mochiEnabled {
+                    MochiWeighInView(phase: phase, startedAt: startedAt, bleStatus: bleStatus,
+                                     presentation: presentation, onAccept: onAccept, onDismiss: onDismiss)
+                } else {
+                    content
+                }
+            }
+            .padding(28)
         }
         .contentShape(Rectangle())
         .onTapGesture { if isResult { onDismiss() } }
@@ -115,10 +125,6 @@ struct MeasuringView: View {
     let startedAt: Date?
     let onAccept: () -> Void
 
-    /// Reveal the manual "save now" escape hatch once stabilization is clearly
-    /// taking a while (the finalizer normally settles well under this).
-    private let acceptAfter: TimeInterval = 2.0
-
     var body: some View {
         VStack(spacing: 28) {
             ZStack {
@@ -135,38 +141,59 @@ struct MeasuringView: View {
             }
             .frame(width: 260, height: 260)
 
-            TimelineView(.animation) { ctx in
-                let elapsed = startedAt.map { max(0, ctx.date.timeIntervalSince($0)) } ?? 0
-                VStack(spacing: 18) {
-                    HStack(spacing: 8) {
-                        ProgressView().tint(Theme.accent)
-                        Text(label).font(.headline).foregroundStyle(.secondary)
-                    }
-                    Text(hint)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    if elapsed >= acceptAfter {
-                        VStack(spacing: 8) {
-                            Button(action: onAccept) {
-                                Label("Save \(weightKg, format: .number.precision(.fractionLength(1))) kg now",
-                                      systemImage: "checkmark.circle.fill")
-                                    .font(.headline)
-                            }
-                            .buttonStyle(.glass)
-                            .tint(Theme.accent)
-                            Text("Saves weight + BMI without body composition.")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
-                    }
-                }
-                .animation(.snappy, value: elapsed >= acceptAfter)
-            }
+            MeasuringStatusView(weightKg: weightKg, label: label, hint: hint,
+                                startedAt: startedAt, onAccept: onAccept)
         }
         .animation(.snappy, value: weightKg)
         .animation(.snappy, value: label)
+    }
+}
+
+/// Progress label, optional hint and the "save current weight" escape hatch shown
+/// while measuring. Shared by the plain overlay and Mochi's.
+struct MeasuringStatusView: View {
+    let weightKg: Double
+    let label: LocalizedStringKey
+    var hint: LocalizedStringKey? = nil
+    let startedAt: Date?
+    let onAccept: () -> Void
+
+    /// Reveal the manual "save now" escape hatch once stabilization is clearly
+    /// taking a while (the finalizer normally settles well under this).
+    private let acceptAfter: TimeInterval = 2.0
+
+    var body: some View {
+        TimelineView(.animation) { ctx in
+            let elapsed = startedAt.map { max(0, ctx.date.timeIntervalSince($0)) } ?? 0
+            VStack(spacing: 18) {
+                HStack(spacing: 8) {
+                    ProgressView().tint(Theme.accent)
+                    Text(label).font(.headline).foregroundStyle(.secondary)
+                }
+                if let hint {
+                    Text(hint)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if elapsed >= acceptAfter {
+                    VStack(spacing: 8) {
+                        Button(action: onAccept) {
+                            Label("Save \(weightKg, format: .number.precision(.fractionLength(1))) kg now",
+                                  systemImage: "checkmark.circle.fill")
+                                .font(.headline)
+                        }
+                        .buttonStyle(.glass)
+                        .tint(Theme.accent)
+                        Text("Saves weight + BMI without body composition.")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                }
+            }
+            .animation(.snappy, value: elapsed >= acceptAfter)
+        }
     }
 }
 
@@ -211,15 +238,7 @@ struct ResultView: View {
                 Text("kg").font(.title3.weight(.medium)).foregroundStyle(.secondary)
             }
 
-            if let c = reading.composition {
-                HStack(spacing: 12) {
-                    miniMetric("Body fat", c.bodyFatPercent, "%")
-                    miniMetric("Lean", c.leanMassKg, "kg")
-                    miniMetric("BMI", c.bmi, "")
-                }
-            }
-
-            syncLine
+            WeighInResultDetails(reading: reading)
 
             if showsDismissHint {
                 Text("Tap anywhere to dismiss")
@@ -234,6 +253,26 @@ struct ResultView: View {
         .onAppear {
             appeared = true
             UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+    }
+}
+
+/// A result's mini metrics (body fat, lean, BMI) and Apple Health sync badge.
+/// Shared by the plain overlay and Mochi's.
+struct WeighInResultDetails: View {
+    let reading: LoggedReading
+
+    var body: some View {
+        VStack(spacing: 22) {
+            if let c = reading.composition {
+                HStack(spacing: 12) {
+                    miniMetric("Body fat", c.bodyFatPercent, "%")
+                    miniMetric("Lean", c.leanMassKg, "kg")
+                    miniMetric("BMI", c.bmi, "")
+                }
+            }
+
+            syncLine
         }
     }
 

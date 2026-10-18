@@ -35,9 +35,15 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     }
 
     func notifySaved(weightKg: Double) {
+        notifySaved(title: String(localized: "Weigh-in saved"),
+                    body: String(localized: "\(weightKg.formatted(.number.precision(.fractionLength(1)))) kg saved to Apple Health."))
+    }
+
+    /// A "saved" confirmation with custom wording (e.g. in Mochi's voice).
+    func notifySaved(title: String, body: String) {
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "Weigh-in saved")
-        content.body = String(localized: "\(weightKg.formatted(.number.precision(.fractionLength(1)))) kg saved to Apple Health.")
+        content.title = title
+        content.body = body
         content.sound = .default
         post(content)
     }
