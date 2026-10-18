@@ -10,6 +10,7 @@ struct GoalPageView: View {
     @EnvironmentObject var model: AppModel
     @State private var editingGoal = false
     @State private var celebrating: Milestone?
+    @Environment(\.scenePhase) private var scenePhase
 
     // MARK: - Derived state
 
@@ -72,6 +73,20 @@ struct GoalPageView: View {
         return WeightHistory.goalProgress(startKg: s.kg, currentKg: c, goalKg: g) ?? 0
     }
 
+    /// What Mochi's goal line is based on (only read while Mochi is on).
+    private var mochiStatus: MochiGoalStatus {
+        let hasGoal = goal != nil && current != nil
+        return MochiGoalStatus(currentKg: trendNow,
+                               reached: hasGoal && reached,
+                               progress: hasGoal ? progress : nil,
+                               daysInRange: hasGoal && reached ? goal.flatMap { GoalInsights.daysInRange(trend: trend, goalKg: $0) } : nil)
+    }
+
+    /// Changes when the goal, or which kind of line fits it, changes: Mochi then speaks anew.
+    private var mochiTrigger: String {
+        "\(model.profile.weightGoal.signature())|\(current != nil)|\(reached)"
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -79,6 +94,9 @@ struct GoalPageView: View {
             ScrollView {
                 GlassEffectContainer(spacing: 16) {
                     VStack(spacing: 16) {
+                        MochiHomeCorner(mochi: model.mochi, presentation: \.goalPresentation,
+                                        display: (trendNow ?? current)?.formatted(1) ?? "– –",
+                                        onTap: { model.refreshMochiGoal(status: mochiStatus) })
                         if let celebrating { celebrationBanner(celebrating) }
                         if let g = goal, current != nil {
                             GoalRingView(progress: progress,
@@ -116,8 +134,15 @@ struct GoalPageView: View {
         .sheet(isPresented: $editingGoal) {
             GoalEditorView().environmentObject(model)
         }
-        .onAppear(perform: checkMilestones)
+        .onAppear {
+            checkMilestones()
+            model.refreshMochiGoalIfStale(status: mochiStatus)
+        }
         .onChange(of: reachedCount) { _, _ in checkMilestones() }
+        .onChange(of: mochiTrigger) { _, _ in model.refreshMochiGoal(status: mochiStatus) }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { model.refreshMochiGoalIfStale(status: mochiStatus) }
+        }
     }
 
     // MARK: - Ring

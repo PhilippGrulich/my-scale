@@ -86,17 +86,19 @@ struct MochiCornerView: View {
     }
 }
 
-/// The corner as the dashboard uses it: observes the coordinator so the corner follows
-/// `settings.enabled` and `homePresentation`, and is absent entirely while Mochi is off.
+/// The corner as the dashboard and the Goal page use it: observes the coordinator so the
+/// corner follows `settings.enabled` and its presentation (`homePresentation` by default),
+/// and is absent entirely while Mochi is off.
 struct MochiHomeCorner: View {
     @ObservedObject var mochi: MochiCoordinator
+    var presentation: KeyPath<MochiCoordinator, MochiPresentation?> = \.homePresentation
     let display: String
     let onTap: () -> Void
     var onHeightChange: (CGFloat) -> Void = { _ in }
 
     var body: some View {
         if mochi.settings.enabled {
-            MochiCornerView(presentation: mochi.homePresentation, display: display,
+            MochiCornerView(presentation: mochi[keyPath: presentation], display: display,
                             onTap: { mochi.playTapHaptic(); onTap() },
                             onHeightChange: onHeightChange)
         }

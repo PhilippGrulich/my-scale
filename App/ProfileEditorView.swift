@@ -3,21 +3,31 @@ import MyOpenScaleCore
 
 /// Settings tab: the single HealthKit owner profile plus
 /// Health / scale / Bluetooth settings. Profile changes are kept as a draft
-/// until Save, so a half-edited stepper never reaches Health. Full profile
-/// CRUD is M5b.
+/// until Save, so a half-edited stepper never reaches Health. The goal is
+/// edited only on the Goal tab. Full profile CRUD is M5b.
 struct ProfileEditorView: View {
     @EnvironmentObject var model: AppModel
     @State private var draft = StoredProfile.makeDefault()
     @State private var confirmingUnpair = false
 
-    private var hasChanges: Bool { draft != model.profile }
+    private var hasChanges: Bool { merged != model.profile }
+
+    /// The saved profile with only the fields this screen edits taken from the draft,
+    /// so saving can never overwrite a goal set on the Goal tab meanwhile.
+    private var merged: StoredProfile {
+        var profile = model.profile
+        profile.name = draft.name
+        profile.dateOfBirth = draft.dateOfBirth
+        profile.dateOfBirthIsReal = draft.dateOfBirthIsReal
+        profile.sex = draft.sex
+        profile.heightCm = draft.heightCm
+        return profile
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 ProfileFieldsView(draft: $draft)
-
-                GoalFieldsView(draft: $draft, currentWeightKg: model.currentWeightKg)
 
                 MochiSettingsSection(mochi: model.mochi)
 
@@ -88,7 +98,7 @@ struct ProfileEditorView: View {
                         Button("Revert") { draft = model.profile }
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") { model.saveConfirmedProfile(draft) }
+                        Button("Save") { model.saveConfirmedProfile(merged) }
                             .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }

@@ -38,14 +38,16 @@ final class MochiLibraryFileTests: XCTestCase {
     func testEventCoverage() throws {
         let minimums: [String: Int] = ["toward": 25, "away": 20, "newBest": 8, "streak": 8, "goodWeek": 6, "daysInRange": 4,
             "milestonePercent": 6, "milestoneKg": 6, "goalReached": 6, "welcomeBack": 8, "notYou": 4, "home": 30, "homeIdle": 6,
-            "birthday": 4, "anniversary": 4, "saved": 6, "reminder1": 5, "reminder2": 5, "reminder4": 5, "reminder8": 5, "reminderWeekly": 5]
+            "birthday": 4, "anniversary": 4, "saved": 6, "reminder1": 5, "reminder2": 5, "reminder4": 5, "reminder8": 5, "reminderWeekly": 5,
+            "goalNone": 6, "goalProgress": 12, "goalReachedHome": 6]
         let en = try load("en")
         for (event, min) in minimums { XCTAssertGreaterThanOrEqual(en.lines.filter { $0.events.contains(event) }.count, min, event) }
     }
 
     func testEveryGoalTypeHasPlaceholderFreeFallback() throws {
         // With no values at all, every reaction event must still find a line for every goal type.
-        for event in ["toward", "away", "newBest", "goodWeek", "goalReached", "notYou", "home"] {
+        for event in ["toward", "away", "newBest", "goodWeek", "goalReached", "notYou", "home",
+                      "goalNone", "goalProgress", "goalReachedHome"] {
             for goal in GoalType.allCases where !(goal == .maintain && event == "newBest") {
                 var rng = SystemRandomNumberGenerator()
                 let s = MochiSituation(event: event, goalType: goal, tags: [], streakDays: 0, values: [:])
@@ -54,7 +56,7 @@ final class MochiLibraryFileTests: XCTestCase {
         }
     }
 
-    /// The dashboard corner bubble wraps but must stay a few lines tall: every line it can show
+    /// The dashboard and Goal page corner bubble wraps but must stay a few lines tall: every line it can show
     /// (greetings, and a stashed reaction with its welcome-back prefix) fits a character budget.
     /// Placeholders count at a generous rendered width (a long name, a number).
     func testCornerLinesFitTheBubble() throws {
@@ -65,7 +67,7 @@ final class MochiLibraryFileTests: XCTestCase {
             }
             return n
         }
-        let greetings: Set = ["home", "homeIdle", "birthday", "anniversary"]
+        let greetings: Set = ["home", "homeIdle", "birthday", "anniversary", "goalNone", "goalProgress", "goalReachedHome"]
         let reactions: Set = ["toward", "away", "newBest", "streak", "goodWeek", "daysInRange",
                               "milestonePercent", "milestoneKg", "goalReached"]
         for lang in ["en", "de"] {

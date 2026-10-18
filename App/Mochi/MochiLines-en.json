@@ -1947,6 +1947,306 @@
       "events": [
         "reminderWeekly"
       ]
+    },
+    {
+      "id": "goalNone.1",
+      "text": "Want to pick a goal together? Tap 'Set goal' 🎯",
+      "events": [
+        "goalNone"
+      ]
+    },
+    {
+      "id": "goalNone.2",
+      "text": "No goal yet. Want to set one together? 🌱",
+      "events": [
+        "goalNone"
+      ]
+    },
+    {
+      "id": "goalNone.3",
+      "text": "Lose, gain or keep steady: you choose, I cheer 📣",
+      "events": [
+        "goalNone"
+      ]
+    },
+    {
+      "id": "goalNone.4",
+      "text": "A goal gives me something to cheer for! 🎉",
+      "events": [
+        "goalNone"
+      ]
+    },
+    {
+      "id": "goalNone.5",
+      "text": "Whenever you're ready, we'll pick a goal 🐾",
+      "events": [
+        "goalNone"
+      ]
+    },
+    {
+      "id": "goalNone.6",
+      "text": "Tap 'Set goal' and I'll keep you company 🍡",
+      "events": [
+        "goalNone"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.1",
+      "text": "Only {left} kg to go. We've got this 💪",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.2",
+      "text": "{percent} % of the way already! 🐾",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.3",
+      "text": "At this pace, about {weeks} weeks to {target} kg 📅",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.4",
+      "text": "Step by step toward {target} kg 🌱",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.5",
+      "text": "Every weigh-in brings us closer 🎯",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.6",
+      "text": "Slow and steady wins this one 🐢💚",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.lose.7",
+      "text": "Proud of you for showing up 🍡",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "lose"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.1",
+      "text": "Just {left} kg more to grow. You've got this 💪",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.2",
+      "text": "{percent} % there already! 🌳",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.3",
+      "text": "About {weeks} weeks to {target} kg at this pace 📅",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.4",
+      "text": "Building up toward {target} kg 🌱",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.5",
+      "text": "Growing stronger, one day at a time 💪",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.6",
+      "text": "Steady gains, happy Mochi 🍡",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.gain.7",
+      "text": "Every weigh-in counts on the way up 🎯",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "gain"
+      ]
+    },
+    {
+      "id": "goalProgress.maintain.1",
+      "text": "Your range is around {target} kg. We'll drift back 🌊",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalProgress.maintain.2",
+      "text": "Just {left} kg from {target} kg. No rush 💚",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalProgress.maintain.3",
+      "text": "A little wobble is normal. Back to the range soon 🌷",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalProgress.maintain.4",
+      "text": "Keeping steady is a skill. You've got it 🧘",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalProgress.maintain.5",
+      "text": "Gently back toward {target} kg 🐾",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalProgress.maintain.6",
+      "text": "Ups and downs happen. I'm right here 🍡",
+      "events": [
+        "goalProgress"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalReachedHome.1",
+      "text": "Goal reached! Now we keep it cozy here 🏆",
+      "events": [
+        "goalReachedHome"
+      ]
+    },
+    {
+      "id": "goalReachedHome.2",
+      "text": "You made it, {name}! Still so proud 🥹",
+      "events": [
+        "goalReachedHome"
+      ]
+    },
+    {
+      "id": "goalReachedHome.3",
+      "text": "Look at that: goal reached! 🎉",
+      "events": [
+        "goalReachedHome"
+      ]
+    },
+    {
+      "id": "goalReachedHome.4",
+      "text": "You're at your goal. Keeping it is the next win 💚",
+      "events": [
+        "goalReachedHome"
+      ]
+    },
+    {
+      "id": "goalReachedHome.maintain.1",
+      "text": "{days} days in your range. Steady as a rock 🪨",
+      "events": [
+        "goalReachedHome"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalReachedHome.maintain.2",
+      "text": "Right in your range. Steady looks good on you 🧘",
+      "events": [
+        "goalReachedHome"
+      ],
+      "goals": [
+        "maintain"
+      ]
+    },
+    {
+      "id": "goalReachedHome.maintain.3",
+      "text": "Steady around {target} kg. Love it 💚",
+      "events": [
+        "goalReachedHome"
+      ],
+      "goals": [
+        "maintain"
+      ]
     }
   ]
 }

@@ -173,6 +173,60 @@ final class MochiCoordinator: ObservableObject {
         homeProducedAt = now
     }
 
+    // MARK: - Goal page
+
+    /// What the Goal page's Mochi currently shows, and when it was produced.
+    @Published private(set) var goalPresentation: MochiPresentation?
+    private(set) var goalProducedAt: Date?
+
+    /// Same freshness rule as the home greeting: none yet, older than 30 minutes, or from another day.
+    func isGoalStale(now: Date = Date()) -> Bool {
+        guard goalPresentation != nil, let at = goalProducedAt else { return true }
+        return now.timeIntervalSince(at) > Self.homeFreshness || !calendar.isDate(at, inSameDayAs: now)
+    }
+
+    /// Goal page appear / foreground: a new line only when the current one is stale.
+    func refreshGoalIfStale(history: [WeightSample], profile: StoredProfile, status: MochiGoalStatus, now: Date = Date()) {
+        if isGoalStale(now: now) { refreshGoal(history: history, profile: profile, status: status, now: now) }
+    }
+
+    /// A new goal-focused line (tap, or the goal or its state changed).
+    func refreshGoal(history: [WeightSample], profile: StoredProfile, status: MochiGoalStatus, now: Date = Date()) {
+        goalPresentation = goalPresentation(history: history, profile: profile, status: status, now: now)
+        goalProducedAt = now
+    }
+
+    /// The Goal page's line: an invite without a goal, progress on the way, praise once reached.
+    func goalPresentation(history: [WeightSample], profile: StoredProfile, status: MochiGoalStatus,
+                          now: Date = Date()) -> MochiPresentation {
+        let goal = profile.weightGoal
+        let context = calendarContext(now: now, profile: profile)
+        let stats = MochiStats.compute(history: history, now: now, firstLaunch: MochiStateStore.firstLaunch,
+                                       goal: goal, calendar: calendar)
+        var values = MochiPlaceholders.values(profile: profile, currentKg: status.currentKg,
+                                              history: history, stats: stats, now: now)
+        // The page's own numbers, so Mochi agrees with the ring.
+        if let progress = status.progress, goal.type != .maintain {
+            values["percent"] = String(Int((progress * 100).rounded()))
+        }
+        if let days = status.daysInRange { values["days"] = String(days) }
+
+        let event: String
+        var pose = MochiPose.idle
+        if goal.targetKg == nil || status.currentKg == nil {
+            event = "goalNone"
+        } else if status.reached {
+            event = "goalReachedHome"
+            pose = .doubleThumbs
+        } else {
+            event = "goalProgress"
+            if let progress = status.progress, progress >= 0.75 { pose = .doubleThumbs }
+        }
+        let text = line(event, goalType: goal.type, tags: context.tags, streakDays: stats.streakDays,
+                        values: values, now: now) ?? ""
+        return MochiPresentation(pose: pose, text: text, display: status.currentKg?.formatted(1) ?? "– –")
+    }
+
     // MARK: - Notifications
 
     /// Body of the "Weigh-in saved" notification in Mochi's voice.
@@ -296,4 +350,16 @@ final class MochiCoordinator: ObservableObject {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
     }
+}
+
+/// What the Goal page knows about the goal, so Mochi's line matches what the page shows.
+struct MochiGoalStatus: Equatable {
+    /// Trend weight now (nil before the first weigh-in).
+    var currentKg: Double?
+    /// The page shows the goal as reached (maintenance).
+    var reached: Bool
+    /// Progress 0...1 as on the ring; nil without a goal.
+    var progress: Double?
+    /// Days the trend has stayed in the goal range, once reached.
+    var daysInRange: Int?
 }

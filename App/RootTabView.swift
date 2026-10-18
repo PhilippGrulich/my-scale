@@ -53,10 +53,11 @@ struct RootTabView: View {
         }
         .task {
             #if DEBUG
-            // `-startTab settings|measure` on launch opens that tab (simulator screenshots).
+            // `-startTab settings|measure|goal` on launch opens that tab (simulator screenshots).
             switch UserDefaults.standard.string(forKey: "startTab") {
             case "settings", "profile": selection = .settings
             case "measure": selection = .measure
+            case "goal": selection = .goal
             default: break
             }
             #endif

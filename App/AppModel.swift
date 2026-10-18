@@ -473,6 +473,18 @@ final class AppModel: ObservableObject {
         mochi.refreshHome(history: weightHistory, profile: profile)
     }
 
+    /// Goal page appear / foreground: a new goal line only if the old one is stale.
+    func refreshMochiGoalIfStale(status: MochiGoalStatus) {
+        guard mochi.settings.enabled else { return }
+        mochi.refreshGoalIfStale(history: weightHistory, profile: profile, status: status)
+    }
+
+    /// A new goal line on request (tap) or when the goal or its state changed.
+    func refreshMochiGoal(status: MochiGoalStatus) {
+        guard mochi.settings.enabled else { return }
+        mochi.refreshGoal(history: weightHistory, profile: profile, status: status)
+    }
+
     /// A weigh-in result was on screen in the foreground: its reaction was seen, so a stash of
     /// the same reaction (made because the app was inactive at that moment) must not show again.
     private func noteWeighInResultSeen() {
