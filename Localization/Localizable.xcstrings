@@ -20,6 +20,16 @@
         }
       }
     },
+    "%@ and above": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ und mehr"
+          }
+        }
+      }
+    },
     "%@ history needs at least two weigh-ins.": {
       "localizations": {
         "de": {
@@ -112,6 +122,17 @@
     "%@ kg · %@": {
       "shouldTranslate": false
     },
+    "%@ kg ÷ (%@ m)² = %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ kg ÷ (%2$@ m)² = %3$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
     "%@ kg/wk": {
       "localizations": {
         "de": {
@@ -134,6 +155,17 @@
       "shouldTranslate": false
     },
     "%@%@ kg": {
+      "shouldTranslate": false
+    },
+    "%@–%@ kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@–%2$@ kg"
+          }
+        }
+      },
       "shouldTranslate": false
     },
     "%lld %%": {
@@ -322,12 +354,35 @@
     "BMI": {
       "shouldTranslate": false
     },
+    "BMI %@": {
+      "shouldTranslate": false
+    },
+    "BMI = weight ÷ height²": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI = Gewicht ÷ Größe²"
+          }
+        }
+      }
+    },
     "BMI at goal": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "BMI beim Ziel"
+          }
+        }
+      }
+    },
+    "BMI only relates weight to height. It can't tell muscle from fat, so very muscular people can show a high BMI while being lean — and a normal BMI can still hide a high body-fat share.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der BMI setzt nur Gewicht und Größe ins Verhältnis. Er unterscheidet nicht zwischen Muskeln und Fett – sehr muskulöse Menschen können einen hohen BMI haben und trotzdem schlank sein, und ein normaler BMI kann einen hohen Körperfettanteil verbergen."
           }
         }
       }
@@ -491,6 +546,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abbrechen"
+          }
+        }
+      }
+    },
+    "Categories": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorien"
           }
         }
       }
@@ -937,6 +1002,16 @@
         }
       }
     },
+    "How it's calculated": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "So wird er berechnet"
+          }
+        }
+      }
+    },
     "Identity": {
       "localizations": {
         "de": {
@@ -983,6 +1058,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sie wacht auf, sobald du dich draufstellst, und erscheint dann hier."
+          }
+        }
+      }
+    },
+    "It's not meant for children, during pregnancy, or for judging health on its own. Talk to a doctor for medical advice.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er ist nicht für Kinder, in der Schwangerschaft oder als alleiniges Gesundheitsurteil gedacht. Für medizinischen Rat wende dich an eine Ärztin oder einen Arzt."
           }
         }
       }
@@ -2146,6 +2231,16 @@
         }
       }
     },
+    "Weigh in again to see how your BMI develops.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich noch einmal, um zu sehen, wie sich dein BMI entwickelt."
+          }
+        }
+      }
+    },
     "Weigh in again to start seeing your trend.": {
       "localizations": {
         "de": {
@@ -2266,12 +2361,32 @@
         }
       }
     },
+    "Weights for your height of %lld cm (WHO categories for adults).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewichte für deine Größe von %lld cm (WHO-Kategorien für Erwachsene)."
+          }
+        }
+      }
+    },
     "Welcome": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Willkommen"
+          }
+        }
+      }
+    },
+    "What BMI doesn't show": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was der BMI nicht zeigt"
           }
         }
       }
@@ -2296,6 +2411,16 @@
         }
       }
     },
+    "You": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du"
+          }
+        }
+      }
+    },
     "You can pair it again from New measurement.": {
       "localizations": {
         "de": {
@@ -2306,12 +2431,48 @@
         }
       }
     },
+    "You're %@ kg above the healthy range for your height.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du liegst %@ kg über dem gesunden Bereich für deine Größe."
+          }
+        }
+      }
+    },
+    "You're %@ kg below the healthy range for your height.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du liegst %@ kg unter dem gesunden Bereich für deine Größe."
+          }
+        }
+      }
+    },
     "You're all set": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Alles bereit"
+          }
+        }
+      }
+    },
+    "You're inside the healthy range — %@ kg above its lower and %@ kg below its upper end.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du liegst im gesunden Bereich – %1$@ kg über der Unter- und %2$@ kg unter der Obergrenze."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "You're inside the healthy range — %1$@ kg above its lower and %2$@ kg below its upper end."
           }
         }
       }
@@ -2332,6 +2493,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dein 30-Tage-Trend entfernt sich gerade von deinem Ziel."
+          }
+        }
+      }
+    },
+    "Your BMI appears after your first weigh-in.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein BMI erscheint nach deiner ersten Messung."
           }
         }
       }
@@ -2358,6 +2529,26 @@
           "stringUnit": {
             "state": "new",
             "value": "Your goal range is %1$@–%2$@ kg."
+          }
+        }
+      }
+    },
+    "Your healthy range": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein gesunder Bereich"
+          }
+        }
+      }
+    },
+    "Your height comes from Settings; update it there if it changed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Größe stammt aus den Einstellungen – passe sie dort an, falls sie sich geändert hat."
           }
         }
       }
@@ -2392,6 +2583,16 @@
         }
       }
     },
+    "Your scale measured a body fat of %@ %%, which says more about body composition than BMI alone.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Waage hat einen Körperfettanteil von %@ %% gemessen – das sagt mehr über deine Körperzusammensetzung als der BMI allein."
+          }
+        }
+      }
+    },
     "Your trend is %@ kg above your goal.": {
       "localizations": {
         "de": {
@@ -2422,6 +2623,22 @@
         }
       }
     },
+    "at %@ kg and %lld cm": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bei %1$@ kg und %2$lld cm"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "at %1$@ kg and %2$lld cm"
+          }
+        }
+      }
+    },
     "for %lld days": {
       "localizations": {
         "de": {
@@ -2438,6 +2655,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "seit 1 Tag"
+          }
+        }
+      }
+    },
+    "from %@ kg": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ab %@ kg"
           }
         }
       }
@@ -2491,6 +2718,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "stabil"
+          }
+        }
+      }
+    },
+    "under %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "unter %@"
+          }
+        }
+      }
+    },
+    "under %@ kg": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "unter %@ kg"
           }
         }
       }

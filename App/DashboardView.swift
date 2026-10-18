@@ -4,6 +4,7 @@ import MyOpenScaleCore
 struct DashboardView: View {
     @EnvironmentObject var model: AppModel
     @State private var selectedMetric: HealthKitSink.MetricKind?
+    @State private var showingBMI = false
     /// Tapping "To goal" / the chart header jumps to the Goal / History tab.
     var onShowGoal: () -> Void = {}
     var onShowHistory: () -> Void = {}
@@ -15,6 +16,9 @@ struct DashboardView: View {
                 .toolbarVisibility(.hidden, for: .navigationBar)
                 .sheet(item: $selectedMetric) { kind in
                     MetricDetailView(kind: kind).environmentObject(model)
+                }
+                .navigationDestination(isPresented: $showingBMI) {
+                    BMIDetailView()
                 }
         }
     }
@@ -79,7 +83,8 @@ struct DashboardView: View {
 
     private func metricCard(_ kind: HealthKitSink.MetricKind, value: Double?,
                             unit: String, image: String, tint: Color) -> some View {
-        Button { selectedMetric = kind } label: {
+        // BMI gets its own explanatory page; the others show their history.
+        Button { if kind == .bmi { showingBMI = true } else { selectedMetric = kind } } label: {
             MetricCardView(title: kind.title, systemImage: image, value: value, unit: unit, tint: tint)
         }
         .buttonStyle(.plain)

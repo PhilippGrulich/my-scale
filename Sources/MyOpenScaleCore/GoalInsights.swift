@@ -135,8 +135,13 @@ public enum GoalInsights {
 
     /// Weight range for a healthy BMI (18.5–25) at this height.
     public static func healthyWeightRange(heightCm: Double) -> ClosedRange<Double> {
+        weightForBMI(18.5, heightCm: heightCm)...weightForBMI(25, heightCm: heightCm)
+    }
+
+    /// The weight that gives `bmi` at this height (inverse of the BMI formula).
+    public static func weightForBMI(_ bmi: Double, heightCm: Double) -> Double {
         let m = heightCm / 100
-        return (18.5 * m * m)...(25 * m * m)
+        return bmi * m * m
     }
 
     /// For each of the last `days` calendar days (oldest first), whether there

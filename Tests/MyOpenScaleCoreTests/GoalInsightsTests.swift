@@ -104,6 +104,12 @@ final class GoalInsightsTests: XCTestCase {
         XCTAssertEqual(BMICategory(bmi: 31), .obese)
     }
 
+    func testWeightForBMIInvertsTheFormula() {
+        XCTAssertEqual(GoalInsights.weightForBMI(25, heightCm: 180), 81, accuracy: 1e-9)
+        let w = GoalInsights.weightForBMI(22, heightCm: 175)
+        XCTAssertEqual(BodyCompositionCalculator.bmi(weightKg: w, heightCm: 175), 22, accuracy: 1e-9)
+    }
+
     // MARK: - Consistency
 
     func testWeighInDaysMarksLoggedDays() {
