@@ -66,11 +66,10 @@ struct DashboardView: View {
     // MARK: - Sections
 
     private var metricCards: some View {
-        let c = model.latestComposition
-        return HStack(spacing: 12) {
-            metricCard(.bodyFat, value: c?.bodyFatPercent, unit: "%", image: "drop.fill", tint: .orange)
-            metricCard(.lean, value: c?.leanMassKg, unit: "kg", image: "figure.arms.open", tint: Theme.accentSecondary)
-            metricCard(.bmi, value: c?.bmi, unit: "", image: "ruler.fill", tint: Theme.accent)
+        HStack(spacing: 12) {
+            metricCard(.bodyFat, value: model.latestValue(.bodyFat), unit: "%", image: "drop.fill", tint: .orange)
+            metricCard(.lean, value: model.latestValue(.lean), unit: "kg", image: "figure.arms.open", tint: Theme.accentSecondary)
+            metricCard(.bmi, value: model.latestValue(.bmi), unit: "", image: "ruler.fill", tint: Theme.accent)
         }
     }
 

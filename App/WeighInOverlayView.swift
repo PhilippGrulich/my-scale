@@ -10,6 +10,8 @@ struct WeighInOverlayView: View {
     let bleStatus: BLEStatus
     let onAccept: () -> Void
     let onDismiss: () -> Void
+    /// Escape hatch while waiting: no scale at hand / Bluetooth unavailable.
+    var onEnterManually: (() -> Void)? = nil
 
     var body: some View {
         ZStack {
@@ -29,7 +31,7 @@ struct WeighInOverlayView: View {
         case .idle:
             Color.clear
         case .waiting:
-            WaitingView(bleStatus: bleStatus, onCancel: onDismiss)
+            WaitingView(bleStatus: bleStatus, onCancel: onDismiss, onEnterManually: onEnterManually)
         case .measuring(let w):
             MeasuringView(weightKg: w, label: "Reading weight…",
                           hint: "Stay still on the scale.",
@@ -46,9 +48,10 @@ struct WeighInOverlayView: View {
 
 // MARK: - Waiting (armed, no adverts yet)
 
-private struct WaitingView: View {
+struct WaitingView: View {
     let bleStatus: BLEStatus
-    let onCancel: () -> Void
+    var onCancel: (() -> Void)? = nil
+    var onEnterManually: (() -> Void)? = nil
 
     /// Bluetooth is usable and we're actively listening.
     private var isListening: Bool { bleStatus == .scanning }
@@ -77,11 +80,27 @@ private struct WaitingView: View {
                     .padding(.horizontal, 8)
             }
 
-            Button(action: onCancel) {
-                Text("Cancel").font(.headline)
+            VStack(spacing: 12) {
+                if let onEnterManually {
+                    let button = Button(action: onEnterManually) {
+                        Label("Enter manually", systemImage: "square.and.pencil")
+                            .font(.headline)
+                    }
+                    // The prominent choice once Bluetooth is clearly not working.
+                    if isListening {
+                        button.buttonStyle(.glass).tint(Theme.accent)
+                    } else {
+                        button.buttonStyle(.borderedProminent).tint(Theme.accent)
+                    }
+                }
+                if let onCancel {
+                    Button(action: onCancel) {
+                        Text("Cancel").font(.headline)
+                    }
+                    .buttonStyle(.glass)
+                    .tint(.secondary)
+                }
             }
-            .buttonStyle(.glass)
-            .tint(.secondary)
         }
         .animation(.snappy, value: isListening)
     }
@@ -89,7 +108,7 @@ private struct WaitingView: View {
 
 // MARK: - Measuring
 
-private struct MeasuringView: View {
+struct MeasuringView: View {
     let weightKg: Double
     let label: LocalizedStringKey
     let hint: LocalizedStringKey
@@ -171,8 +190,11 @@ private struct PulsingRing: View {
 
 // MARK: - Result
 
-private struct ResultView: View {
+struct ResultView: View {
     let reading: LoggedReading
+    /// The full-screen overlay closes on tap; the Add Measurement sheet has
+    /// its own Done button instead.
+    var showsDismissHint = true
     @State private var appeared = false
 
     var body: some View {
@@ -199,10 +221,12 @@ private struct ResultView: View {
 
             syncLine
 
-            Text("Tap anywhere to dismiss")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.top, 4)
+            if showsDismissHint {
+                Text("Tap anywhere to dismiss")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 4)
+            }
         }
         .scaleEffect(appeared ? 1 : 0.85)
         .opacity(appeared ? 1 : 0)

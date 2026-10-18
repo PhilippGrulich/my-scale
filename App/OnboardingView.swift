@@ -142,8 +142,8 @@ struct OnboardingView: View {
             }
         }
         .padding(.vertical, 40)
-        .onAppear { model.beginOnboardingScan() }
-        .onDisappear { model.endOnboardingScan() }
+        .onAppear { model.beginPairingScan() }
+        .onDisappear { model.endPairingScan() }
     }
 
     private var doneStep: some View {

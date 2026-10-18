@@ -25,6 +25,18 @@ public enum BodyCompositionCalculator {
                                bmi: bmi(weightKg: w, heightCm: profile.heightCm))
     }
 
+    /// Composition for a manually entered weigh-in (no impedance): BMI from the
+    /// height, and — only when the user typed a body-fat % — lean mass derived
+    /// from it. Fat/lean are NaN otherwise, like `partial`.
+    public static func manual(weightKg w: Double, bodyFatPercent fat: Double?, heightCm h: Double) -> BodyComposition {
+        let validFat = fat.flatMap { (0...75).contains($0) ? $0 : nil }
+        return BodyComposition(
+            bodyMassKg: w,
+            bodyFatPercent: validFat ?? .nan,
+            leanMassKg: validFat.map { w * (1 - $0 / 100) } ?? .nan,
+            bmi: bmi(weightKg: w, heightCm: h))
+    }
+
     /// Weight-only composition for stabilized frames that carry no impedance:
     /// BMI is still well-defined; fat%/lean are left as NaN to signal "partial".
     public static func partial(weightKg w: Double, profile: BodyProfile) -> BodyComposition {

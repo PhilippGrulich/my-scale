@@ -12,7 +12,7 @@ struct MyOpenScaleApp: App {
                 if showOnboarding {
                     OnboardingView(onFinish: {
                         OnboardingStore.markCompleted()
-                        model.endOnboardingScan()
+                        model.endPairingScan()
                         showOnboarding = false
                     })
                 } else {
@@ -25,7 +25,7 @@ struct MyOpenScaleApp: App {
                 // Shortcuts sets a shared flag and opens the app; arm the
                 // measurement once we're active and past onboarding.
                 guard phase == .active, !showOnboarding else { return }
-                if MeasurementHandoff.consumePending() { model.startMeasurement() }
+                if MeasurementHandoff.consumePending() { model.addMeasurementRequested = true }
             }
         }
     }

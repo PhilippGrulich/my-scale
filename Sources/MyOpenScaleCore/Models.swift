@@ -29,11 +29,19 @@ public struct WeightSample: Equatable, Sendable, Identifiable {
     public let id: UUID
     public var date: Date
     public var weightKg: Double
+    /// False for samples another app (or a manual entry in the Health app)
+    /// wrote. HealthKit only lets an app delete its own samples.
+    public var isFromThisApp: Bool
+    /// Display name of the writing app/device, e.g. "Health" or "Withings".
+    public var sourceName: String?
 
-    public init(id: UUID, date: Date, weightKg: Double) {
+    public init(id: UUID, date: Date, weightKg: Double,
+                isFromThisApp: Bool = true, sourceName: String? = nil) {
         self.id = id
         self.date = date
         self.weightKg = weightKg
+        self.isFromThisApp = isFromThisApp
+        self.sourceName = sourceName
     }
 }
 

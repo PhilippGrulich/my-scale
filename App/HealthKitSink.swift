@@ -32,8 +32,9 @@ final class HealthKitSink {
     }
 
     /// Read types: characteristics for composition math (DOB / sex), height to
-    /// prefill the profile during onboarding, plus bodyMass so we can chart the
-    /// user's full weight history. HealthKit never reveals whether a read was
+    /// prefill the profile during onboarding, plus the body metrics so the
+    /// dashboard shows the user's full history — including entries other apps,
+    /// other scales or the Health app itself wrote. HealthKit never reveals whether a read was
     /// granted, so the app treats these as best-effort.
     private var readTypes: Set<HKObjectType> {
         Set(([
@@ -42,6 +43,9 @@ final class HealthKitSink {
         ] as [HKObjectType?] + [
             HKObjectType.quantityType(forIdentifier: .height),
             HKObjectType.quantityType(forIdentifier: .bodyMass),
+            HKObjectType.quantityType(forIdentifier: .bodyFatPercentage),
+            HKObjectType.quantityType(forIdentifier: .leanBodyMass),
+            HKObjectType.quantityType(forIdentifier: .bodyMassIndex),
         ]).compactMap { $0 })
     }
 
@@ -135,7 +139,25 @@ final class HealthKitSink {
             "MyOpenScaleAppBuild": appBuild,
             "MyOpenScaleUserID": profile.id.uuidString,
         ]
+        save(composition, at: capturedAt, metadata: metadata, completion: completion)
+    }
 
+    /// Write a weigh-in the user typed in (no scale). Flagged as user-entered so
+    /// Apple Health shows it as a manual entry. Completion on the main queue.
+    func writeManual(composition: BodyComposition,
+                     at date: Date,
+                     completion: @escaping (Result<Void, Error>) -> Void) {
+        guard Self.isAvailable else {
+            DispatchQueue.main.async { completion(.failure(SinkError.unavailable)) }
+            return
+        }
+        save(composition, at: date, metadata: [HKMetadataKeyWasUserEntered: true], completion: completion)
+    }
+
+    private func save(_ composition: BodyComposition,
+                      at capturedAt: Date,
+                      metadata: [String: Any],
+                      completion: @escaping (Result<Void, Error>) -> Void) {
         var samples: [HKQuantitySample] = []
 
         if let t = HKQuantityType.quantityType(forIdentifier: .bodyMass) {
@@ -231,10 +253,14 @@ final class HealthKitSink {
                 return
             }
             let kg = HKUnit.gramUnit(with: .kilo)
+            let ownBundle = HKSource.default().bundleIdentifier
             let result: [WeightSample] = (samples as? [HKQuantitySample] ?? []).map {
-                WeightSample(id: $0.uuid,
-                             date: $0.startDate,
-                             weightKg: $0.quantity.doubleValue(for: kg))
+                let source = $0.sourceRevision.source
+                return WeightSample(id: $0.uuid,
+                                    date: $0.startDate,
+                                    weightKg: $0.quantity.doubleValue(for: kg),
+                                    isFromThisApp: source.bundleIdentifier == ownBundle,
+                                    sourceName: source.name)
             }
             DispatchQueue.main.async { completion(.success(result)) }
         }
@@ -291,6 +317,42 @@ final class HealthKitSink {
         store.execute(query)
     }
 
+    /// Most recent value of a metric from any source (nil if none / denied).
+    func readLatest(_ kind: MetricKind, completion: @escaping (MetricSample?) -> Void) {
+        guard Self.isAvailable, let type = HKQuantityType.quantityType(forIdentifier: kind.hkIdentifier) else {
+            DispatchQueue.main.async { completion(nil) }
+            return
+        }
+        let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let query = HKSampleQuery(sampleType: type, predicate: nil, limit: 1, sortDescriptors: [sort]) { _, samples, _ in
+            let latest = (samples as? [HKQuantitySample])?.first.map {
+                MetricSample(id: $0.uuid, date: $0.startDate,
+                             value: $0.quantity.doubleValue(for: kind.hkUnit) * kind.displayScale)
+            }
+            DispatchQueue.main.async { completion(latest) }
+        }
+        store.execute(query)
+    }
+
+    private var observers: [HKObserverQuery] = []
+
+    /// Call `onChange` (main queue) whenever any app adds or deletes weight or
+    /// body-composition samples, e.g. a manual entry in the Health app, so the
+    /// dashboard refreshes while it's open. Idempotent.
+    func observeBodyChanges(_ onChange: @escaping () -> Void) {
+        guard Self.isAvailable, observers.isEmpty else { return }
+        let ids: [HKQuantityTypeIdentifier] = [.bodyMass, .bodyFatPercentage, .leanBodyMass, .bodyMassIndex]
+        for id in ids {
+            guard let type = HKQuantityType.quantityType(forIdentifier: id) else { continue }
+            let query = HKObserverQuery(sampleType: type, predicate: nil) { _, completionHandler, error in
+                if error == nil { DispatchQueue.main.async { onChange() } }
+                completionHandler()
+            }
+            observers.append(query)
+            store.execute(query)
+        }
+    }
+
     /// Delete a weigh-in: removes the body samples THIS app wrote at `date`
     /// (weight, BMI, body fat, lean mass) from Apple Health. Only our own source
     /// is touched, so manual Health entries / other apps are left alone.
@@ -335,6 +397,16 @@ final class HealthKitSink {
             if let firstError { completion(.failure(firstError)) }
             else { completion(.success(())) }
         }
+    }
+
+    /// HealthKit's own texts ("Not authorized") are terse and not always
+    /// localized; for a denied share, say where to turn it on.
+    static func userMessage(for error: Error) -> String {
+        if let hk = error as? HKError,
+           hk.code == .errorAuthorizationDenied || hk.code == .errorAuthorizationNotDetermined {
+            return String(localized: "MyOpenScale may not save to Apple Health. Allow it in the Health app under Profile › Apps › MyOpenScale.")
+        }
+        return error.localizedDescription
     }
 
     enum SinkError: LocalizedError {

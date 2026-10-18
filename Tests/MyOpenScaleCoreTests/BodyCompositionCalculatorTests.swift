@@ -47,4 +47,26 @@ final class BodyCompositionCalculatorTests: XCTestCase {
         XCTAssertTrue(result.bodyFatPercent.isNaN)
         XCTAssertTrue(result.leanMassKg.isNaN)
     }
+
+    // MARK: - manual entry
+
+    func testManualEntryWithoutBodyFatHasBMIOnly() {
+        let c = BodyCompositionCalculator.manual(weightKg: 80, bodyFatPercent: nil, heightCm: 180)
+        XCTAssertEqual(c.bodyMassKg, 80)
+        XCTAssertEqual(c.bmi, 24.69, accuracy: 0.01)
+        XCTAssertTrue(c.bodyFatPercent.isNaN)
+        XCTAssertTrue(c.leanMassKg.isNaN)
+    }
+
+    func testManualEntryDerivesLeanMassFromBodyFat() {
+        let c = BodyCompositionCalculator.manual(weightKg: 80, bodyFatPercent: 20, heightCm: 180)
+        XCTAssertEqual(c.bodyFatPercent, 20)
+        XCTAssertEqual(c.leanMassKg, 64, accuracy: 1e-9)
+    }
+
+    func testManualEntryIgnoresImplausibleBodyFat() {
+        let c = BodyCompositionCalculator.manual(weightKg: 80, bodyFatPercent: 120, heightCm: 180)
+        XCTAssertTrue(c.bodyFatPercent.isNaN)
+        XCTAssertTrue(c.leanMassKg.isNaN)
+    }
 }

@@ -1,37 +1,22 @@
 import SwiftUI
 
 /// Bottom tab bar: overview · "+" weigh-in action (center) · profile. Owns the
-/// app-wide pieces (weigh-in overlay, Health loading, foreground refresh) so a
-/// measurement started from Control Center / Siri shows no matter which tab is
-/// open.
+/// app-wide pieces (Add Measurement sheet, passive weigh-in overlay, Health
+/// loading, foreground refresh) so they work no matter which tab is open.
 struct RootTabView: View {
     @EnvironmentObject var model: AppModel
     @Environment(\.scenePhase) private var scenePhase
 
     enum TabID: Hashable { case overview, measure, profile }
     @State private var selection: TabID = .overview
-
-    /// The "+" tab is an action, not a destination: selecting it starts a
-    /// measurement and leaves the current tab selected.
-    private var tabSelection: Binding<TabID> {
-        Binding(
-            get: { selection },
-            set: { tab in
-                if tab == .measure {
-                    model.startMeasurement()
-                } else {
-                    selection = tab
-                }
-            }
-        )
-    }
+    @State private var showingAddMeasurement = false
 
     var body: some View {
-        TabView(selection: tabSelection) {
+        TabView(selection: $selection) {
             Tab("Overview", systemImage: "gauge.with.dots.needle.67percent", value: TabID.overview) {
                 DashboardView()
             }
-            // Action tab: selecting it starts a weigh-in (see `tabSelection`).
+            // Action tab: selecting it opens Add Measurement (see onChange below).
             Tab("Weigh in", systemImage: "plus.circle.fill", value: TabID.measure) {
                 Color.clear
             }
@@ -40,7 +25,28 @@ struct RootTabView: View {
             }
         }
         .tint(Theme.accent)
+        // The "+" tab is an action, not a destination: when it gets selected,
+        // jump straight back to the previous tab and open the sheet.
+        // (Refusing the selection in a custom Binding instead leaves TabView
+        // thinking "+" is selected, so every second tap was ignored.)
+        .onChange(of: selection) { previous, tab in
+            guard tab == .measure else { return }
+            selection = previous
+            showingAddMeasurement = true
+        }
         .tabBarMinimizeBehavior(.onScrollDown)
+        .sheet(isPresented: addMeasurementBinding) {
+            AddMeasurementView(startIn: model.hasPairedScale ? .scale : .manual)
+                .environmentObject(model)
+        }
+        // Control Center / Siri / Shortcuts "Start Weigh-In".
+        .onChange(of: model.addMeasurementRequested, initial: true) { _, requested in
+            guard requested else { return }
+            model.addMeasurementRequested = false
+            showingAddMeasurement = true
+        }
+        // Passive weigh-ins (stepping on the scale with the app open) still get
+        // the full-screen overlay — unless the sheet is already showing them.
         .fullScreenCover(isPresented: overlayBinding) {
             WeighInOverlayView(phase: model.measurementPhase,
                                startedAt: model.liveStartedAt,
@@ -57,9 +63,25 @@ struct RootTabView: View {
         }
     }
 
+    /// Closing the sheet (Done, Cancel, swipe-down) ends its measurement in the
+    /// same update, so the overlay below never re-shows the reading the sheet
+    /// was already displaying.
+    private var addMeasurementBinding: Binding<Bool> {
+        Binding(
+            get: { showingAddMeasurement },
+            set: { presented in
+                if !presented {
+                    model.endPairingScan()
+                    model.dismissOverlay()
+                }
+                showingAddMeasurement = presented
+            }
+        )
+    }
+
     private var overlayBinding: Binding<Bool> {
         Binding(
-            get: { model.measurementPhase.isActive },
+            get: { model.measurementPhase.isActive && !showingAddMeasurement },
             set: { if !$0 { model.dismissOverlay() } }
         )
     }

@@ -7,6 +7,7 @@ import MyOpenScaleCore
 struct ProfileEditorView: View {
     @EnvironmentObject var model: AppModel
     @State private var draft = StoredProfile.makeDefault()
+    @State private var confirmingUnpair = false
 
     private var hasChanges: Bool { draft != model.profile }
 
@@ -37,6 +38,24 @@ struct ProfileEditorView: View {
                                   lastError: model.lastSyncError,
                                   onAuthorize: { model.requestHealthAuthorization() },
                                   inline: true)
+                    HStack {
+                        Label("Scale", systemImage: "scalemass")
+                        Spacer()
+                        if model.hasPairedScale {
+                            Button("Unpair", role: .destructive) { confirmingUnpair = true }
+                                .font(.subheadline)
+                        } else {
+                            Text("Not paired")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .confirmationDialog("Unpair this scale?", isPresented: $confirmingUnpair,
+                                        titleVisibility: .visible) {
+                        Button("Unpair", role: .destructive) { model.unpairScale() }
+                    } message: {
+                        Text("You can pair it again from New measurement.")
+                    }
                     HStack {
                         Label("Bluetooth", systemImage: "dot.radiowaves.left.and.right")
                         Spacer()

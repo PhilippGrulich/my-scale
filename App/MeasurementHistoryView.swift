@@ -8,6 +8,7 @@ struct MeasurementHistoryView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var pendingDelete: WeightSample?
+    @State private var showingManualEntry = false
 
     private var samples: [WeightSample] {
         model.weightHistory.sorted { $0.date > $1.date }
@@ -19,23 +20,34 @@ struct MeasurementHistoryView: View {
                 if samples.isEmpty {
                     ContentUnavailableView("No measurements yet",
                                            systemImage: "scalemass",
-                                           description: Text("Weigh-ins you take will appear here."))
+                                           description: Text("Weigh-ins from your scale, manual entries and Apple Health appear here."))
                 } else {
                     List {
                         ForEach(samples) { sample in
                             HStack(alignment: .firstTextBaseline) {
-                                Text(sample.weightKg.formatted(1) + " kg")
-                                    .font(.headline.monospacedDigit())
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(sample.weightKg.formatted(1) + " kg")
+                                        .font(.headline.monospacedDigit())
+                                    // Entries from the Health app or other apps can't
+                                    // be deleted here — say where they came from.
+                                    if !sample.isFromThisApp, let source = sample.sourceName {
+                                        Label(source, systemImage: "heart.text.square")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
                                 Spacer()
                                 Text(sample.date, format: .dateTime.month().day().year().hour().minute())
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    pendingDelete = sample
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
+                                if sample.isFromThisApp {
+                                    Button(role: .destructive) {
+                                        pendingDelete = sample
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
@@ -45,9 +57,19 @@ struct MeasurementHistoryView: View {
             .navigationTitle("History")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showingManualEntry = true } label: {
+                        Image(systemName: "plus")
+                    }
+                    .accessibilityLabel("New measurement")
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
+            }
+            .sheet(isPresented: $showingManualEntry) {
+                AddMeasurementView(startIn: model.hasPairedScale ? .scale : .manual)
+                    .environmentObject(model)
             }
             .confirmationDialog("Delete this weigh-in?",
                                 isPresented: deleteDialogBinding,

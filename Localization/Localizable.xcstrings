@@ -1,6 +1,9 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%": {
+      "shouldTranslate": false
+    },
     "%@": {
       "shouldTranslate": false
     },
@@ -124,6 +127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eine Messung mit %@ kg muss bestätigt werden."
+          }
+        }
+      }
+    },
+    "Add weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eintragen"
           }
         }
       }
@@ -427,6 +440,26 @@
         }
       }
     },
+    "Enter manually": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manuell eintragen"
+          }
+        }
+      }
+    },
+    "Enter manually instead": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stattdessen manuell eintragen"
+          }
+        }
+      }
+    },
     "Example reading. Nothing was saved to Apple Health.": {
       "localizations": {
         "de": {
@@ -587,6 +620,16 @@
         }
       }
     },
+    "It wakes up when you stand on it and shows up here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sie wacht auf, sobald du dich draufstellst, und erscheint dann hier."
+          }
+        }
+      }
+    },
     "Lean": {
       "localizations": {
         "de": {
@@ -680,12 +723,32 @@
     "MyOpenScale": {
       "shouldTranslate": false
     },
+    "MyOpenScale may not save to Apple Health. Allow it in the Health app under Profile › Apps › MyOpenScale.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MyOpenScale darf nicht in Apple Health sichern. Erlaube es in der Health-App unter Profil › Apps › MyOpenScale."
+          }
+        }
+      }
+    },
     "Name": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Name"
+          }
+        }
+      }
+    },
+    "New measurement": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Messung"
           }
         }
       }
@@ -790,6 +853,16 @@
         }
       }
     },
+    "Not paired": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht gekoppelt"
+          }
+        }
+      }
+    },
     "Not saved to Health": {
       "localizations": {
         "de": {
@@ -826,6 +899,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Übersicht"
+          }
+        }
+      }
+    },
+    "Pair a scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waage koppeln"
+          }
+        }
+      }
+    },
+    "Pair scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waage koppeln"
           }
         }
       }
@@ -950,6 +1043,26 @@
         }
       }
     },
+    "Saved to Apple Health as a manual entry. BMI is calculated from your height, lean mass from your body fat.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird als manueller Eintrag in Apple Health gesichert. Der BMI wird aus deiner Größe berechnet, die fettfreie Masse aus deinem Körperfett."
+          }
+        }
+      }
+    },
+    "Saved to Apple Health as a manual entry. BMI is calculated from your height.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird als manueller Eintrag in Apple Health gesichert. Der BMI wird aus deiner Größe berechnet."
+          }
+        }
+      }
+    },
     "Saved to Health": {
       "localizations": {
         "de": {
@@ -986,6 +1099,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wird in Health gesichert …"
+          }
+        }
+      }
+    },
+    "Scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waage"
           }
         }
       }
@@ -1326,6 +1449,26 @@
         }
       }
     },
+    "Unpair": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entkoppeln"
+          }
+        }
+      }
+    },
+    "Unpair this scale?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Waage entkoppeln?"
+          }
+        }
+      }
+    },
     "Waiting for your scale… stand still once you're on and the reading will start automatically.": {
       "localizations": {
         "de": {
@@ -1396,6 +1539,16 @@
         }
       }
     },
+    "Weigh in on the scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf der Waage wiegen"
+          }
+        }
+      }
+    },
     "Weigh in to see your trend.": {
       "localizations": {
         "de": {
@@ -1416,12 +1569,22 @@
         }
       }
     },
-    "Weigh-ins you take will appear here.": {
+    "Weigh-ins from your scale, manual entries and Apple Health appear here.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deine Messungen erscheinen hier."
+            "value": "Messungen deiner Waage, manuelle Einträge und Daten aus Apple Health erscheinen hier."
+          }
+        }
+      }
+    },
+    "Weigh-ins with body fat, lean mass and BMI are then saved automatically.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messungen mit Körperfett, fettfreier Masse und BMI werden dann automatisch gesichert."
           }
         }
       }
@@ -1462,6 +1625,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ja, diese Waage koppeln"
+          }
+        }
+      }
+    },
+    "You can pair it again from New measurement.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst sie unter „Neue Messung“ wieder koppeln."
           }
         }
       }

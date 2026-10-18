@@ -64,6 +64,14 @@ final class AppModel: ObservableObject {
     /// progress + the "save current weight" escape hatch). Nil when idle.
     @Published private(set) var liveStartedAt: Date?
     @Published private(set) var weightHistory: [WeightSample] = []
+    /// Set when something outside the UI (Control Center, Siri, Shortcuts) asks
+    /// for a new measurement; `RootTabView` opens the Add Measurement sheet and
+    /// clears it.
+    @Published var addMeasurementRequested = false
+    /// Newest body-fat / lean / BMI value in Apple Health from any source (this
+    /// app, another scale's app, a manual Health entry).
+    @Published private(set) var latestMetrics: [HealthKitSink.MetricKind: HealthKitSink.MetricSample] = [:]
+    private var healthReloadTask: Task<Void, Never>?
     @Published private(set) var lastSyncError: String?
     /// Live scale detected during onboarding pairing: which peripheral + its
     /// current weight. Nil until a real weigh-in frame arrives while scanning.
@@ -82,13 +90,13 @@ final class AppModel: ObservableObject {
 
     /// The remembered scale (peripheral.identifier). When set, only readings from
     /// this peripheral are accepted; others are ignored entirely.
-    private var pairedScaleID: UUID?
+    @Published private(set) var pairedScaleID: UUID?
     /// Learned weight+impedance signatures: who is the owner vs. known others.
     /// Drives "is this me?" attribution (replaces weight-range matching).
     private var attribution = AttributionModel()
     /// True while the onboarding scale step is scanning, so `appendFrame` will
     /// surface a `scaleCandidate`.
-    private var onboardingScanActive = false
+    private var pairingScanActive = false
     /// True when the user explicitly tapped "Start new measurement". Keeps the
     /// overlay armed (returning to `.waiting`, not `.idle`) if frames pause, so a
     /// deliberate weigh-in isn't dismissed before the user steps on.
@@ -161,6 +169,18 @@ final class AppModel: ObservableObject {
         lastOwnReading?.composition
     }
 
+    /// Dashboard card value: the newest Apple Health value, falling back to the
+    /// last scale reading (e.g. before Health access is granted). NaN = none.
+    func latestValue(_ kind: HealthKitSink.MetricKind) -> Double? {
+        if let v = latestMetrics[kind]?.value { return v }
+        guard let c = latestComposition else { return nil }
+        switch kind {
+        case .bodyFat: return c.bodyFatPercent
+        case .lean: return c.leanMassKg
+        case .bmi: return c.bmi
+        }
+    }
+
     // MARK: - Lifecycle
 
     func requestHealthAuthorization() {
@@ -199,16 +219,19 @@ final class AppModel: ObservableObject {
         saveProfile(profile.applying(prefill: prefill))
     }
 
-    /// Begin scanning for the user's scale during the pairing step.
-    func beginOnboardingScan() {
-        onboardingScanActive = true
+    var hasPairedScale: Bool { pairedScaleID != nil }
+
+    /// Begin scanning for a scale to pair (onboarding, or the Add Measurement
+    /// sheet's pairing mode).
+    func beginPairingScan() {
+        pairingScanActive = true
         scaleCandidate = nil
         scanner.start()
     }
 
     /// Stop surfacing scale candidates once the pairing step is done.
-    func endOnboardingScan() {
-        onboardingScanActive = false
+    func endPairingScan() {
+        pairingScanActive = false
         scaleCandidate = nil
     }
 
@@ -251,6 +274,8 @@ final class AppModel: ObservableObject {
             return
         }
         #endif
+        healthKit.observeBodyChanges { [weak self] in self?.scheduleHealthReload() }
+        loadLatestMetrics()
         healthKit.readWeightHistory { [weak self] result in
             guard let self else { return }
             switch result {
@@ -354,7 +379,56 @@ final class AppModel: ObservableObject {
 
     /// Delete a stored weigh-in from Apple Health (the samples this app wrote at
     /// that time) and from the in-app history. Refreshes the chart on success.
+    /// Several observer callbacks arrive per change (one per metric type, and
+    /// for our own writes too); coalesce them into one reload.
+    private func scheduleHealthReload() {
+        healthReloadTask?.cancel()
+        healthReloadTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(400))
+            guard !Task.isCancelled else { return }
+            self?.loadWeightHistory()
+        }
+    }
+
+    private func loadLatestMetrics() {
+        for kind in HealthKitSink.MetricKind.allCases {
+            healthKit.readLatest(kind) { [weak self] sample in
+                self?.latestMetrics[kind] = sample
+            }
+        }
+    }
+
+    /// Save a weigh-in typed in by the user (no scale available, or catching up
+    /// on a missed day). BMI comes from the profile height; lean mass only when
+    /// a body-fat % was entered. Completion on the main queue.
+    func addManualMeasurement(weightKg: Double, bodyFatPercent: Double?, date: Date,
+                              completion: @escaping (Result<Void, Error>) -> Void) {
+        let composition = BodyCompositionCalculator.manual(weightKg: weightKg,
+                                                           bodyFatPercent: bodyFatPercent,
+                                                           heightCm: profile.heightCm)
+        // First Health use (user skipped "Connect" in onboarding): ask now.
+        guard healthAuth != .notRequested else {
+            healthKit.requestAuthorization { [weak self] state in
+                self?.healthAuth = state
+                self?.addManualMeasurement(weightKg: weightKg, bodyFatPercent: bodyFatPercent,
+                                           date: date, completion: completion)
+            }
+            return
+        }
+        healthKit.writeManual(composition: composition, at: date) { [weak self] result in
+            switch result {
+            case .success:
+                self?.lastSyncError = nil
+                self?.loadWeightHistory()
+            case .failure(let error):
+                self?.lastSyncError = error.localizedDescription
+            }
+            completion(result)
+        }
+    }
+
     func deleteMeasurement(_ sample: WeightSample) {
+        guard sample.isFromThisApp else { return }
         weightHistory.removeAll { $0.id == sample.id }
         readings.removeAll { abs($0.capturedAt.timeIntervalSince(sample.date)) < 1 }
         persistReadings()
@@ -475,7 +549,7 @@ final class AppModel: ObservableObject {
     private func appendFrame(_ frame: ObservedFrame) {
         recentFrames.insert(frame, at: 0)
         if recentFrames.count > maxFrames { recentFrames.removeLast(recentFrames.count - maxFrames) }
-        if onboardingScanActive,
+        if pairingScanActive,
            !frame.parsed.isWeightRemoved,
            frame.parsed.weightKg >= minLiveWeightKg {
             scaleCandidate = ScaleCandidate(peripheralID: frame.peripheralID,
