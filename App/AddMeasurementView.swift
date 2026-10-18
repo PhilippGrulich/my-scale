@@ -50,6 +50,8 @@ struct AddMeasurementView: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
+            // The rolling circle says what this page is; no title bar for manual entry.
+            .toolbarVisibility(mode == .manual ? .hidden : .automatic, for: .navigationBar)
         }
         .tint(Theme.accent)
         .onAppear(perform: enter)
