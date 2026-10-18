@@ -4,6 +4,8 @@ import SwiftUI
 struct MochiSpeechBubble: View {
     let text: String
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private static let tail: CGFloat = 10
 
     var body: some View {
@@ -22,7 +24,8 @@ struct MochiSpeechBubble: View {
                     .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
             )
             .frame(maxWidth: 220, alignment: .leading)
-            .transition(.scale(scale: 0.6, anchor: .leading).combined(with: .opacity))
+            // Reduce Motion: a plain crossfade instead of the scale pop.
+            .transition(reduceMotion ? .opacity : .scale(scale: 0.6, anchor: .leading).combined(with: .opacity))
     }
 }
 
