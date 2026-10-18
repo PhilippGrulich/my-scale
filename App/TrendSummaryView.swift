@@ -10,9 +10,11 @@ import MyOpenScaleCore
 struct TrendSummaryView: View {
     let history: [WeightSample]
     let currentKg: Double?
-    let goalKg: Double?
+    let goal: WeightGoal
     /// Tapping the goal column (or "Set goal" when there is none) edits it.
     var onEditGoal: (() -> Void)? = nil
+
+    private var goalKg: Double? { goal.targetKg }
 
     private var sorted: [WeightSample] { history.sorted { $0.date < $1.date } }
     private var previous: WeightSample? { sorted.count >= 2 ? sorted[sorted.count - 2] : nil }
@@ -112,8 +114,10 @@ struct TrendSummaryView: View {
     }
 
     private func towardGoal(_ change: Double) -> Bool {
-        guard let g = goalKg, let c = currentKg, abs(g - c) >= 0.1 else { return change <= 0.05 }
-        return (g - c < 0) == (change < 0) || abs(change) < 0.05
+        guard let c = currentKg else { return change <= 0.05 }
+        // Without a target there is nothing to aim at, so down is good.
+        let effective = goal.targetKg == nil ? WeightGoal(type: .lose, targetKg: nil, startKg: nil) : goal
+        return effective.isToward(fromKg: c - change, toKg: c)
     }
 
     private func signed(_ kg: Double) -> String {

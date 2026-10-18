@@ -1045,6 +1045,16 @@
         }
       }
     },
+    "Gain weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zunehmen"
+          }
+        }
+      }
+    },
     "Get Started": {
       "localizations": {
         "de": {
@@ -1101,6 +1111,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ziel erreicht!"
+          }
+        }
+      }
+    },
+    "Goal type": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel"
           }
         }
       }
@@ -1382,6 +1402,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Live-Frames (%lld)"
+          }
+        }
+      }
+    },
+    "Lose weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abnehmen"
           }
         }
       }
@@ -2288,6 +2318,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wird gestartet …"
+          }
+        }
+      }
+    },
+    "Stay at my weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewicht halten"
           }
         }
       }

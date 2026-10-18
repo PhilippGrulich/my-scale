@@ -8,6 +8,7 @@ struct GoalEditorView: View {
     @EnvironmentObject var model: AppModel
     @Environment(\.dismiss) private var dismiss
 
+    @State private var goalType: GoalType = .lose
     @State private var goalKg: Double = 75
     @State private var hasTargetDate = false
     @State private var targetDate = Calendar.current.date(byAdding: .month, value: 3, to: Date()) ?? Date()
@@ -30,6 +31,15 @@ struct GoalEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Picker("Goal type", selection: $goalType) {
+                        Text("Lose weight").tag(GoalType.lose)
+                        Text("Gain weight").tag(GoalType.gain)
+                        Text("Stay at my weight").tag(GoalType.maintain)
+                    }
+                    .pickerStyle(.segmented)
+                }
+
                 Section {
                     HStack {
                         Text("Target weight")
@@ -135,6 +145,7 @@ struct GoalEditorView: View {
 
     private func load() {
         let p = model.profile
+        goalType = p.goalType ?? .lose
         if let goal = p.goalWeightKg {
             goalKg = goal
         } else if let current = model.currentWeightKg {
@@ -151,6 +162,7 @@ struct GoalEditorView: View {
 
     private func save() {
         var updated = model.profile
+        updated.goalType = goalType
         updated.goalWeightKg = (goalKg * 10).rounded() / 10
         updated.goalTargetDate = hasTargetDate ? targetDate : nil
         updated.goalBodyFatPercent = hasBodyFatGoal ? bodyFatGoal : nil

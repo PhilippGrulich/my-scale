@@ -34,7 +34,7 @@ struct DashboardView: View {
 
                     TrendSummaryView(history: model.weightHistory,
                                      currentKg: model.currentWeightKg,
-                                     goalKg: model.profile.goalWeightKg,
+                                     goal: model.profile.weightGoal,
                                      onEditGoal: onShowGoal)
 
                     // Discoverable when there's no data yet (e.g. App Review

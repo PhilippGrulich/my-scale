@@ -17,21 +17,7 @@ struct ProfileEditorView: View {
             Form {
                 ProfileFieldsView(draft: $draft)
 
-                Section("Goal") {
-                    if let goal = draft.goalWeightKg {
-                        Stepper(value: Binding(get: { goal }, set: { draft.goalWeightKg = $0 }),
-                                in: 30...250, step: 0.5) {
-                            HStack {
-                                Text("Target weight")
-                                Spacer()
-                                Text(goal.formatted(1) + " kg").foregroundStyle(.secondary)
-                            }
-                        }
-                        Button("Remove goal", role: .destructive) { draft.goalWeightKg = nil }
-                    } else {
-                        Button("Set a weight goal") { draft.goalWeightKg = 75 }
-                    }
-                }
+                GoalFieldsView(draft: $draft, currentWeightKg: model.currentWeightKg)
 
                 Section("Connections") {
                     SyncBadgeView(auth: model.healthAuth,

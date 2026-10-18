@@ -14,6 +14,8 @@ struct StoredProfile: Codable, Equatable {
     var weightMaxKg: Double
     /// Optional target weight for the goal/ETA UI. nil = no goal set.
     var goalWeightKg: Double?
+    /// Direction of the goal. nil on profiles saved before goal types existed (treated as lose).
+    var goalType: GoalType?
     /// Weight and date when the current goal was set — the 0 % point of the
     /// goal progress ring. Set by `AppModel.saveProfile` whenever the goal
     /// changes (optional, so older saved profiles still decode).
@@ -54,6 +56,11 @@ struct StoredProfile: Codable, Equatable {
         if let sex = prefill.sex { copy.sex = sex }
         if let h = prefill.heightCm, h > 0 { copy.heightCm = h }
         return copy
+    }
+
+    /// The goal as Mochi and the trend colours understand it.
+    var weightGoal: WeightGoal {
+        WeightGoal(type: goalType ?? .lose, targetKg: goalWeightKg, startKg: goalStartKg)
     }
 
     /// Map to the pure-core profile. This is always the HealthKit owner in v1
