@@ -1,8 +1,9 @@
 import SwiftUI
 import MyOpenScaleCore
 
-// Pose props around Mochi: confetti, sparkles, z's, heart, party hat, sweat drop, bell, cupcake.
-// Everything is drawn in Mochi's 200×200 design space (see `MochiView`).
+// Pose props around Mochi: confetti, sparkles, z's, heart, party hat, sunglasses, puffed cheeks,
+// sweat drop, bell, cupcake. Everything is drawn in Mochi's 200×200 design space (see `MochiView`),
+// placed around the cat: head top ≈ y 43, ear tips (60, 26) / (140, 26).
 
 /// Props behind the body (confetti falls behind Mochi).
 struct MochiBackProps: View {
@@ -27,20 +28,20 @@ struct MochiFrontProps: View {
     var body: some View {
         switch pose {
         case .thumbsUp:
-            MochiSparkles(spots: [.init(pt(184, 38), 11, MochiPalette.bulb, 0),
-                                  .init(pt(156, 24), 7, MochiPalette.blush, 0.15),
-                                  .init(pt(201, 66), 6, MochiPalette.sky, 0.3)],
+            MochiSparkles(spots: [.init(pt(186, 46), 11, MochiPalette.bulb, 0),
+                                  .init(pt(160, 20), 7, MochiPalette.blush, 0.15),
+                                  .init(pt(198, 80), 6, MochiPalette.sky, 0.3)],
                           style: .pop, period: 2.2, time: time, still: still)
         case .doubleThumbs:
-            MochiSparkles(spots: [.init(pt(16, 44), 8, MochiPalette.bulb, 0),
-                                  .init(pt(184, 44), 8, MochiPalette.bulb, 0.4),
-                                  .init(pt(70, 30), 6, MochiPalette.blush, 0.2),
-                                  .init(pt(150, 26), 6, MochiPalette.sky, 0.6)],
+            MochiSparkles(spots: [.init(pt(22, 50), 8, MochiPalette.bulb, 0),
+                                  .init(pt(178, 50), 8, MochiPalette.bulb, 0.4),
+                                  .init(pt(74, 20), 6, MochiPalette.blush, 0.2),
+                                  .init(pt(128, 18), 6, MochiPalette.sky, 0.6)],
                           style: .twinkle, period: 0.8, time: time, still: still)
         case .confetti where still:
-            MochiSparkles(spots: [.init(pt(40, 34), 9, MochiPalette.bulb, 0),
-                                  .init(pt(162, 30), 9, MochiPalette.blush, 0),
-                                  .init(pt(100, 14), 7, MochiPalette.sky, 0)],
+            MochiSparkles(spots: [.init(pt(30, 40), 9, MochiPalette.bulb, 0),
+                                  .init(pt(170, 36), 9, MochiPalette.blush, 0),
+                                  .init(pt(100, 22), 7, MochiPalette.sky, 0)],
                           style: .twinkle, period: 1, time: 0, still: true)
         case .snoozing:
             MochiZs(time: time, still: still, s: s)
@@ -50,7 +51,7 @@ struct MochiFrontProps: View {
     }
 }
 
-/// Props that ride along with the body (heart, party hat, sweat drop).
+/// Props that ride along with the head (hearts, party hat, sunglasses, cheeks, sweat drop).
 struct MochiHeadProps: View {
     let pose: MochiPose
     let time: Double
@@ -61,22 +62,27 @@ struct MochiHeadProps: View {
         switch pose {
         case .selfHug: MochiHearts(time: time, still: still)
         case .birthday: MochiPartyHat(s: s)
-        case .squishing: MochiSweatDrop(time: time, still: still)
+        case .doubleThumbs: MochiShades(time: time, still: still, s: s)
+        case .squishing:
+            MochiCheeks(time: time, still: still, s: s)
+            MochiSweatDrop(time: time, still: still)
         default: EmptyView()
         }
     }
 }
 
-/// Props held in Mochi's right hand; the caller rotates them with the right arm.
+/// Props held up in Mochi's right paw; `paw` is the paw's centre in design space.
 struct MochiHeldProp: View {
     let pose: MochiPose
     let time: Double
     let still: Bool
+    let paw: CGPoint
+    let s: CGFloat
 
     var body: some View {
         switch pose {
-        case .bellRing: MochiBell(time: time, still: still)
-        case .birthday: MochiCupcake(time: time, still: still)
+        case .bellRing: MochiBell(time: time, still: still).offset(x: (paw.x - 182) * s, y: (paw.y - 96) * s)
+        case .birthday: MochiCupcake(time: time, still: still).offset(x: (paw.x - 182) * s, y: (paw.y - 101) * s)
         default: EmptyView()
         }
     }
@@ -192,7 +198,7 @@ private struct MochiZs: View {
     let s: CGFloat
 
     private static let letters: [(x: CGFloat, y: CGFloat, size: CGFloat, delay: Double)] = [
-        (140, 60, 26, 0), (156, 46, 20, 0.8), (170, 34, 15, 1.6),
+        (154, 54, 24, 0), (168, 40, 19, 0.8), (180, 28, 14, 1.6),
     ]
 
     var body: some View {
@@ -223,11 +229,11 @@ private struct MochiHearts: View {
     var body: some View {
         let pulse = still ? 1 : MochiKeys.kf(MochiKeys.phase(time, 1), [(0, 1), (0.5, 1.25), (1, 1)])
         ZStack {
-            heart(at: pt(64, 40), scale: 1)
-                .scaleEffect(pulse, anchor: MochiGeometry.unit(64, 40))
+            heart(at: pt(160, 44), scale: 1)
+                .scaleEffect(pulse, anchor: MochiGeometry.unit(160, 44))
             if !still {
-                floating(from: pt(46, 70), delay: 0)
-                floating(from: pt(156, 66), delay: 1.2)
+                floating(from: pt(34, 98), delay: 0)
+                floating(from: pt(168, 92), delay: 1.2)
             }
         }
     }
@@ -259,7 +265,7 @@ private struct MochiHearts: View {
 private struct MochiPartyHat: View {
     let s: CGFloat
 
-    private static let left = pt(58, 77), right = pt(96, 63), apex = pt(64, 26)
+    private static let left = pt(80, 50), right = pt(116, 45), apex = pt(94, 6)
 
     var body: some View {
         let (l, r, a) = (Self.left, Self.right, Self.apex)
@@ -289,7 +295,7 @@ private struct MochiSweatDrop: View {
 
     var body: some View {
         let p = still ? 0.3 : MochiKeys.phase(time, 1.4)
-        let top = pt(152, 78 + 8 * CGFloat(p))
+        let top = pt(148, 54 + 10 * CGFloat(p))
         ZStack {
             MochiShape { path in
                 path.move(to: top)
@@ -309,7 +315,7 @@ private struct MochiSweatDrop: View {
 
 // MARK: - Bell
 
-/// A ringing bell held up in the right hand (right-side coordinates).
+/// A ringing bell held up in the right paw (drawn for a paw at (182, 96)).
 private struct MochiBell: View {
     let time: Double
     let still: Bool
@@ -349,7 +355,7 @@ private struct MochiBell: View {
 
 // MARK: - Cupcake
 
-/// A birthday cupcake with a flickering candle, held up in the right hand (right-side coordinates).
+/// A birthday cupcake with a flickering candle, held up in the right paw (drawn for a paw at (182, 101)).
 private struct MochiCupcake: View {
     let time: Double
     let still: Bool
@@ -376,5 +382,51 @@ private struct MochiCupcake: View {
                 .fill(Color(red: 1, green: 0.62, blue: 0.2))
                 .scaleEffect(x: 1, y: flicker, anchor: MochiGeometry.unit(182, 51))
         }
+    }
+}
+
+// MARK: - Sunglasses
+
+/// Sunglasses dropping onto the eyes with a bounce, staying on, then lifting off (4 s loop).
+private struct MochiShades: View {
+    let time: Double
+    let still: Bool
+    let s: CGFloat
+
+    var body: some View {
+        let p = MochiKeys.phase(time, 4)
+        let drop = still ? 0 : MochiKeys.kf(p, [(0, -70), (0.08, -70), (0.2, 3), (0.24, 0), (0.88, 0), (1, -70)])
+        let opacity = still ? 1 : MochiKeys.kf(p, [(0, 0), (0.08, 0), (0.18, 1), (0.88, 1), (1, 0)])
+        ZStack {
+            mochiFill(Path(svg: "M72 72 H128 V76 H72Z"), MochiPalette.shades, s: s)
+            mochiFill(Path(svg: "M72 74 H96 Q96 88 84 88 Q72 88 72 74Z M104 74 H128 Q128 88 116 88 Q104 88 104 74Z"), MochiPalette.shades, s: s)
+            mochiFill(Path(svg: "M76 77 L82 77 L78 82Z M108 77 L114 77 L110 82Z"), Color.white.opacity(0.55), s: s)
+        }
+        .offset(y: drop * s)
+        .opacity(opacity)
+    }
+}
+
+// MARK: - Cheeks
+
+/// Puffed white cheeks while sucking it in, in step with the belly squeeze (3 s loop).
+private struct MochiCheeks: View {
+    let time: Double
+    let still: Bool
+    let s: CGFloat
+
+    var body: some View {
+        let hold = still ? 1 : MochiKeys.kf(MochiKeys.phase(time, 3), [(0, 0), (0.3, 1), (0.75, 1), (1, 0)])
+        let puff = CGFloat(0.35 + 0.65 * hold)
+        ZStack {
+            cheek(73, puff)
+            cheek(127, puff)
+        }
+    }
+
+    private func cheek(_ x: CGFloat, _ puff: CGFloat) -> some View {
+        mochiFill(.ellipse(x, 93, 8, 6.5), MochiPalette.white, outline: true, s: s)
+            .scaleEffect(0.6 + 0.4 * puff, anchor: MochiGeometry.unit(x, 93))
+            .opacity(Double(puff))
     }
 }

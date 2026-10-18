@@ -2,8 +2,8 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// Developer screen showing every Mochi pose, at full size (140) and home-screen size (64).
-/// `-mochiGallery YES` opens it at launch; `-mochiGalleryScroll <id>` (a pose name, `small` or
+/// Developer screen showing every Mochi pose, at full size (140), home-screen size (64) and watch size (44).
+/// `-mochiGallery YES` opens it at launch; `-mochiGalleryScroll <id>` (a pose name, `small`, `tiny` or
 /// `bubble`) scrolls to a section, for simulator screenshots.
 struct MochiPoseGalleryView: View {
     var body: some View {
@@ -36,6 +36,13 @@ struct MochiPoseGalleryView: View {
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
                             }
+                        }
+                    }
+
+                    Text(verbatim: "Watch size (44)").font(.headline).id("tiny")
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 56), spacing: 6)], spacing: 10) {
+                        ForEach(MochiPose.allCases, id: \.self) { pose in
+                            MochiView(pose: pose, display: Self.sampleDisplay(pose), size: 44)
                         }
                     }
 
