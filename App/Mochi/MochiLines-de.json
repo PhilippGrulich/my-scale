@@ -489,7 +489,7 @@
     },
     {
       "id": "away.gain.2",
-      "text": "{change} kg sind nur ein kleines Wackeln 🍮",
+      "text": "{change} kg? Zunehmen geht im Zickzack, alles gut 🍮",
       "events": [
         "away"
       ],

@@ -489,7 +489,7 @@
     },
     {
       "id": "away.gain.2",
-      "text": "{change} kg is just a little wobble 🍮",
+      "text": "{change} kg? Growing zigzags, and that's fine 🍮",
       "events": [
         "away"
       ],

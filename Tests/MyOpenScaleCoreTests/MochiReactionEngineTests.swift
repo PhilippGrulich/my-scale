@@ -50,6 +50,25 @@ final class MochiReactionEngineTests: XCTestCase {
         XCTAssertEqual(r.event, .toward)
     }
 
+    // Regression for the controller's tap-through: a −0.3 kg day after demo-like history.
+    // For a loser (also the default profile: no type, no target) it is toward; for a gainer, away.
+    func testLoserSmallDropIsTowardThumbsUp() {
+        let history = [s(daysAgo: 3, 80.6), s(daysAgo: 2, 80.1), s(daysAgo: 1, 80.3)]
+        for goal in [WeightGoal(type: .lose, targetKg: nil, startKg: nil), lose(75, start: 80.0)] {
+            let (r, _) = react(80.0, history: history, goal: goal)
+            XCTAssertEqual(r.event, .toward, "\(goal)"); XCTAssertEqual(r.pose, .thumbsUp, "\(goal)")
+            XCTAssertEqual(r.changeKg ?? 0, -0.3, accuracy: 1e-9)
+        }
+    }
+
+    func testGainerSmallDropIsAwaySelfHug() {
+        let history = [s(daysAgo: 3, 80.6), s(daysAgo: 2, 80.1), s(daysAgo: 1, 80.3)]
+        for goal in [WeightGoal(type: .gain, targetKg: nil, startKg: nil), gain(85, start: 80.1)] {
+            let (r, _) = react(80.0, history: history, goal: goal)
+            XCTAssertEqual(r.event, .away, "\(goal)"); XCTAssertEqual(r.pose, .selfHug, "\(goal)")
+        }
+    }
+
     func testHalfwayMilestoneFiresOnce() {
         var st = MochiProgressState.fresh(for: lose(70, start: 80))
         let (r1, st1) = react(74.9, history: [s(daysAgo: 1, 75.3)], goal: lose(70, start: 80), state: st)

@@ -54,6 +54,32 @@ final class MochiLibraryFileTests: XCTestCase {
         }
     }
 
+    /// The dashboard corner bubble wraps but must stay a few lines tall: every line it can show
+    /// (greetings, and a stashed reaction with its welcome-back prefix) fits a character budget.
+    /// Placeholders count at a generous rendered width (a long name, a number).
+    func testCornerLinesFitTheBubble() throws {
+        func rendered(_ text: String) -> Int {
+            var n = text.count
+            for key in MochiMessageSelector.placeholders(in: text) {
+                n += (key == "name" ? 12 : 6) - (key.count + 2)
+            }
+            return n
+        }
+        let greetings: Set = ["home", "homeIdle", "birthday", "anniversary"]
+        let reactions: Set = ["toward", "away", "newBest", "streak", "goodWeek", "daysInRange",
+                              "milestonePercent", "milestoneKg", "goalReached"]
+        for lang in ["en", "de"] {
+            let lines = try load(lang).lines
+            func longest(_ events: Set<String>) -> Int {
+                lines.filter { !events.isDisjoint(with: $0.events) }.map { rendered($0.text) }.max() ?? 0
+            }
+            for l in lines where !greetings.union(reactions).isDisjoint(with: l.events) {
+                XCTAssertLessThanOrEqual(rendered(l.text), 70, "\(lang) \(l.id): \(l.text)")
+            }
+            XCTAssertLessThanOrEqual(longest(["welcomeBack"]) + 1 + longest(reactions), 130, lang)
+        }
+    }
+
     func testNoShamingWords() throws {
         let banned = ["calorie", "kalorie", "diet", "diät", "careful", "vorsicht", "what did you eat", "was hast du gegessen", "fat", "fett"]
         for lang in ["en", "de"] { for l in try load(lang).lines {
