@@ -1,5 +1,11 @@
 import SwiftUI
 
+/// True while a `WeightWheel` inside is being dragged, so a scrolling host can hold still.
+struct WeightWheelDraggingKey: PreferenceKey {
+    static let defaultValue = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) { value = value || nextValue() }
+}
+
 /// What the ring around a weight circle shows.
 enum WeightCircleProgress: Equatable {
     case none
@@ -126,6 +132,9 @@ struct WeightWheel: View {
     @State private var consumedTranslation: CGFloat = 0
     @State private var momentum: Task<Void, Never>?
     @State private var typing = false
+    /// The value when typing began: what invalid or out-of-range input falls back to.
+    @State private var valueBeforeTyping: Double?
+    @State private var dragging = false
     @State private var typed = ""
     @FocusState private var focused: Bool
 
@@ -136,9 +145,12 @@ struct WeightWheel: View {
             if typing { typingField } else { lane }
         }
         .contentShape(Circle())
-        .gesture(drag)
+        // The wheel owns vertical drags; the page doesn't scroll under the finger
+        // (the host reads `WeightWheelDraggingKey` and disables its scrolling).
+        .highPriorityGesture(drag)
         .onTapGesture(perform: beginTyping)
-        .sensoryFeedback(.selection, trigger: value)
+        .preference(key: WeightWheelDraggingKey.self, value: dragging)
+        .sensoryFeedback(.selection, trigger: value) { _, _ in !typing }
         .onChange(of: focused) { _, isFocused in
             if !isFocused { endTyping() }
         }
@@ -200,6 +212,7 @@ struct WeightWheel: View {
             .onChanged { gesture in
                 momentum?.cancel()
                 guard !typing else { return }
+                if !dragging { dragging = true }
                 // Upward travel (negative height) not yet turned into steps.
                 let pending = consumedTranslation - gesture.translation.height
                 let steps = Int((pending / Self.pointsPerStep).rounded(.towardZero))
@@ -209,6 +222,7 @@ struct WeightWheel: View {
             }
             .onEnded { gesture in
                 consumedTranslation = 0
+                dragging = false
                 guard !typing, !reduceMotion else { return }
                 // A flick keeps rolling a little, slowing down.
                 let flick = gesture.translation.height - gesture.predictedEndTranslation.height
@@ -256,11 +270,11 @@ struct WeightWheel: View {
                 .font(metrics.numberFont)
                 .monospacedDigit()
                 .multilineTextAlignment(.center)
-                .frame(width: diameter * 0.56)
+                .frame(width: diameter * 0.66)
                 .onSubmit { focused = false }
-                .onChange(of: typed) { _, text in
-                    // Valid values apply as they're typed (so Save mid-typing uses them).
-                    if let typedValue = parse(text), range.contains(typedValue) { set(typedValue) }
+                .onChange(of: typed) { _, _ in
+                    // Applies as it's typed, so Save mid-typing uses it.
+                    applyTyped()
                 }
                 .onAppear { focused = true }
             Text(unit)
@@ -271,16 +285,35 @@ struct WeightWheel: View {
 
     private func beginTyping() {
         momentum?.cancel()
-        guard !typing else { return }
+        if typing {
+            // The keyboard didn't come up (or was lost): try again, else back to the wheel.
+            if !focused { focused = true }
+            return
+        }
+        valueBeforeTyping = value
         typed = ""
         typing = true
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(700))
+            if typing && !focused { endTyping() }   // focus never took: don't get stuck
+        }
     }
 
-    /// Applies what was typed (clamped, snapped to the step); invalid input keeps the value.
+    /// The typed value when it's valid and in range; otherwise the value from before typing.
+    private func applyTyped() {
+        guard let before = valueBeforeTyping else { return }
+        if let typedValue = parse(typed), range.contains(typedValue) {
+            set(typedValue)
+        } else {
+            set(before)
+        }
+    }
+
     private func endTyping() {
         guard typing else { return }
-        if let typedValue = parse(typed) { set(typedValue) }
+        applyTyped()
         typing = false
+        valueBeforeTyping = nil
     }
 
     /// Accepts both "," and "." as the decimal separator.

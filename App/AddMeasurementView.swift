@@ -29,6 +29,9 @@ struct AddMeasurementView: View {
     @State private var bodyFatPercent: Double = 20
     @State private var date = Date()
     @State private var pickingDate = false
+    @State private var wheelDragging = false
+    /// The weight the form started from; a late history load may replace it only while untouched.
+    @State private var seededWeightKg: Double?
     @State private var saving = false
     @State private var error: String?
 
@@ -61,9 +64,12 @@ struct AddMeasurementView: View {
             default: break
             }
         }
-        // History loaded after the form opened: start from the last weight after all.
-        .onChange(of: model.currentWeightKg) { old, new in
-            if old == nil, let new, mode == .manual { weightKg = (new * 10).rounded() / 10 }
+        // History loaded after the form opened: start from the last weight, unless the
+        // user already changed it.
+        .onChange(of: model.currentWeightKg) { _, new in
+            guard let new, mode == .manual, weightKg == seededWeightKg else { return }
+            weightKg = (new * 10).rounded() / 10
+            seededWeightKg = weightKg
         }
     }
 
@@ -92,6 +98,7 @@ struct AddMeasurementView: View {
         includeBodyFat = false
         error = nil
         if let current = model.currentWeightKg { weightKg = (current * 10).rounded() / 10 }
+        seededWeightKg = weightKg
         if let fat = model.latestValue(.bodyFat), fat.isFinite { bodyFatPercent = (fat * 2).rounded() / 2 }
         start(mode)
     }
@@ -202,9 +209,10 @@ struct AddMeasurementView: View {
                     .padding(.top, 18)
 
                     if includeBodyFat {
-                        bodyFatWheel
-                            .padding(.top, 24)
-                            .transition(.scale(scale: 0.8).combined(with: .opacity))
+                        BodyFatRow(value: $bodyFatPercent,
+                                   onRemove: { withAnimation(.snappy) { includeBodyFat = false } })
+                            .padding(.top, 14)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
                     Group {
@@ -255,6 +263,9 @@ struct AddMeasurementView: View {
                 .onTapGesture(perform: dismissKeyboard)
             }
             .scrollBounceBehavior(.basedOnSize)
+            // A drag on a wheel rolls the value, never the page.
+            .scrollDisabled(wheelDragging)
+            .onPreferenceChange(WeightWheelDraggingKey.self) { wheelDragging = $0 }
             .scrollDismissesKeyboard(.immediately)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
@@ -287,30 +298,6 @@ struct AddMeasurementView: View {
             }
             .font(.subheadline.weight(.semibold))
             .contentTransition(.numericText(value: delta))
-        }
-    }
-
-    /// The optional body fat: the same rolling circle, smaller, with an × to remove it.
-    private var bodyFatWheel: some View {
-        VStack(spacing: 10) {
-            Text("Body fat")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
-            WeightWheel(value: $bodyFatPercent, range: 3...75, step: 0.5,
-                        diameter: 150, unit: "%", label: "Body fat")
-                .overlay(alignment: .topTrailing) {
-                    Button { withAnimation(.snappy) { includeBodyFat = false } } label: {
-                        Image(systemName: "xmark")
-                            .font(.footnote.weight(.bold))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 32, height: 32)
-                            .background(Theme.circleFill, in: Circle())
-                            .shadow(color: .black.opacity(0.08), radius: 3, y: 1)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Remove body fat")
-                    .offset(x: 8, y: -4)
-                }
         }
     }
 
@@ -507,6 +494,79 @@ private struct ManualChipStyle: ButtonStyle {
             HStack(spacing: 6) {
                 configuration.icon.foregroundStyle(Theme.accent)
                 configuration.title
+            }
+        }
+    }
+}
+
+/// The optional body fat as one compact card: a tap-to-type number (decimal pad, "," or
+/// "."), a 0.5 % stepper and an × to remove it. Invalid or out-of-range input keeps the old value.
+private struct BodyFatRow: View {
+    @Binding var value: Double
+    let onRemove: () -> Void
+
+    static let range = 3.0...75.0
+
+    @State private var text = ""
+    /// The value when typing began: what invalid input falls back to.
+    @State private var valueBeforeTyping: Double?
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("Body fat")
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+            Spacer(minLength: 4)
+            HStack(spacing: 4) {
+                TextField(value.formatted(1), text: $text)
+                    .keyboardType(.decimalPad)
+                    .focused($focused)
+                    .multilineTextAlignment(.center)
+                    .font(.body.weight(.semibold).monospacedDigit())
+                    .frame(width: 56)
+                    .padding(.vertical, 6)
+                    .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 8))
+                    .accessibilityLabel("Body fat")
+                Text("%").foregroundStyle(.secondary)
+            }
+            Stepper("Body fat", value: $value, in: Self.range, step: 0.5)
+                .labelsHidden()
+            Button(action: onRemove) {
+                Image(systemName: "xmark")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 28, height: 28)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Remove body fat")
+        }
+        .padding(.leading, 16)
+        .padding(.trailing, 8)
+        .padding(.vertical, 8)
+        .background(Theme.circleFill, in: RoundedRectangle(cornerRadius: 18))
+        .shadow(color: .black.opacity(0.06), radius: 3, y: 1)
+        .onAppear { text = value.formatted(1) }
+        // Typed values apply as they're typed (so Save uses them); the stepper updates the text.
+        .onChange(of: text) { _, typed in
+            guard focused, let before = valueBeforeTyping else { return }
+            let normalized = typed.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")
+            var next = before
+            if let parsed = Double(normalized), parsed.isFinite, Self.range.contains(parsed) {
+                next = (parsed * 10).rounded() / 10
+            }
+            if next != value { value = next }
+        }
+        .onChange(of: value) { _, new in
+            if !focused { text = new.formatted(1) }
+        }
+        .onChange(of: focused) { _, isFocused in
+            if isFocused {
+                valueBeforeTyping = value
+                text = ""   // the placeholder shows the current value; typing replaces it
+            } else {
+                valueBeforeTyping = nil
+                text = value.formatted(1)   // invalid input shows the kept value again
             }
         }
     }
