@@ -1,11 +1,14 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// The standalone weigh-in flow, driven by `WatchAppModel.phase`: searching →
-/// live weight → saving → result (or error). One centred layout for every step:
-/// Mochi (or the number when Mochi is off) with a short line under it. The
-/// sheet's own close button cancels; the result has a Done button.
+/// The weigh-in steps, driven by `WatchAppModel.phase`: searching → live weight
+/// → saving → result (or error). Shown inside the Scale page (and the result
+/// part on the Manual page). One centred layout for every step: Mochi (or the
+/// number when Mochi is off) with a short line under it.
 struct WatchWeighInView: View {
+    /// What "Done" on the result does (the Scale page starts listening again).
+    var onDone: () -> Void
+
     @EnvironmentObject var model: WatchAppModel
 
     var body: some View {
@@ -47,17 +50,6 @@ struct WatchWeighInView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
-        manualButton
-    }
-
-    private var manualButton: some View {
-        Button { model.switchToManual() } label: {
-            Label("Enter manually", systemImage: "digitalcrown.horizontal.arrow.clockwise")
-                .frame(maxWidth: .infinity)
-        }
-        // Prominent once Bluetooth is clearly not working.
-        .buttonStyle(.bordered)
-        .tint(model.bleStatus == .scanning || model.bleStatus == .unknown ? .secondary : Theme.accent)
     }
 
     @ViewBuilder
@@ -93,7 +85,7 @@ struct WatchWeighInView: View {
                 .font(.caption2)
                 .foregroundStyle(result.savedToHealth ? Theme.accent : .orange)
 
-            Button("Done") { model.done() }
+            Button("Done", action: onDone)
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.accent)
         }
@@ -111,7 +103,7 @@ struct WatchWeighInView: View {
             Text(message)
                 .font(.footnote)
                 .multilineTextAlignment(.center)
-            Button("Done") { model.done() }
+            Button("Done", action: onDone)
                 .buttonStyle(.bordered)
         }
     }

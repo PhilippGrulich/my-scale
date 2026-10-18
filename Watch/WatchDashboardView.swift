@@ -2,14 +2,17 @@ import SwiftUI
 import Charts
 import MyOpenScaleCore
 
-/// Watch overview as vertical pages (scroll with the Digital Crown), one topic
-/// each — Today (Mochi + weight + trend), Goal (ring), Body (values + chart),
-/// Weigh in (the scale when one is paired — foreground only on watchOS — or
-/// manual entry with the Crown).
+/// The watch app as vertical pages (scroll with the Digital Crown), each one
+/// self-contained — no sheets or pushed screens: Today (Mochi + weight +
+/// trend), Goal (ring), Body (values + chart), Manual (enter a weight here) and,
+/// when a scale is paired on the phone, Scale (scans while the page is shown —
+/// watchOS only allows Bluetooth in the foreground — and shows the result).
 struct WatchDashboardView: View {
     @EnvironmentObject var model: WatchAppModel
     @State private var didRequestAuth = false
-    @State private var showingManual = false
+
+    enum Page: Hashable { case today, goal, body, manual, scale }
+    @State private var page: Page = .today
 
     var body: some View {
         NavigationStack {
@@ -17,17 +20,18 @@ struct WatchDashboardView: View {
                 if model.needsSetup {
                     setupPage
                 } else {
-                    TabView {
-                        todayPage
-                        if model.goal.targetKg != nil, model.currentWeightKg != nil { goalPage }
-                        if model.latestBodyFat != nil || model.bmi != nil || model.history.count >= 2 { bodyPage }
-                        weighInPage
+                    TabView(selection: $page) {
+                        todayPage.tag(Page.today)
+                        if model.goal.targetKg != nil, model.currentWeightKg != nil { goalPage.tag(Page.goal) }
+                        if model.latestBodyFat != nil || model.bmi != nil || model.history.count >= 2 {
+                            bodyPage.tag(Page.body)
+                        }
+                        manualPage.tag(Page.manual)
+                        if model.hasScale { scalePage.tag(Page.scale) }
                     }
                     .tabViewStyle(.verticalPage)
+                    .onChange(of: page) { old, new in pageChanged(from: old, to: new) }
                 }
-            }
-            .navigationDestination(isPresented: $showingManual) {
-                WatchManualEntryView().environmentObject(model)
             }
         }
         .task {
@@ -36,55 +40,41 @@ struct WatchDashboardView: View {
                 model.requestAuthorizationAndSync()
             }
         }
-        .onChange(of: model.manualRequested) { _, requested in
-            guard requested else { return }
-            model.manualRequested = false
-            // Let the weigh-in sheet close first.
-            Task {
-                try? await Task.sleep(for: .milliseconds(400))
-                showingManual = true
-            }
-        }
-        .sheet(isPresented: Binding(
-            get: { model.phase.isActive },
-            set: { active in if !active { model.done() } }
-        )) {
-            WatchWeighInView().environmentObject(model)
-        }
     }
 
-    // MARK: - Weigh in
+    // MARK: - Manual / Scale
 
-    private var weighInPage: some View {
-        VStack(spacing: 8) {
-            if model.mochiEnabled {
-                MochiView(pose: .helloWave, display: model.currentWeightKg?.formatted(1) ?? "", size: 64)
-            } else {
-                Image(systemName: "scalemass.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(Theme.accent)
-            }
-            if model.hasScale {
-                Button { model.startWeighIn() } label: {
-                    Label("Scale", systemImage: "scalemass.fill").frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(Theme.accent)
-                Button { showingManual = true } label: {
-                    Label("Manual", systemImage: "digitalcrown.horizontal.arrow.clockwise").frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-            } else {
-                Button { showingManual = true } label: {
-                    Label("Enter manually", systemImage: "plus").frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(Theme.accent)
+    private var manualPage: some View {
+        WatchManualEntryView()
+            .containerBackground(Theme.accent.gradient.opacity(0.25), for: .tabView)
+            .navigationTitle("Manual")
+    }
+
+    private var scalePage: some View {
+        WatchWeighInView(onDone: {
+            // Ready for the next person / weigh-in while the page stays open.
+            model.done()
+            model.startWeighIn()
+        })
+        .containerBackground(Theme.accentSecondary.gradient.opacity(0.25), for: .tabView)
+        .navigationTitle("Scale")
+    }
+
+    /// Bluetooth only runs while the Scale page is on screen.
+    private func pageChanged(from old: Page, to new: Page) {
+        // Leaving the Manual page with its result showing resets it.
+        if old == .manual, model.source == .manual, model.phase != .saving { model.done() }
+        if new == .scale {
+            if model.source == .manual, model.phase != .saving { model.done() }
+            if model.phase == .idle { model.startWeighIn() }
+        }
+        if old == .scale, model.source == .scale {
+            switch model.phase {
+            case .saving: break          // let the Health write finish
+            case .saved, .error: model.done()
+            default: model.cancel()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(Theme.accent.gradient.opacity(0.25), for: .tabView)
-        .navigationTitle("Weigh In")
     }
 
     // MARK: - Today

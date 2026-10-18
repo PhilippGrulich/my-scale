@@ -925,6 +925,16 @@
         }
       }
     },
+    "Decrease": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verringern"
+          }
+        }
+      }
+    },
     "Delete": {
       "localizations": {
         "de": {
@@ -1522,6 +1532,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Im Zielbereich"
+          }
+        }
+      }
+    },
+    "Increase": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erhöhen"
           }
         }
       }
@@ -2798,6 +2818,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zum Schließen irgendwo tippen"
+          }
+        }
+      }
+    },
+    "Tap the number to use the Crown": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zahl antippen, um die Crown zu nutzen"
           }
         }
       }

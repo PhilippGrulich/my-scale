@@ -73,6 +73,9 @@ final class WatchAppModel: ObservableObject {
     }
 
     @Published private(set) var phase: Phase = .idle
+    /// Which page the current weigh-in belongs to (scale page or manual page).
+    enum Source { case scale, manual }
+    @Published private(set) var source: Source = .scale
     @Published private(set) var bleStatus: WatchBLEStatus = .unknown
     @Published private(set) var authState: HealthKitSink.AuthState = .notRequested
     @Published private(set) var currentWeightKg: Double?
@@ -89,8 +92,7 @@ final class WatchAppModel: ObservableObject {
     /// A scale is paired on the phone: "+ Weigh in" starts the scale capture;
     /// otherwise it opens manual entry.
     var hasScale: Bool { sync?.hasPairedScale ?? false }
-    /// Set when the weigh-in screen asks to switch to manual entry.
-    @Published var manualRequested = false
+
     var name: String? { sync?.name }
 
     var goal: WeightGoal {
@@ -233,15 +235,9 @@ final class WatchAppModel: ObservableObject {
     /// step on. No-op if the profile still needs a height.
     func startWeighIn() {
         guard !needsSetup else { return }
+        source = .scale
         phase = .searching
         scanner.start()
-    }
-
-    /// Leave the scale weigh-in for manual entry (the overview opens it).
-    func switchToManual() {
-        scanner.stop()
-        phase = .idle
-        manualRequested = true
     }
 
     /// Cancel an in-progress weigh-in and return to idle.
@@ -337,6 +333,8 @@ final class WatchAppModel: ObservableObject {
             : nil
         let composition = BodyCompositionCalculator.manual(weightKg: weightKg, bodyFatPercent: nil,
                                                            heightCm: profile.heightCm ?? 175)
+        scanner.stop()
+        source = .manual
         phase = .saving
         healthKit.writeManual(composition: composition, at: now) { [weak self] result in
             guard let self else { return }
