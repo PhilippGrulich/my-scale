@@ -66,6 +66,16 @@
     "%@ kg": {
       "shouldTranslate": false
     },
+    "%@ kg / 30d": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg / 30 T"
+          }
+        }
+      }
+    },
     "%@ kg above your current weight.": {
       "localizations": {
         "de": {

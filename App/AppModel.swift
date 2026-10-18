@@ -518,16 +518,31 @@ final class AppModel: ObservableObject {
 
     /// Publish the latest weight to the widget snapshot (read by the Home/Lock
     /// Screen widget) and ask any installed widgets to refresh.
-    private func updateWidgetSnapshot() {
+    func updateWidgetSnapshot() {
         guard let weightKg = currentWeightKg else { return }
-        // Last ~40 points (90 days) for the large widget's chart.
-        let recent = WeightHistory.filter(weightHistory, lastDays: 90, now: Date()).suffix(40)
-        let points = recent.map { WidgetPoint(date: $0.date, weightKg: $0.weightKg) }
-        WidgetSnapshotStore.write(WidgetSnapshot(weightKg: weightKg,
-                                                 date: weightHistory.last?.date ?? Date(),
-                                                 trendDeltaKg: trendDeltaKg,
-                                                 goalKg: profile.goalWeightKg,
-                                                 points: Array(points)))
+        // Same picture as the Overview chart: daily dots + centered trend over
+        // 30 days, on the app's calm axis.
+        let now = Date()
+        let daily = WeightHistory.filter(WeightHistory.bucketed(weightHistory), lastDays: 30, now: now)
+        let trend = WeightHistory.filter(
+            WeightHistory.trend(WeightHistory.bucketed(weightHistory), halfLifeDays: 3, centered: true),
+            lastDays: 30, now: now)
+        let axis = WeightHistory.chartAxis(for: daily + trend)
+        let progress: Double? = profile.goalWeightKg.flatMap { goal in
+            let start = profile.goalStartKg ?? WeightHistory.filter(weightHistory, lastDays: 90, now: now).first?.weightKg
+            return start.flatMap { WeightHistory.goalProgress(startKg: $0, currentKg: weightKg, goalKg: goal) }
+        }
+        WidgetSnapshotStore.write(WidgetSnapshot(
+            weightKg: weightKg,
+            date: weightHistory.max { $0.date < $1.date }?.date ?? now,
+            trendDeltaKg: trendDeltaKg,
+            goalKg: profile.goalWeightKg,
+            points: daily.map { WidgetPoint(date: $0.date, weightKg: $0.weightKg) },
+            trendPoints: trend.map { WidgetPoint(date: $0.date, weightKg: $0.weightKg) },
+            monthTrendKg: WeightHistory.trendChangeKg(weightHistory, lastDays: 30, now: now),
+            axisLowerKg: axis.domain.lowerBound,
+            axisUpperKg: axis.domain.upperBound,
+            goalProgress: progress))
         WidgetCenter.shared.reloadAllTimelines()
     }
 
@@ -550,8 +565,11 @@ final class AppModel: ObservableObject {
         if updated.goalBodyFatPercent != profile.goalBodyFatPercent {
             updated.goalBodyFatStartPercent = updated.goalBodyFatPercent == nil ? nil : latestValue(.bodyFat).flatMap { $0.isFinite ? $0 : nil }
         }
+        let goalChanged = updated.goalWeightKg != profile.goalWeightKg
         profile = updated
         ProfileStore.save(updated)
+        // The widget shows the goal line and progress ring.
+        if goalChanged { updateWidgetSnapshot() }
     }
 
     /// Persist a profile the user explicitly confirmed (onboarding "Continue" or

@@ -12,9 +12,21 @@ struct WidgetPoint: Codable, Equatable {
 struct WidgetSnapshot: Codable, Equatable {
     var weightKg: Double
     var date: Date
+    /// Change since the previous weigh-in (kept for older widget builds).
     var trendDeltaKg: Double?
     var goalKg: Double?
+    /// Daily weigh-ins of the last 30 days (one dot per day).
     var points: [WidgetPoint] = []
+    // Added later — optional so older snapshots still decode.
+    /// Smoothed trend for the same window (the line).
+    var trendPoints: [WidgetPoint]?
+    /// Change of the smoothed trend over 30 days, like the app's "30-day trend".
+    var monthTrendKg: Double?
+    /// The app's calm chart axis, so widget and app scale the same way.
+    var axisLowerKg: Double?
+    var axisUpperKg: Double?
+    /// Progress from goal start to goal, 0…1 (nil without a goal).
+    var goalProgress: Double?
 }
 
 enum WidgetSnapshotStore {

@@ -1,47 +1,48 @@
 # MyOpenScaleControls — Control Center control + widget
 
-**Status: wired into `project.yml` for the 1.0 release.** The shared stores
-(`MeasurementHandoff`, `WidgetSnapshot`) now use the App Group
-`group.com.philippgrulich.myopenscale`. The only remaining step is the **one-time
-Xcode signing setup** below (the headless build can't create the new bundle id /
-App Group — "No Accounts").
+WidgetKit extension (target `MyOpenScaleControls` in `project.yml`, embedded in
+the app, bundle id `com.philippgrulich.myopenscale.app.controls`). It shares the
+App Group `group.com.philippgrulich.myopenscale` with the app.
 
-This folder holds a WidgetKit extension with two things:
-- a **Control Center control** ("Start Weigh-In") that opens the app and arms a
-  new measurement (`MyOpenScaleControlsBundle.swift`), and
-- a **Home / Lock Screen widget** showing the latest weight + trend
-  (`MyOpenScaleWidget.swift`), fed by the snapshot the app writes in
-  `Shared/WidgetSnapshot.swift`.
+## Control Center control — "Start Weigh-In"
 
-It is **not** wired into `project.yml` yet because it needs signing setup that
-can't be done from a headless build:
+`MyOpenScaleControlsBundle.swift` → `StartWeighInControl`. Also available on the
+Lock Screen and the Action Button. It runs `StartMeasurementIntent` (in
+`Shared/`), which sets a timestamped flag in `MeasurementHandoff` and opens the
+app. On activation the app consumes the flag and selects the **Weigh in** tab:
+live weigh-in if a scale is paired, otherwise manual entry. The same intent backs
+Siri, Spotlight and the Shortcuts app (`App/MyOpenScaleShortcuts.swift`).
 
-- a **new bundle id** `com.philippgrulich.myopenscale.app.controls`, and
-- the **App Groups** capability (`group.com.philippgrulich.myopenscale`) on **both**
-  the app and this extension, so the extension (separate process) can hand the
-  "start" signal to the app.
+## Weight widget
 
-Both require the Apple ID account in Xcode's GUI to register the app id / group.
+`MyOpenScaleWidget.swift`. Sizes:
 
-## How to enable it
+| Size | Shows |
+|---|---|
+| Small | weight, 30-day trend, when it was measured |
+| Medium | the same, plus a chart |
+| Large | the same, plus a chart with axes and the goal line |
+| Lock Screen rectangular | weight + 30-day trend |
+| Lock Screen inline | weight |
+| Lock Screen circular | goal progress ring with kg to go (weight without a goal) |
 
-1. In `project.yml`, re-add (a) `com.apple.security.application-groups: [group.com.philippgrulich.myopenscale]`
-   to the **app** target's entitlements, (b) the `MyOpenScaleControls` app-extension
-   target (sources: `Controls`, `Shared`; `INFOPLIST_FILE: Controls/Info.plist`;
-   entitlements: `Controls/MyOpenScaleControls.entitlements`), and (c) a
-   `- target: MyOpenScaleControls` / `embed: true` dependency on the app target.
-   (See git history of `project.yml` for the exact block.)
-2. In **both** `Shared/MeasurementHandoff.swift` and `Shared/WidgetSnapshot.swift`,
-   switch `defaults` from `.standard` to
-   `UserDefaults(suiteName: "group.com.philippgrulich.myopenscale")` so the extension's
-   separate process shares the flag/snapshot with the app.
-3. `xcodegen generate`, open `MyOpenScaleApp.xcodeproj` in Xcode once, select the
-   `MyOpenScaleControls` target → Signing & Capabilities → ensure "Automatically
-   manage signing" + the team, and confirm the **App Groups** capability shows
-   `group.com.philippgrulich.myopenscale` on both targets (Xcode registers them).
-4. Build/deploy. The control then appears in the Control Center gallery
-   (long-press Control Center → **+** → search "Weigh In").
+The app does all the maths. After each weigh-in, Health change or goal change,
+`AppModel.updateWidgetSnapshot()` writes a `WidgetSnapshot` (`Shared/WidgetSnapshot.swift`)
+with:
+- daily dots and the centered trend for 30 days, so the chart looks like the
+  Overview chart
+- the app's calm chart axis
+- the 30-day trend change
+- goal progress
 
-Until then, "Start Weigh-In" is still available via **Siri, Spotlight, and the
-Shortcuts app** (the in-app `StartMeasurementIntent` + `MyOpenScaleShortcuts`), and
-the **+ Weigh in** button in the middle of the tab bar.
+It then calls `WidgetCenter.reloadAllTimelines()`. New snapshot fields are
+optional, so older snapshots still decode.
+
+Weight is health data, so all values are `.privacySensitive()`: they're redacted
+on the Lock Screen while the device is locked.
+
+## Signing
+
+New bundle ids and the App Group need a one-time Xcode signing step on a fresh
+machine (open the project, sign in, automatic signing on both targets, ⌘B). After
+that, headless `xcodebuild -allowProvisioningUpdates` works. See `docs/RELEASING.md`.
