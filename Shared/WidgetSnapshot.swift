@@ -6,6 +6,20 @@ struct WidgetPoint: Codable, Equatable {
     var weightKg: Double
 }
 
+/// One value on the Progress widget, fully prepared by the app (localized
+/// title, formatted value) so the widget only lays it out.
+struct WidgetMetric: Codable, Equatable {
+    var id: String
+    var title: String
+    var symbol: String
+    var value: String
+    var unit: String
+    /// 30-day change, already formatted with sign and unit ("−0,8 kg").
+    var change: String?
+    /// Whether that change goes the healthy way (nil = neutral).
+    var changeIsGood: Bool?
+}
+
 /// Snapshot the app writes after each weigh-in so a Home/Lock-Screen widget can
 /// render the latest weight (+ a small recent series for the large widget's
 /// chart) without touching HealthKit itself.
@@ -27,6 +41,11 @@ struct WidgetSnapshot: Codable, Equatable {
     var axisUpperKg: Double?
     /// Progress from goal start to goal, 0…1 (nil without a goal).
     var goalProgress: Double?
+    /// Values for the Progress widget, most important first (weight, body
+    /// fat, muscle, water, visceral fat — only those with data).
+    var metrics: [WidgetMetric]?
+    /// Plan status ("Im Plan", "0,6 kg voraus") or forecast text, localized.
+    var goalStatus: String?
 }
 
 enum WidgetSnapshotStore {

@@ -1195,6 +1195,26 @@
         }
       }
     },
+    "Goal around %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel etwa %@"
+          }
+        }
+      }
+    },
+    "Goal progress with weight, body fat and muscle at a glance.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zielfortschritt mit Gewicht, Körperfett und Muskeln auf einen Blick."
+          }
+        }
+      }
+    },
     "Goal reached!": {
       "localizations": {
         "de": {
@@ -2131,6 +2151,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Angabe"
+          }
+        }
+      }
+    },
+    "Progress": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fortschritt"
           }
         }
       }
@@ -3230,6 +3260,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wieg dich auf deiner Waage, um dein Körperfett zu verfolgen."
+          }
+        }
+      }
+    },
+    "Weigh in to see your progress.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich, um deinen Fortschritt zu sehen."
           }
         }
       }

@@ -542,8 +542,67 @@ final class AppModel: ObservableObject {
             monthTrendKg: WeightHistory.trendChangeKg(weightHistory, lastDays: 30, now: now),
             axisLowerKg: axis.domain.lowerBound,
             axisUpperKg: axis.domain.upperBound,
-            goalProgress: progress))
+            goalProgress: progress,
+            metrics: widgetMetrics(weightKg: weightKg, now: now),
+            goalStatus: widgetGoalStatus(currentKg: weightKg, now: now)))
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    /// Weight + the most telling body values with their 30-day change, for the
+    /// Progress widget. Only values with data.
+    private func widgetMetrics(weightKg: Double, now: Date) -> [WidgetMetric] {
+        func signed(_ v: Double, digits: Int, unit: String) -> String {
+            let n = abs(v).formatted(.number.precision(.fractionLength(digits)))
+            let sign = abs(v) < 0.5 * pow(10, -Double(digits)) ? "±" : (v > 0 ? "+" : "−")
+            return unit.isEmpty ? "\(sign)\(n)" : "\(sign)\(n) \(unit)"
+        }
+        /// Losing weight/fat is good unless the goal is to gain.
+        let losing = (profile.goalWeightKg ?? weightKg - 1) < weightKg
+        var result: [WidgetMetric] = []
+
+        let monthChange = WeightHistory.trendChangeKg(weightHistory, lastDays: 30, now: now)
+        result.append(WidgetMetric(
+            id: "weight", title: String(localized: "Weight"), symbol: "scalemass.fill",
+            value: weightKg.formatted(.number.precision(.fractionLength(1))), unit: "kg",
+            change: monthChange.map { signed($0, digits: 1, unit: "kg") },
+            changeIsGood: monthChange.flatMap { abs($0) < 0.05 ? nil : (($0 < 0) == losing) }))
+
+        let wanted: [(BodyMetric, Bool)] = [(.bodyFat, false), (.muscle, true), (.water, true), (.visceralFat, false)]
+        for (metric, upIsGood) in wanted {
+            guard let latest = latestMetric(metric) else { continue }
+            let history = metricHistory(metric)
+            let cutoff = now.addingTimeInterval(-30 * 86_400)
+            let then = history.filter { $0.date <= cutoff }.last ?? history.first
+            let delta: Double? = then.flatMap { $0.date < latest.date ? latest.value - $0.value : nil }
+            let digits = metric == .visceralFat ? 0 : 1
+            result.append(WidgetMetric(
+                id: metric.rawValue, title: metric.title, symbol: metric.systemImage,
+                value: latest.value.formatted(.number.precision(.fractionLength(digits))), unit: metric.unit,
+                change: delta.map { signed($0, digits: digits, unit: metric.unit) },
+                changeIsGood: delta.flatMap { abs($0) < 0.05 ? nil : (($0 > 0) == upIsGood) }))
+        }
+        return result
+    }
+
+    /// "Im Plan" / "0,6 kg voraus" with a target date, otherwise the forecast
+    /// month, otherwise nil.
+    private func widgetGoalStatus(currentKg: Double, now: Date) -> String? {
+        guard let goal = profile.goalWeightKg else { return nil }
+        let trendNow = WeightHistory.trend(WeightHistory.bucketed(weightHistory)).last?.weightKg ?? currentKg
+        if let target = profile.goalTargetDate {
+            let start = profile.goalStartKg ?? currentKg
+            let plan = GoalPlan(startKg: start, startDate: profile.goalSetAt ?? now, goalKg: goal, targetDate: target)
+            switch PlanStatus(aheadKg: plan.aheadKg(trendKg: trendNow, at: now)) {
+            case .onPlan: return String(localized: "On plan")
+            case .ahead(let kg): return String(localized: "\(kg.formatted(1)) kg ahead")
+            case .behind(let kg): return String(localized: "\(kg.formatted(1)) kg behind")
+            }
+        }
+        guard let rate = WeightHistory.weeklyRateKg(weightHistory, lastDays: 30, now: now),
+              let weeks = WeightHistory.weeksToGoal(currentKg: trendNow, goalKg: goal, weeklyRateKg: rate),
+              weeks <= 104 else { return nil }
+        let eta = now.addingTimeInterval(weeks * 7 * 86_400)
+        return String(localized: "Goal around \(eta.formatted(.dateTime.month(.abbreviated).year()))")
     }
 
     /// Called by the view when the app returns to the foreground.

@@ -10,6 +10,7 @@ struct MyOpenScaleControlsBundle: WidgetBundle {
     var body: some Widget {
         StartWeighInControl()    // Control Center / Lock Screen "weigh in" button
         MyOpenScaleWidget()          // Home / Lock Screen latest-weight widget
+        ProgressWidget()             // Home Screen multi-value progress widget
     }
 }
 
