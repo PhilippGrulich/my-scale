@@ -13,6 +13,10 @@ struct DashboardView: View {
         NavigationStack {
             weightPage
                 .background(Theme.backgroundGradient.ignoresSafeArea())
+                .onAppear {
+                    // With no history yet, the load that is under way refreshes Mochi when it lands.
+                    if !model.weightHistory.isEmpty { model.refreshMochiHome() }
+                }
                 .toolbarVisibility(.hidden, for: .navigationBar)
                 .navigationDestination(item: $selectedMetric) { metric in
                     BodyMetricDetailView(metric: metric)
@@ -27,10 +31,18 @@ struct DashboardView: View {
         ScrollView {
             GlassEffectContainer(spacing: 16) {
                 VStack(spacing: 16) {
-                    WeightHeroView(weightKg: model.currentWeightKg,
-                                   measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
-                                       ?? model.lastOwnReading?.capturedAt)
-                        .padding(.top, 12)
+                    ZStack(alignment: .topLeading) {
+                        WeightHeroView(weightKg: model.currentWeightKg,
+                                       measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
+                                           ?? model.lastOwnReading?.capturedAt)
+                            .frame(maxWidth: .infinity)
+                            // Room for the corner bubble above the number while Mochi is on.
+                            .padding(.top, model.mochi.settings.enabled ? 36 : 0)
+                        MochiHomeCorner(mochi: model.mochi,
+                                        display: model.currentWeightKg?.formatted(1) ?? "– –",
+                                        onTap: { model.refreshMochiHome() })
+                    }
+                    .padding(.top, 12)
 
                     TrendSummaryView(history: model.weightHistory,
                                      currentKg: model.currentWeightKg,

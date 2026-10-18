@@ -344,6 +344,7 @@ final class AppModel: ObservableObject {
                                     impedanceOhms: 490 + Int.random(in: -15...15, using: &rng) + (200 - day) / 20)
             }
             rescheduleMochiReminders()
+            refreshMochiHome()
             return
         }
         #endif
@@ -359,10 +360,19 @@ final class AppModel: ObservableObject {
                 // Watch weigh-ins that arrive through Health.
                 self.rescheduleMochiReminders()
                 self.updateWidgetSnapshot()
+                self.refreshMochiHome()
             case .failure(let error):
                 self.lastSyncError = error.localizedDescription
+                if self.mochi.homePresentation == nil { self.refreshMochiHome() }
             }
         }
+    }
+
+    /// Ask Mochi what the home screen shows: a stashed reaction first, else a fresh greeting.
+    /// Does nothing while Mochi is off.
+    func refreshMochiHome() {
+        guard mochi.settings.enabled else { return }
+        mochi.refreshHome(history: weightHistory, profile: profile)
     }
 
     private func noteOwnWeighIn(at date: Date) {
@@ -703,6 +713,7 @@ final class AppModel: ObservableObject {
         awaitingStepOff = false
         measurementPhase = .idle
         weighInPresentation = nil
+        refreshMochiHome()
     }
 
     /// Finalize the current live (possibly not-yet-stable) weight on demand —
@@ -923,6 +934,7 @@ final class AppModel: ObservableObject {
             if case .result(let r) = self.measurementPhase, r.id == id {
                 self.measurementPhase = .idle
                 self.weighInPresentation = nil
+                self.refreshMochiHome()
             }
         }
     }
