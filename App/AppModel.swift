@@ -169,6 +169,57 @@ final class AppModel: ObservableObject {
         lastOwnReading?.composition
     }
 
+    // MARK: - Body composition (all estimates from impedance)
+
+    /// One point of a body metric's timeline.
+    struct MetricPoint: Identifiable, Equatable {
+        let date: Date
+        let value: Double
+        var id: Date { date }
+    }
+
+    /// Every weigh-in with an impedance, turned into the full set of estimates
+    /// (with the user's age at that date). Ascending by date.
+    var bodyMetricSeries: [(date: Date, values: BodyMetricValues)] {
+        weightHistory
+            .filter { $0.impedanceOhms != nil }
+            .sorted { $0.date < $1.date }
+            .map { s in
+                (s.date, BodyMetricsCalculator.compute(
+                    weightKg: s.weightKg, impedanceOhms: Double(s.impedanceOhms ?? 0),
+                    profile: BodyProfile(from: profile.coreProfile, at: s.date)))
+            }
+    }
+
+    /// The user's age today (for reference ranges).
+    var ageYears: Double {
+        BodyProfile(from: profile.coreProfile, at: Date()).ageYears
+    }
+
+    /// Timeline of one metric. Impedance-based estimates first; body fat and
+    /// lean mass fall back to whatever Apple Health has (manual entries,
+    /// other apps) when there are no scale readings.
+    func metricHistory(_ metric: BodyMetric) -> [MetricPoint] {
+        bodyMetricSeries.map { MetricPoint(date: $0.date, value: $0.values.value(metric)) }
+    }
+
+    /// Latest value of a metric and when it was measured; nil when there is
+    /// nothing to show (then the Overview hides the tile).
+    func latestMetric(_ metric: BodyMetric) -> MetricPoint? {
+        let scale = bodyMetricSeries.last.map { MetricPoint(date: $0.date, value: $0.values.value(metric)) }
+        // Body fat / lean mass may also come from Health (manual entry, other
+        // apps) — whichever is newer wins.
+        let kind: HealthKitSink.MetricKind? = metric == .bodyFat ? .bodyFat : (metric == .lean ? .lean : nil)
+        let health = kind.flatMap { latestMetrics[$0] }
+            .flatMap { $0.value.isFinite ? MetricPoint(date: $0.date, value: $0.value) : nil }
+        switch (scale, health) {
+        case let (s?, h?): return h.date > s.date.addingTimeInterval(1) ? h : s
+        case let (s?, nil): return s
+        case let (nil, h?): return h
+        default: return nil
+        }
+    }
+
     /// Dashboard card value: the newest Apple Health value, falling back to the
     /// last scale reading (e.g. before Health access is granted). NaN = none.
     func latestValue(_ kind: HealthKitSink.MetricKind) -> Double? {
@@ -269,7 +320,8 @@ final class AppModel: ObservableObject {
                 guard day % 9 != 4 else { return nil }   // skip a few days
                 let kg = 82 - Double(200 - day) * 0.008 + Double.random(in: -0.5...0.5, using: &rng)
                 return WeightSample(id: UUID(), date: Date().addingTimeInterval(-Double(day) * 86_400 - 3600),
-                                    weightKg: (kg * 10).rounded() / 10)
+                                    weightKg: (kg * 10).rounded() / 10,
+                                    impedanceOhms: 490 + Int.random(in: -15...15, using: &rng) + (200 - day) / 20)
             }
             return
         }

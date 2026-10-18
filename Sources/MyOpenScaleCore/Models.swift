@@ -34,14 +34,20 @@ public struct WeightSample: Equatable, Sendable, Identifiable {
     public var isFromThisApp: Bool
     /// Display name of the writing app/device, e.g. "Health" or "Withings".
     public var sourceName: String?
+    /// The scale's impedance for this weigh-in (stored in the sample's
+    /// metadata by this app); nil for manual entries and other sources. With
+    /// it, every body-composition estimate can be recomputed for history.
+    public var impedanceOhms: Int?
 
     public init(id: UUID, date: Date, weightKg: Double,
-                isFromThisApp: Bool = true, sourceName: String? = nil) {
+                isFromThisApp: Bool = true, sourceName: String? = nil,
+                impedanceOhms: Int? = nil) {
         self.id = id
         self.date = date
         self.weightKg = weightKg
         self.isFromThisApp = isFromThisApp
         self.sourceName = sourceName
+        self.impedanceOhms = impedanceOhms
     }
 }
 

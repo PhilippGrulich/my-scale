@@ -20,6 +20,9 @@ final class HealthKitSink {
 
     static var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
+    /// Metadata key carrying the scale impedance on this app's samples.
+    static let impedanceKey = "MyOpenScaleImpedanceOhms"
+
     // The four metrics we write (plan: bodyMass, bodyFatPercentage,
     // leanBodyMass, bodyMassIndex).
     private var shareTypes: Set<HKSampleType> {
@@ -135,7 +138,7 @@ final class HealthKitSink {
 
         let metadata: [String: Any] = [
             HKMetadataKeyWasUserEntered: false,
-            "MyOpenScaleImpedanceOhms": impedanceOhms,
+            Self.impedanceKey: impedanceOhms,
             "MyOpenScaleAppBuild": appBuild,
             "MyOpenScaleUserID": profile.id.uuidString,
         ]
@@ -256,11 +259,13 @@ final class HealthKitSink {
             let ownBundle = HKSource.default().bundleIdentifier
             let result: [WeightSample] = (samples as? [HKQuantitySample] ?? []).map {
                 let source = $0.sourceRevision.source
+                let impedance = ($0.metadata?[Self.impedanceKey] as? NSNumber)?.intValue
                 return WeightSample(id: $0.uuid,
                                     date: $0.startDate,
                                     weightKg: $0.quantity.doubleValue(for: kg),
                                     isFromThisApp: source.bundleIdentifier == ownBundle,
-                                    sourceName: source.name)
+                                    sourceName: source.name,
+                                    impedanceOhms: impedance.flatMap { $0 > 0 ? $0 : nil })
             }
             DispatchQueue.main.async { completion(.success(result)) }
         }
@@ -424,6 +429,7 @@ final class HealthKitSink {
         let lock = NSLock()
         var old: [HKSample] = []
         var bodyFatPercent: Double?
+        var impedance: Any?
         for id in ids {
             guard let type = HKQuantityType.quantityType(forIdentifier: id) else { continue }
             group.enter()
@@ -435,6 +441,9 @@ final class HealthKitSink {
                 if id == .bodyFatPercentage, let s = found.first as? HKQuantitySample {
                     bodyFatPercent = s.quantity.doubleValue(for: .percent()) * 100
                 }
+                if id == .bodyMass, let s = found.first {
+                    impedance = s.metadata?[Self.impedanceKey]
+                }
                 lock.unlock()
                 group.leave()
             }
@@ -445,7 +454,11 @@ final class HealthKitSink {
             let composition = BodyCompositionCalculator.manual(weightKg: newWeightKg,
                                                                bodyFatPercent: bodyFatPercent,
                                                                heightCm: heightCm)
-            save(composition, at: newDate, metadata: [HKMetadataKeyWasUserEntered: true]) { [self] result in
+            // Keep the impedance so the other body-composition estimates
+            // survive a corrected weight.
+            var metadata: [String: Any] = [HKMetadataKeyWasUserEntered: true]
+            if let impedance { metadata[Self.impedanceKey] = impedance }
+            save(composition, at: newDate, metadata: metadata) { [self] result in
                 guard case .success = result else { completion(result); return }
                 store.delete(old) { _, error in
                     DispatchQueue.main.async {

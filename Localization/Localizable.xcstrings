@@ -20,22 +20,22 @@
         }
       }
     },
+    "%@ / 30d": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ / 30 T"
+          }
+        }
+      }
+    },
     "%@ and above": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ und mehr"
-          }
-        }
-      }
-    },
-    "%@ history needs at least two weigh-ins.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für den Verlauf von %@ sind mindestens zwei Messungen nötig."
           }
         }
       }
@@ -193,6 +193,22 @@
         }
       }
     },
+    "%lld readings since %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld Messungen seit %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld readings since %2$@"
+          }
+        }
+      }
+    },
     "%lld years": {
       "localizations": {
         "de": {
@@ -212,6 +228,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "1 J"
+          }
+        }
+      }
+    },
+    "1–9 healthy · 10–14 high · 15 and above very high": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1–9 gesund · 10–14 hoch · ab 15 sehr hoch"
           }
         }
       }
@@ -252,6 +278,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eine Messung mit %@ kg muss bestätigt werden."
+          }
+        }
+      }
+    },
+    "A rating for the fat around your inner organs. It is more strongly linked to health risks than fat under the skin: 1–9 is healthy, 10–14 high, 15 and above very high.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Wert für das Fett um deine inneren Organe. Es hängt stärker mit Gesundheitsrisiken zusammen als Fett unter der Haut: 1–9 ist gesund, 10–14 hoch, ab 15 sehr hoch."
           }
         }
       }
@@ -302,6 +338,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fast geschafft – bleib mit beiden Füßen auf der Waage."
+          }
+        }
+      }
+    },
+    "An estimate of the mineral weight of your skeleton. It changes very slowly; the scale derives it from your lean mass, so it is a rough guide only.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Schätzung des Mineralgewichts deines Skeletts. Sie ändert sich sehr langsam; die Waage leitet sie aus der fettfreien Masse ab – also nur ein grober Anhaltspunkt."
           }
         }
       }
@@ -383,6 +429,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Der BMI setzt nur Gewicht und Größe ins Verhältnis. Er unterscheidet nicht zwischen Muskeln und Fett – sehr muskulöse Menschen können einen hohen BMI haben und trotzdem schlank sein, und ein normaler BMI kann einen hohen Körperfettanteil verbergen."
+          }
+        }
+      }
+    },
+    "Basal metabolic rate": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grundumsatz"
           }
         }
       }
@@ -490,6 +546,16 @@
         }
       }
     },
+    "Body water": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperwasser"
+          }
+        }
+      }
+    },
     "Body-composition values are estimates, not medical advice.": {
       "localizations": {
         "de": {
@@ -526,6 +592,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Körperfett-Ziel erreicht."
+          }
+        }
+      }
+    },
+    "Bone mass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knochenmasse"
           }
         }
       }
@@ -576,6 +652,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Schließen"
+          }
+        }
+      }
+    },
+    "Compares your basal metabolic rate with the average of different age groups. Below your real age suggests a favourable body composition.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergleicht deinen Grundumsatz mit dem Durchschnitt verschiedener Altersgruppen. Liegt er unter deinem echten Alter, spricht das für eine günstige Körperzusammensetzung."
           }
         }
       }
@@ -790,6 +876,26 @@
         }
       }
     },
+    "Estimated from your weight, the scale's electrical resistance measurement, height, age and sex. Good for following trends, not a medical measurement.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschätzt aus deinem Gewicht, der Widerstandsmessung der Waage, Größe, Alter und Geschlecht. Gut, um Trends zu verfolgen – keine medizinische Messung."
+          }
+        }
+      }
+    },
+    "Everything that isn't fat: muscles, bones, organs and water. Your weight minus your body fat.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles, was kein Fett ist: Muskeln, Knochen, Organe und Wasser. Dein Gewicht minus dein Körperfett."
+          }
+        }
+      }
+    },
     "Example reading. Nothing was saved to Apple Health.": {
       "localizations": {
         "de": {
@@ -920,6 +1026,22 @@
         }
       }
     },
+    "Healthy for %@ aged %lld: %@–%@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesund für %1$@ mit %2$lld Jahren: %3$@–%4$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Healthy for %1$@ aged %2$lld: %3$@–%4$@"
+          }
+        }
+      }
+    },
     "Healthy range for %lld cm: %@–%@ kg (BMI 18.5–25).": {
       "localizations": {
         "de": {
@@ -978,6 +1100,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hallo %@! Stell dich jederzeit auf deine Waage – deine Messungen erscheinen hier und in Apple Health."
+          }
+        }
+      }
+    },
+    "High": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoch"
           }
         }
       }
@@ -1082,6 +1214,16 @@
         }
       }
     },
+    "Last 30 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte 30 Tage"
+          }
+        }
+      }
+    },
     "Lean": {
       "localizations": {
         "de": {
@@ -1112,12 +1254,12 @@
         }
       }
     },
-    "Loading…": {
+    "Low": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Laden …"
+            "value": "Niedrig"
           }
         }
       }
@@ -1162,6 +1304,16 @@
         }
       }
     },
+    "Metabolic age": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stoffwechselalter"
+          }
+        }
+      }
+    },
     "Milestone reached!": {
       "localizations": {
         "de": {
@@ -1188,6 +1340,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Größe fehlt – bitte zuerst einrichten."
+          }
+        }
+      }
+    },
+    "Muscle mass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muskelmasse"
           }
         }
       }
@@ -1295,12 +1457,12 @@
         }
       }
     },
-    "Not enough data yet": {
+    "Normal": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Noch nicht genug Daten"
+            "value": "Normal"
           }
         }
       }
@@ -1371,6 +1533,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Adipositas"
+          }
+        }
+      }
+    },
+    "Older than you": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Älter als du"
           }
         }
       }
@@ -1505,6 +1677,16 @@
         }
       }
     },
+    "Protein": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protein"
+          }
+        }
+      }
+    },
     "Range": {
       "localizations": {
         "de": {
@@ -1531,6 +1713,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gewicht wird gelesen …"
+          }
+        }
+      }
+    },
+    "Reference": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Referenz"
           }
         }
       }
@@ -1815,6 +2007,16 @@
         }
       }
     },
+    "Shaded: healthy range for you": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinterlegt: gesunder Bereich für dich"
+          }
+        }
+      }
+    },
     "Shows all measurements": {
       "localizations": {
         "de": {
@@ -2055,12 +2257,72 @@
         }
       }
     },
+    "The calories your body burns at complete rest in a day — for breathing, circulation and keeping warm. Your total daily need is higher, depending on how active you are.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Kalorien, die dein Körper an einem Tag in völliger Ruhe verbraucht – für Atmung, Kreislauf und Körperwärme. Dein gesamter Tagesbedarf ist höher, je nachdem wie aktiv du bist."
+          }
+        }
+      }
+    },
+    "The share of your weight that is fat. Some fat is essential; too much — especially around the organs — raises the risk of heart disease and diabetes.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Anteil deines Gewichts, der aus Fett besteht. Etwas Fett ist lebenswichtig; zu viel – besonders um die Organe – erhöht das Risiko für Herzkrankheiten und Diabetes."
+          }
+        }
+      }
+    },
+    "The share of your weight that is protein, mostly in muscle. It's estimated from muscle mass and body water.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Anteil deines Gewichts, der aus Eiweiß besteht, vor allem in den Muskeln. Er wird aus Muskelmasse und Körperwasser geschätzt."
+          }
+        }
+      }
+    },
+    "The share of your weight that is water. It drops when body fat rises, and it changes with drinking, salt and exercise — so day-to-day swings are normal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Anteil deines Gewichts, der aus Wasser besteht. Er sinkt, wenn der Körperfettanteil steigt, und schwankt mit Trinken, Salz und Sport – Schwankungen von Tag zu Tag sind also normal."
+          }
+        }
+      }
+    },
     "The target date has passed — set a new one.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Das Zieldatum ist vorbei – leg ein neues fest."
+          }
+        }
+      }
+    },
+    "The weight of your muscles, including water held in them. More muscle raises your resting calorie burn and protects joints and bones; keeping it while losing weight is a good sign.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Gewicht deiner Muskeln, inklusive des darin gespeicherten Wassers. Mehr Muskeln erhöhen deinen Grundumsatz und schützen Gelenke und Knochen; sie beim Abnehmen zu halten, ist ein gutes Zeichen."
+          }
+        }
+      }
+    },
+    "There is no general healthy range for this value — it depends on your height, build and training. Watch how it changes over time instead.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diesen Wert gibt es keinen allgemeinen gesunden Bereich – er hängt von Größe, Körperbau und Training ab. Achte stattdessen darauf, wie er sich entwickelt."
           }
         }
       }
@@ -2131,6 +2393,16 @@
         }
       }
     },
+    "Unchanged": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unverändert"
+          }
+        }
+      }
+    },
     "Underweight": {
       "localizations": {
         "de": {
@@ -2167,6 +2439,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aktualisiert den Eintrag in Apple Health. Der Körperfettanteil bleibt gleich, fettfreie Masse und BMI werden für das neue Gewicht neu berechnet."
+          }
+        }
+      }
+    },
+    "Value": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wert"
+          }
+        }
+      }
+    },
+    "Very high": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sehr hoch"
+          }
+        }
+      }
+    },
+    "Visceral fat": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Viszeralfett"
           }
         }
       }
@@ -2231,6 +2533,16 @@
         }
       }
     },
+    "Weigh in again to see how this value develops.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich noch einmal, um zu sehen, wie sich dieser Wert entwickelt."
+          }
+        }
+      }
+    },
     "Weigh in again to see how your BMI develops.": {
       "localizations": {
         "de": {
@@ -2267,6 +2579,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Auf der Waage wiegen"
+          }
+        }
+      }
+    },
+    "Weigh in on your scale to see this value.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich auf deiner Waage, um diesen Wert zu sehen."
           }
         }
       }
@@ -2391,6 +2713,16 @@
         }
       }
     },
+    "What is this?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was ist das?"
+          }
+        }
+      }
+    },
     "With a date, the Goal tab shows whether you're on plan.": {
       "localizations": {
         "de": {
@@ -2473,6 +2805,16 @@
           "stringUnit": {
             "state": "new",
             "value": "You're inside the healthy range — %1$@ kg above its lower and %2$@ kg below its upper end."
+          }
+        }
+      }
+    },
+    "Younger than you": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jünger als du"
           }
         }
       }
@@ -2583,12 +2925,32 @@
         }
       }
     },
+    "Your real age is %lld. A metabolic age below it is favourable.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein echtes Alter ist %lld. Ein Stoffwechselalter darunter ist günstig."
+          }
+        }
+      }
+    },
     "Your scale measured a body fat of %@ %%, which says more about body composition than BMI alone.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Deine Waage hat einen Körperfettanteil von %@ %% gemessen – das sagt mehr über deine Körperzusammensetzung als der BMI allein."
+          }
+        }
+      }
+    },
+    "Your total daily calorie need is roughly 1.2× this when sitting most of the day, up to 1.7× when very active.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein gesamter Tagesbedarf liegt etwa beim 1,2-Fachen, wenn du viel sitzt, und bis zum 1,7-Fachen, wenn du sehr aktiv bist."
           }
         }
       }
@@ -2682,6 +3044,16 @@
         }
       }
     },
+    "men": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Männer"
+          }
+        }
+      }
+    },
     "needs review": {
       "localizations": {
         "de": {
@@ -2738,6 +3110,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "unter %@ kg"
+          }
+        }
+      }
+    },
+    "women": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frauen"
+          }
+        }
+      }
+    },
+    "yrs": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "J."
           }
         }
       }

@@ -3,7 +3,7 @@ import MyOpenScaleCore
 
 struct DashboardView: View {
     @EnvironmentObject var model: AppModel
-    @State private var selectedMetric: HealthKitSink.MetricKind?
+    @State private var selectedMetric: BodyMetric?
     @State private var showingBMI = false
     /// Tapping "To goal" / the chart header jumps to the Goal / History tab.
     var onShowGoal: () -> Void = {}
@@ -14,8 +14,8 @@ struct DashboardView: View {
             weightPage
                 .background(Theme.backgroundGradient.ignoresSafeArea())
                 .toolbarVisibility(.hidden, for: .navigationBar)
-                .sheet(item: $selectedMetric) { kind in
-                    MetricDetailView(kind: kind).environmentObject(model)
+                .navigationDestination(item: $selectedMetric) { metric in
+                    BodyMetricDetailView(metric: metric)
                 }
                 .navigationDestination(isPresented: $showingBMI) {
                     BMIDetailView()
@@ -55,7 +55,8 @@ struct DashboardView: View {
                                     goalKg: model.profile.goalWeightKg,
                                     onShowHistory: onShowHistory)
 
-                    metricCards
+                    BodyMetricsGridView(onSelect: { selectedMetric = $0 },
+                                        onSelectBMI: { showingBMI = true })
 
                     Text("Body-composition values are estimates, not medical advice.")
                         .font(.caption2)
@@ -72,23 +73,6 @@ struct DashboardView: View {
     }
 
     // MARK: - Sections
-
-    private var metricCards: some View {
-        HStack(spacing: 12) {
-            metricCard(.bodyFat, value: model.latestValue(.bodyFat), unit: "%", image: "drop.fill", tint: .orange)
-            metricCard(.lean, value: model.latestValue(.lean), unit: "kg", image: "figure.arms.open", tint: Theme.accentSecondary)
-            metricCard(.bmi, value: model.latestValue(.bmi), unit: "", image: "ruler.fill", tint: Theme.accent)
-        }
-    }
-
-    private func metricCard(_ kind: HealthKitSink.MetricKind, value: Double?,
-                            unit: String, image: String, tint: Color) -> some View {
-        // BMI gets its own explanatory page; the others show their history.
-        Button { if kind == .bmi { showingBMI = true } else { selectedMetric = kind } } label: {
-            MetricCardView(title: kind.title, systemImage: image, value: value, unit: unit, tint: tint)
-        }
-        .buttonStyle(.plain)
-    }
 
     /// Held weigh-ins that didn't clearly match the owner — one-tap confirm.
     @ViewBuilder
