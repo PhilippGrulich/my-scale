@@ -9,6 +9,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     /// Routed to the app model (set by AppModel).
     var onConfirm: ((UUID) -> Void)?
     var onReject: ((UUID) -> Void)?
+    /// A Mochi weigh-in reminder was tapped.
+    var onReminderTap: (() -> Void)?
 
     private let reviewCategory = "weighin.review"
     private let confirmAction = "weighin.confirm"
@@ -75,6 +77,10 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     /// Confirm / Not me tapped on the notification.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse) async {
+        if response.notification.request.content.categoryIdentifier == MochiReminderScheduler.category {
+            await MainActor.run { onReminderTap?() }
+            return
+        }
         guard
             let idString = response.notification.request.content.userInfo[readingIDKey] as? String,
             let id = UUID(uuidString: idString)

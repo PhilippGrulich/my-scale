@@ -6,11 +6,12 @@ import MyOpenScaleCore
 /// lines, persists Mochi's state and plays haptics.
 @MainActor
 final class MochiCoordinator: ObservableObject {
-    /// Persisted on every change. (Task 12 also reschedules reminders here.)
+    /// Persisted on every change, which also reschedules the reminders.
     @Published var settings: MochiSettings {
         didSet {
             guard settings != oldValue else { return }
             MochiStateStore.settings = settings
+            rescheduleReminders(history: historyProvider(), profile: profileProvider())
         }
     }
 
@@ -23,6 +24,7 @@ final class MochiCoordinator: ObservableObject {
     var profileProvider: () -> StoredProfile = { StoredProfile.makeDefault() }
 
     private let library: MochiLibrary
+    private let reminderScheduler = MochiReminderScheduler()
     private var random = SystemRandomNumberGenerator()
     private var calendar: Calendar { .current }
 
@@ -172,6 +174,28 @@ final class MochiCoordinator: ObservableObject {
         return line(stage.lineEvent, goalType: profile.weightGoal.type, tags: tags(now: now, profile: profile),
                     streakDays: stats.streakDays, values: values, now: now)
             ?? String(localized: "Time for a quick weigh-in?")
+    }
+
+    /// Recomputes the pending reminders: none when Mochi or reminders are off.
+    func rescheduleReminders(history: [WeightSample], profile: StoredProfile, now: Date = Date()) {
+        guard settings.enabled, settings.remindersEnabled else {
+            reminderScheduler.cancelAll()
+            return
+        }
+        let minute: Int
+        switch settings.reminderMode {
+        case .fixed:
+            minute = settings.fixedMinuteOfDay
+        case .smart:
+            minute = settings.smartMinuteOverride
+                ?? ReminderPlanner.usualMinuteOfDay(history: history, calendar: calendar)
+                ?? ReminderPlanner.defaultMinuteOfDay
+        }
+        let planned = ReminderPlanner.plan(lastWeighIn: history.map(\.date).max(), now: now,
+                                           mode: settings.reminderMode, minuteOfDay: minute,
+                                           count: 8, calendar: calendar)
+        let reminders = planned.map { ($0, title: "Mochi", body: reminderBody(stage: $0.stage, profile: profile)) }
+        reminderScheduler.replace(with: reminders)
     }
 
     // MARK: - Private

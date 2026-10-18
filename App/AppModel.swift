@@ -151,6 +151,9 @@ final class AppModel: ObservableObject {
         notifications.onReject = { [weak self] id in
             Task { @MainActor in self?.rejectReading(id) }
         }
+        notifications.onReminderTap = { [weak self] in
+            Task { @MainActor in self?.startMeasurement() }
+        }
 
         scanner.onStatusChange = { [weak self] status in
             Task { @MainActor in self?.bleStatus = status }
@@ -337,6 +340,7 @@ final class AppModel: ObservableObject {
                                     weightKg: (kg * 10).rounded() / 10,
                                     impedanceOhms: 490 + Int.random(in: -15...15, using: &rng) + (200 - day) / 20)
             }
+            mochi.rescheduleReminders(history: weightHistory, profile: profile)
             return
         }
         #endif
@@ -348,6 +352,9 @@ final class AppModel: ObservableObject {
             case .success(let samples):
                 self.weightHistory = samples
                 self.lastSyncError = nil
+                // Also covers a just-written weigh-in (the write reloads history) and
+                // Watch weigh-ins that arrive through Health.
+                self.mochi.rescheduleReminders(history: samples, profile: self.profile)
                 self.updateWidgetSnapshot()
             case .failure(let error):
                 self.lastSyncError = error.localizedDescription
