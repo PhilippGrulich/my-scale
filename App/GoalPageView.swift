@@ -122,7 +122,15 @@ struct GoalPageView: View {
             Rectangle().fill(.secondary.opacity(0.25)).frame(width: 1, height: 36)
             milestone("Current", current, detail: nil)
             Rectangle().fill(.secondary.opacity(0.25)).frame(width: 1, height: 36)
-            milestone("Goal", goal, detail: nil, tint: Theme.accentSecondary)
+            // The goal itself is the obvious place to change it.
+            Button { editingGoal = true } label: {
+                milestone("Goal", goal,
+                          detail: Text("\(Image(systemName: "pencil")) Change"),
+                          tint: Theme.accentSecondary)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Edit your goal weight")
         }
         .padding(.vertical, 14)
         .glassEffect(in: .rect(cornerRadius: 22))

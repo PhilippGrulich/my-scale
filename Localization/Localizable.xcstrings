@@ -7,6 +7,16 @@
     "%@": {
       "shouldTranslate": false
     },
+    "%@ Change": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Ändern"
+          }
+        }
+      }
+    },
     "%@ history needs at least two weigh-ins.": {
       "localizations": {
         "de": {
