@@ -427,6 +427,25 @@ final class AppModel: ObservableObject {
         }
     }
 
+    /// Correct the weight (and/or time) of a weigh-in this app saved. Entries
+    /// from other apps can't be changed — HealthKit only lets us delete our own.
+    func editMeasurement(_ sample: WeightSample, weightKg: Double, date: Date,
+                         completion: @escaping (Result<Void, Error>) -> Void) {
+        guard sample.isFromThisApp else { return }
+        healthKit.replaceMeasurement(at: sample.date, newWeightKg: weightKg, newDate: date,
+                                     heightCm: profile.heightCm) { [weak self] result in
+            guard let self else { return }
+            if case .success = result {
+                // The local log's copy (if any) now disagrees with Health; drop it
+                // like a delete does — Health is the source of truth.
+                self.readings.removeAll { abs($0.capturedAt.timeIntervalSince(sample.date)) < 1 }
+                self.persistReadings()
+                self.loadWeightHistory()
+            }
+            completion(result)
+        }
+    }
+
     func deleteMeasurement(_ sample: WeightSample) {
         guard sample.isFromThisApp else { return }
         weightHistory.removeAll { $0.id == sample.id }

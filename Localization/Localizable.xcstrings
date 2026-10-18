@@ -440,6 +440,26 @@
         }
       }
     },
+    "Edit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten"
+          }
+        }
+      }
+    },
+    "Edit weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten"
+          }
+        }
+      }
+    },
     "Enter manually": {
       "localizations": {
         "de": {
@@ -1465,6 +1485,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Diese Waage entkoppeln?"
+          }
+        }
+      }
+    },
+    "Updates the entry in Apple Health. Body fat keeps its percentage; lean mass and BMI are recalculated for the new weight.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert den Eintrag in Apple Health. Der Körperfettanteil bleibt gleich, fettfreie Masse und BMI werden für das neue Gewicht neu berechnet."
           }
         }
       }

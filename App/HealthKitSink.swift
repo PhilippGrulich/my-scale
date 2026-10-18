@@ -399,6 +399,63 @@ final class HealthKitSink {
         }
     }
 
+    /// Correct a weigh-in this app wrote. HealthKit samples are immutable, so
+    /// this collects the app's own samples at `oldDate` (weight, BMI, body fat,
+    /// lean mass), saves a corrected set at `newDate`, and only then deletes
+    /// exactly those old objects — a failed save leaves the original intact.
+    /// Body fat keeps its percentage; lean mass and BMI follow the new weight.
+    /// Completion on the main queue.
+    func replaceMeasurement(at oldDate: Date,
+                            newWeightKg: Double,
+                            newDate: Date,
+                            heightCm: Double,
+                            completion: @escaping (Result<Void, Error>) -> Void) {
+        guard Self.isAvailable else {
+            DispatchQueue.main.async { completion(.failure(SinkError.unavailable)) }
+            return
+        }
+        let ids: [HKQuantityTypeIdentifier] = [.bodyMass, .bodyMassIndex, .bodyFatPercentage, .leanBodyMass]
+        let window = HKQuery.predicateForSamples(withStart: oldDate.addingTimeInterval(-1),
+                                                 end: oldDate.addingTimeInterval(1), options: [])
+        let mine = HKQuery.predicateForObjects(from: .default())
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [window, mine])
+
+        let group = DispatchGroup()
+        let lock = NSLock()
+        var old: [HKSample] = []
+        var bodyFatPercent: Double?
+        for id in ids {
+            guard let type = HKQuantityType.quantityType(forIdentifier: id) else { continue }
+            group.enter()
+            let query = HKSampleQuery(sampleType: type, predicate: predicate,
+                                      limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, _ in
+                let found = samples ?? []
+                lock.lock()
+                old.append(contentsOf: found)
+                if id == .bodyFatPercentage, let s = found.first as? HKQuantitySample {
+                    bodyFatPercent = s.quantity.doubleValue(for: .percent()) * 100
+                }
+                lock.unlock()
+                group.leave()
+            }
+            store.execute(query)
+        }
+        group.notify(queue: .main) { [self] in
+            guard !old.isEmpty else { completion(.failure(SinkError.noSamples)); return }
+            let composition = BodyCompositionCalculator.manual(weightKg: newWeightKg,
+                                                               bodyFatPercent: bodyFatPercent,
+                                                               heightCm: heightCm)
+            save(composition, at: newDate, metadata: [HKMetadataKeyWasUserEntered: true]) { [self] result in
+                guard case .success = result else { completion(result); return }
+                store.delete(old) { _, error in
+                    DispatchQueue.main.async {
+                        if let error { completion(.failure(error)) } else { completion(.success(())) }
+                    }
+                }
+            }
+        }
+    }
+
     /// HealthKit's own texts ("Not authorized") are terse and not always
     /// localized; for a denied share, say where to turn it on.
     static func userMessage(for error: Error) -> String {
