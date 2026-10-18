@@ -49,7 +49,7 @@ struct MeasurementHistoryView: View {
             }
             // Standard grouped grey (like Settings) so the white day cards stand out.
             .background(Color(.systemGroupedBackground).ignoresSafeArea())
-            .navigationTitle("History")
+            .toolbarVisibility(.hidden, for: .navigationBar)
             .task { model.loadActivity() }
             .sheet(item: $editing) { sample in
                 EditMeasurementView(sample: sample, onDelete: {
