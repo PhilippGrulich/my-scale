@@ -22,7 +22,8 @@ struct WeighInOverlayView: View {
             Group {
                 if mochiEnabled {
                     MochiWeighInView(phase: phase, startedAt: startedAt, bleStatus: bleStatus,
-                                     presentation: presentation, onAccept: onAccept, onDismiss: onDismiss)
+                                     presentation: presentation, onAccept: onAccept, onDismiss: onDismiss,
+                                     onEnterManually: onEnterManually)
                 } else {
                     content
                 }

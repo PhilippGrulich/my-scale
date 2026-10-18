@@ -167,7 +167,16 @@ final class AppModel: ObservableObject {
         scanner.onReading = { [weak self] reading, peripheralID in
             Task { @MainActor in self?.handle(reading, from: peripheralID) }
         }
+        // Home content waits for the app to be active (see `appIsActive`). A cold launch
+        // never changes scenePhase, so catch the moment it becomes active here.
+        becameActiveObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.refreshMochiHomeOnActivation() }
+        }
     }
+
+    private var becameActiveObserver: NSObjectProtocol?
 
     // MARK: - Derived view state
 
@@ -390,6 +399,17 @@ final class AppModel: ObservableObject {
     private func refreshMochiHomeIfStaleNow() {
         guard mochi.settings.enabled, measurementPhase == .idle else { return }
         mochi.refreshHomeIfStale(history: weightHistory, profile: profile)
+    }
+
+    /// The app became active: show a waiting stash, or a first / stale greeting.
+    private func refreshMochiHomeOnActivation() {
+        guard dashboardVisible, mochiHomeCanUpdate else { return }
+        if weightHistory.isEmpty && mochi.homePresentation == nil {
+            // No history yet: show a waiting stash; the load under way gives the first greeting.
+            mochi.showPendingHomeReaction()
+        } else {
+            mochi.refreshHomeIfStale(history: weightHistory, profile: profile)
+        }
     }
 
     /// A history load never regenerates the greeting: it may show a stashed reaction, and gives
@@ -671,12 +691,27 @@ final class AppModel: ObservableObject {
             switch result {
             case .success:
                 self?.lastSyncError = nil
+                self?.reactToManualEntry(weightKg: weightKg, date: date)
                 self?.loadWeightHistory()
             case .failure(let error):
                 self?.lastSyncError = error.localizedDescription
             }
             completion(result)
         }
+    }
+
+    /// Mochi reacts to a typed weigh-in too (the user did weigh in): the reaction waits on
+    /// the home-screen corner, where the Weigh in tab returns after saving. Mochi off: nothing.
+    private func reactToManualEntry(weightKg: Double, date: Date) {
+        guard mochi.settings.enabled else { return }
+        let reading = LoggedReading(capturedAt: date, weightKg: weightKg, impedanceOhms: 0,
+                                    resolution: "You", composition: nil, healthKitStatus: .written)
+        // Only samples from before it; the Health reload after the write would contain it.
+        let history = weightHistory.filter { $0.date < date.addingTimeInterval(-60) }
+        fillGoalStartIfNeeded(for: reading)
+        let presentation = mochi.presentationForWeighIn(reading, history: history, profile: profile)
+        mochi.stash(presentation)
+        if appIsActive { mochi.playHaptic(for: presentation.pose) }
     }
 
     /// Correct the weight (and/or time) of a weigh-in this app saved. Entries

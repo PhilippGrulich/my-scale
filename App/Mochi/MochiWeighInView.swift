@@ -1,16 +1,22 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// The weigh-in overlay with Mochi as host: Mochi stays on screen through the phases
-/// (looking around, squishing with the live number on its tummy, then its reaction),
-/// talking through speech bubbles. Same phases and controls as the plain overlay.
+/// A weigh-in with Mochi as host: Mochi stays on screen through the phases (looking
+/// around, squishing with the live number on its tummy, then its reaction), talking
+/// through speech bubbles. Shared by the passive full-screen overlay and the Weigh in
+/// tab's scale mode, with the same controls as their plain versions.
 struct MochiWeighInView: View {
     let phase: MeasurementPhase
     let startedAt: Date?
     let bleStatus: BLEStatus
     let presentation: MochiPresentation?
     let onAccept: () -> Void
-    let onDismiss: () -> Void
+    /// Cancel while waiting (the overlay); nil hides it (the tab has its own navigation).
+    var onDismiss: (() -> Void)? = nil
+    /// "Enter manually" while waiting; prominent once Bluetooth is clearly not working.
+    var onEnterManually: (() -> Void)? = nil
+    /// The overlay closes on tap; the tab has a Done button instead.
+    var showsDismissHint = true
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -86,11 +92,24 @@ struct MochiWeighInView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
 
-                Button(action: onDismiss) {
-                    Text("Cancel").font(.headline)
+                if let onEnterManually {
+                    let button = Button(action: onEnterManually) {
+                        Label("Enter manually", systemImage: "square.and.pencil")
+                            .font(.headline)
+                    }
+                    if isListening {
+                        button.buttonStyle(.glass).tint(Theme.accent)
+                    } else {
+                        button.buttonStyle(.borderedProminent).tint(Theme.accent)
+                    }
                 }
-                .buttonStyle(.glass)
-                .tint(.secondary)
+                if let onDismiss {
+                    Button(action: onDismiss) {
+                        Text("Cancel").font(.headline)
+                    }
+                    .buttonStyle(.glass)
+                    .tint(.secondary)
+                }
             }
         case .measuring(let w):
             MeasuringStatusView(weightKg: w, label: "Reading weight…", startedAt: startedAt, onAccept: onAccept)
@@ -100,9 +119,11 @@ struct MochiWeighInView: View {
         case .result(let r):
             VStack(spacing: 18) {
                 WeighInResultDetails(reading: r)
-                Text("Tap anywhere to dismiss")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if showsDismissHint {
+                    Text("Tap anywhere to dismiss")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }

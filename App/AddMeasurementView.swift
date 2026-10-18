@@ -128,28 +128,44 @@ struct AddMeasurementView: View {
     private var scaleContent: some View {
         VStack {
             Spacer(minLength: 0)
-            switch model.measurementPhase {
-            case .idle, .waiting:
-                WaitingView(bleStatus: model.bleStatus,
-                            onEnterManually: { switchTo(.manual) })
-            case .measuring(let w):
-                MeasuringView(weightKg: w, label: "Reading weight…",
-                              hint: "Stay still on the scale.",
-                              startedAt: model.liveStartedAt,
-                              onAccept: { model.acceptCurrentLiveWeight() })
-            case .finalizing(let w):
-                MeasuringView(weightKg: w, label: "Measuring body composition…",
-                              hint: "Almost there — keep your feet on the scale.",
-                              startedAt: model.liveStartedAt,
-                              onAccept: { model.acceptCurrentLiveWeight() })
-            case .result(let r):
-                ResultView(reading: r, showsDismissHint: false)
+            if model.mochi.settings.enabled {
+                // Mochi hosts the weigh-in here just like in the passive overlay.
+                MochiWeighInView(phase: model.measurementPhase,
+                                 startedAt: model.liveStartedAt,
+                                 bleStatus: model.bleStatus,
+                                 presentation: model.weighInPresentation,
+                                 onAccept: { model.acceptCurrentLiveWeight() },
+                                 onEnterManually: { switchTo(.manual) },
+                                 showsDismissHint: false)
+            } else {
+                plainScaleContent
             }
             Spacer(minLength: 0)
         }
         .padding(28)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.backgroundGradient.ignoresSafeArea())
+    }
+
+    @ViewBuilder
+    private var plainScaleContent: some View {
+        switch model.measurementPhase {
+        case .idle, .waiting:
+            WaitingView(bleStatus: model.bleStatus,
+                        onEnterManually: { switchTo(.manual) })
+        case .measuring(let w):
+            MeasuringView(weightKg: w, label: "Reading weight…",
+                          hint: "Stay still on the scale.",
+                          startedAt: model.liveStartedAt,
+                          onAccept: { model.acceptCurrentLiveWeight() })
+        case .finalizing(let w):
+            MeasuringView(weightKg: w, label: "Measuring body composition…",
+                          hint: "Almost there — keep your feet on the scale.",
+                          startedAt: model.liveStartedAt,
+                          onAccept: { model.acceptCurrentLiveWeight() })
+        case .result(let r):
+            ResultView(reading: r, showsDismissHint: false)
+        }
     }
 
     // MARK: - Manual

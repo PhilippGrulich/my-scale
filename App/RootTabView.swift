@@ -53,8 +53,12 @@ struct RootTabView: View {
         }
         .task {
             #if DEBUG
-            // `-startTab settings` on launch opens the Settings tab (simulator screenshots).
-            if ["settings", "profile"].contains(UserDefaults.standard.string(forKey: "startTab")) { selection = .settings }
+            // `-startTab settings|measure` on launch opens that tab (simulator screenshots).
+            switch UserDefaults.standard.string(forKey: "startTab") {
+            case "settings", "profile": selection = .settings
+            case "measure": selection = .measure
+            default: break
+            }
             #endif
             model.loadWeightHistory()
             #if DEBUG
@@ -67,6 +71,9 @@ struct RootTabView: View {
                 model.simulateWeighIn()
                 return
             }
+            // `-skipNotificationPrompt YES`: no permission alert (it makes the app inactive,
+            // which holds back Mochi's home content), for simulator screenshots.
+            if UserDefaults.standard.bool(forKey: "skipNotificationPrompt") { return }
             #endif
             // Needed for weigh-in-saved alerts; a no-op if onboarding's reminders step already asked.
             model.requestNotificationAuthorization()
