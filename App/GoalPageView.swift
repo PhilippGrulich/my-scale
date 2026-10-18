@@ -39,7 +39,6 @@ struct GoalPageView: View {
         NavigationStack {
             content
                 .background(Theme.backgroundGradient.ignoresSafeArea())
-                .navigationTitle("Goal")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { SettingsToolbarItem() }
         }
