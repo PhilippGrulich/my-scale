@@ -11,7 +11,8 @@ struct ProfileFieldsView: View {
         Section("Identity") {
             TextField("Name", text: $draft.name)
             DatePicker("Date of birth",
-                       selection: $draft.dateOfBirth,
+                       selection: Binding(get: { draft.dateOfBirth },
+                                          set: { draft.dateOfBirth = $0; draft.dateOfBirthIsReal = true }),
                        in: ...Date(),
                        displayedComponents: .date)
             Picker("Biological sex", selection: $draft.sex) {

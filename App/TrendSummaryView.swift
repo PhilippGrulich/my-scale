@@ -115,8 +115,10 @@ struct TrendSummaryView: View {
 
     private func towardGoal(_ change: Double) -> Bool {
         guard let c = currentKg else { return change <= 0.05 }
-        // Without a target there is nothing to aim at, so down is good.
-        let effective = goal.targetKg == nil ? WeightGoal(type: .lose, targetKg: nil, startKg: nil) : goal
+        // Lose / gain set the direction even without a target (as Mochi does). Only maintain
+        // without a target has nothing to aim at; there, down counts as good.
+        let effective = goal.type == .maintain && goal.targetKg == nil
+            ? WeightGoal(type: .lose, targetKg: nil, startKg: nil) : goal
         return effective.isToward(fromKg: c - change, toKg: c)
     }
 

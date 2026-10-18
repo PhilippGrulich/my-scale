@@ -67,17 +67,14 @@ final class MochiCoordinator: ObservableObject {
         let now = reading.capturedAt
         let display = reading.weightKg.formatted(1)
         let goal = profile.weightGoal
-        let context = MochiCalendarContext.make(now: now, dateOfBirth: profile.dateOfBirth,
-                                                calendar: calendar, regionCode: Locale.current.region?.identifier)
+        let context = calendarContext(now: now, profile: profile)
         let isOwn = reading.resolution == "You" && !reading.needsConfirmation
 
         guard isOwn else {
             let reaction = MochiReactionEngine.notYou()
             let text = line(reaction.event.lineEvent, goalType: goal.type, tags: context.tags,
                             streakDays: 0, values: [:], now: now) ?? ""
-            let presentation = MochiPresentation(pose: reaction.pose, text: text, display: display)
-            playHaptic(for: presentation.pose)
-            return presentation
+            return MochiPresentation(pose: reaction.pose, text: text, display: display)
         }
 
         let state = MochiStateStore.progress ?? .fresh(for: goal)
@@ -107,7 +104,6 @@ final class MochiCoordinator: ObservableObject {
             }
             presentation = MochiPresentation(pose: reaction.pose, text: text, display: display)
         }
-        playHaptic(for: presentation.pose)
         return presentation
     }
 
@@ -146,8 +142,7 @@ final class MochiCoordinator: ObservableObject {
         if showPendingHomeReaction(now: now) { return }
 
         let goal = profile.weightGoal
-        let context = MochiCalendarContext.make(now: now, dateOfBirth: profile.dateOfBirth,
-                                                calendar: calendar, regionCode: Locale.current.region?.identifier)
+        let context = calendarContext(now: now, profile: profile)
         let stats = MochiStats.compute(history: history, now: now, firstLaunch: MochiStateStore.firstLaunch,
                                        goal: goal, calendar: calendar)
         let latestKg = history.max(by: { $0.date < $1.date })?.weightKg
@@ -232,7 +227,7 @@ final class MochiCoordinator: ObservableObject {
         }
         let planned = ReminderPlanner.plan(lastWeighIn: ([lastWeighInOverride].compactMap { $0 } + history.map(\.date)).max(), now: now,
                                            mode: settings.reminderMode, minuteOfDay: minute,
-                                           count: 8, calendar: calendar)
+                                           count: Self.reminderCount(settings.reminderMode), calendar: calendar)
         // Bodies are picked against a scratch copy of the line history: they avoid repeating
         // within this schedule, but are never recorded as shown (nothing was delivered yet).
         var scratch = MochiStateStore.lineHistory
@@ -240,11 +235,27 @@ final class MochiCoordinator: ObservableObject {
         reminderScheduler.replace(with: reminders)
     }
 
+    /// How many reminders are kept pending: fixed is daily for a month; smart covers its
+    /// 1/2/4/8-day stages and then weekly for about three months. Rescheduled whenever the
+    /// app runs, so this is only the horizon for a user who never opens it (best effort).
+    static func reminderCount(_ mode: ReminderMode) -> Int {
+        switch mode {
+        case .fixed: return 30
+        case .smart: return 16
+        }
+    }
+
     // MARK: - Private
 
+    /// The one place the calendar context is built: the birthday only counts when the
+    /// profile's date of birth is real, never for the placeholder default.
+    private func calendarContext(now: Date, profile: StoredProfile) -> MochiCalendarContext {
+        MochiCalendarContext.make(now: now, dateOfBirth: profile.knownDateOfBirth,
+                                  calendar: calendar, regionCode: Locale.current.region?.identifier)
+    }
+
     private func tags(now: Date, profile: StoredProfile) -> Set<String> {
-        MochiCalendarContext.make(now: now, dateOfBirth: profile.dateOfBirth,
-                                  calendar: calendar, regionCode: Locale.current.region?.identifier).tags
+        calendarContext(now: now, profile: profile).tags
     }
 
     /// Picks and renders a line for `event`, remembering it so it is not repeated soon.
@@ -269,7 +280,14 @@ final class MochiCoordinator: ObservableObject {
         return pick.text
     }
 
-    private func playHaptic(for pose: MochiPose) {
+    /// A light tap when the user squishes Mochi.
+    func playTapHaptic() {
+        guard settings.haptics else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+
+    /// Haptic for a reaction the user is about to see (not for stashed or background ones).
+    func playHaptic(for pose: MochiPose) {
         guard settings.haptics else { return }
         switch pose {
         case .confetti, .doubleThumbs:

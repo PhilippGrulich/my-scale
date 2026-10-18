@@ -372,13 +372,23 @@ final class AppModel: ObservableObject {
     /// Whether the dashboard is on screen (set by the view); Mochi's home line only updates then.
     var dashboardVisible = false
 
+    /// Home content is only consumed or generated while the app is in the foreground: a
+    /// background weigh-in's stash must survive until the user actually opens the app
+    /// (`dashboardVisible` stays true while backgrounded, as `onDisappear` doesn't fire).
+    private var appIsActive: Bool { UIApplication.shared.applicationState == .active }
+
     private var mochiHomeCanUpdate: Bool {
-        mochi.settings.enabled && measurementPhase == .idle
+        mochi.settings.enabled && measurementPhase == .idle && appIsActive
     }
 
     /// Dashboard appear / foreground: a stashed reaction, or a new greeting if the old one is stale.
     func refreshMochiHomeIfStale() {
         guard mochiHomeCanUpdate else { return }
+        refreshMochiHomeIfStaleNow()
+    }
+
+    private func refreshMochiHomeIfStaleNow() {
+        guard mochi.settings.enabled, measurementPhase == .idle else { return }
         mochi.refreshHomeIfStale(history: weightHistory, profile: profile)
     }
 
@@ -393,8 +403,28 @@ final class AppModel: ObservableObject {
 
     /// A new greeting on request (tap, or after a weigh-in result is dismissed).
     func refreshMochiHome() {
-        guard mochi.settings.enabled else { return }
+        guard mochi.settings.enabled, appIsActive else { return }
         mochi.refreshHome(history: weightHistory, profile: profile)
+    }
+
+    /// A weigh-in result was on screen in the foreground: its reaction was seen, so a stash of
+    /// the same reaction (made because the app was inactive at that moment) must not show again.
+    private func noteWeighInResultSeen() {
+        guard appIsActive, let shown = weighInPresentation,
+              MochiStateStore.pendingHomeReaction == shown else { return }
+        MochiStateStore.pendingHomeReaction = nil
+    }
+
+    /// A goal with a target but no start weight (set before any weight was known) starts from
+    /// the owner's previous known weight, else this first reading, so milestones and % progress
+    /// can count. Mochi only: with Mochi off the profile stays as the user saved it.
+    private func fillGoalStartIfNeeded(for reading: LoggedReading) {
+        guard mochi.settings.enabled, profile.goalWeightKg != nil, profile.goalStartKg == nil else { return }
+        let previous = weightHistory.filter { $0.date < reading.capturedAt.addingTimeInterval(-60) }
+            .max { $0.date < $1.date }?.weightKg
+        profile.goalStartKg = previous ?? reading.weightKg
+        if profile.goalSetAt == nil { profile.goalSetAt = reading.capturedAt }
+        ProfileStore.save(profile)
     }
 
     private func noteOwnWeighIn(at date: Date) {
@@ -426,7 +456,8 @@ final class AppModel: ObservableObject {
     /// Called by the view when the app returns to the foreground.
     func onForeground() {
         loadWeightHistory()
-        if dashboardVisible { refreshMochiHomeIfStale() }
+        // The scene just became active; don't depend on UIApplication's state having caught up.
+        if dashboardVisible { refreshMochiHomeIfStaleNow() }
     }
 
     func saveProfile(_ updated: StoredProfile) {
@@ -493,7 +524,9 @@ final class AppModel: ObservableObject {
         if mochi.settings.enabled {
             // The reading is now the owner's: Mochi reacts on the home screen. History is
             // from before the reading (the engine appends it itself).
-            let history = weightHistory.filter { abs($0.date.timeIntervalSince(reading.capturedAt)) >= 60 }
+            // Only samples from before it: a reading confirmed days later must not count later ones.
+            let history = weightHistory.filter { $0.date < reading.capturedAt.addingTimeInterval(-60) }
+            fillGoalStartIfNeeded(for: reading)
             mochi.stash(mochi.presentationForWeighIn(reading, history: history, profile: profile))
         }
         writeReadingToHealth(reading)
@@ -737,6 +770,7 @@ final class AppModel: ObservableObject {
         manualMeasurementActive = false
         awaitingStepOff = false
         measurementPhase = .idle
+        if wasResult { noteWeighInResultSeen() }
         weighInPresentation = nil
         if wasResult { refreshMochiHome() }
     }
@@ -942,9 +976,14 @@ final class AppModel: ObservableObject {
         manualMeasurementActive = false   // the weigh-in completed
         awaitingStepOff = true            // ignore "still standing" frames until step-off
         // Before the Health write, so `weightHistory` doesn't contain this reading yet.
-        weighInPresentation = mochi.settings.enabled
-            ? mochi.presentationForWeighIn(logged, history: weightHistory, profile: profile)
-            : nil
+        if mochi.settings.enabled {
+            if logged.resolution == "You" && !logged.needsConfirmation { fillGoalStartIfNeeded(for: logged) }
+            let presentation = mochi.presentationForWeighIn(logged, history: weightHistory, profile: profile)
+            weighInPresentation = presentation
+            if appIsActive { mochi.playHaptic(for: presentation.pose) }
+        } else {
+            weighInPresentation = nil
+        }
         measurementPhase = .result(logged)
         armDismiss(for: logged.id)
     }
@@ -958,6 +997,7 @@ final class AppModel: ObservableObject {
             guard let self, !Task.isCancelled else { return }
             if case .result(let r) = self.measurementPhase, r.id == id {
                 self.measurementPhase = .idle
+                self.noteWeighInResultSeen()
                 self.weighInPresentation = nil
                 self.refreshMochiHome()
             }

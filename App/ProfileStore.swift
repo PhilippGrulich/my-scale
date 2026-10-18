@@ -9,6 +9,9 @@ struct StoredProfile: Codable, Equatable {
     var name: String
     var heightCm: Double
     var dateOfBirth: Date
+    /// True once the date of birth came from Apple Health or the user set it; the
+    /// placeholder default is not a real birthday (Mochi only celebrates real ones).
+    var dateOfBirthIsReal: Bool?
     var sex: BiologicalSex
     var weightMinKg: Double
     var weightMaxKg: Double
@@ -52,11 +55,17 @@ struct StoredProfile: Codable, Equatable {
     /// left untouched so the existing default stands and the user can edit.
     func applying(prefill: HealthKitSink.HealthPrefill) -> StoredProfile {
         var copy = self
-        if let dob = prefill.dateOfBirth { copy.dateOfBirth = dob }
+        if let dob = prefill.dateOfBirth {
+            copy.dateOfBirth = dob
+            copy.dateOfBirthIsReal = true
+        }
         if let sex = prefill.sex { copy.sex = sex }
         if let h = prefill.heightCm, h > 0 { copy.heightCm = h }
         return copy
     }
+
+    /// The date of birth when it is real, else nil (see `dateOfBirthIsReal`).
+    var knownDateOfBirth: Date? { dateOfBirthIsReal == true ? dateOfBirth : nil }
 
     /// The goal as Mochi and the trend colours understand it.
     var weightGoal: WeightGoal {

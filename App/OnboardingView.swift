@@ -249,6 +249,8 @@ struct OnboardingView: View {
     // MARK: - Mochi
 
     private func acceptMochi() {
+        // Reminders stay off until the reminders step asks (an app kill in between leaves them off).
+        model.mochi.settings.remindersEnabled = false
         model.mochi.settings.enabled = true
         mochiEnabled = true
         step = .welcome

@@ -60,7 +60,8 @@ struct MochiHomeCorner: View {
 
     var body: some View {
         if mochi.settings.enabled {
-            MochiCornerView(presentation: mochi.homePresentation, display: display, onTap: onTap)
+            MochiCornerView(presentation: mochi.homePresentation, display: display,
+                            onTap: { mochi.playTapHaptic(); onTap() })
         }
     }
 }
