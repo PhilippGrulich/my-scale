@@ -86,6 +86,12 @@ struct ProfileEditorView: View {
     #if DEBUG
     private var developerSection: some View {
         Section("Developer") {
+            NavigationLink {
+                MochiPoseGalleryView()
+            } label: {
+                Label("Mochi poses", systemImage: "face.smiling")
+            }
+
             Button {
                 model.simulateWeighIn()
             } label: {

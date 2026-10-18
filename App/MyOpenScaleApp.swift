@@ -9,15 +9,16 @@ struct MyOpenScaleApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if showOnboarding {
-                    OnboardingView(onFinish: {
-                        OnboardingStore.markCompleted()
-                        model.endPairingScan()
-                        showOnboarding = false
-                    })
+                #if DEBUG
+                // `-mochiGallery YES` on launch shows only the Mochi pose gallery (simulator screenshots).
+                if UserDefaults.standard.bool(forKey: "mochiGallery") {
+                    NavigationStack { MochiPoseGalleryView() }
                 } else {
-                    RootTabView()
+                    appContent
                 }
+                #else
+                appContent
+                #endif
             }
             .environmentObject(model)
             .onChange(of: scenePhase, initial: true) { _, phase in
@@ -27,6 +28,18 @@ struct MyOpenScaleApp: App {
                 guard phase == .active, !showOnboarding else { return }
                 if MeasurementHandoff.consumePending() { model.addMeasurementRequested = true }
             }
+        }
+    }
+
+    @ViewBuilder private var appContent: some View {
+        if showOnboarding {
+            OnboardingView(onFinish: {
+                OnboardingStore.markCompleted()
+                model.endPairingScan()
+                showOnboarding = false
+            })
+        } else {
+            RootTabView()
         }
     }
 }
