@@ -50,6 +50,10 @@ struct RootTabView: View {
             if phase == .active { model.onForeground() }
         }
         .task {
+            #if DEBUG
+            // `-startTab settings` on launch opens the Settings tab (simulator screenshots).
+            if ["settings", "profile"].contains(UserDefaults.standard.string(forKey: "startTab")) { selection = .settings }
+            #endif
             model.loadWeightHistory()
             model.requestNotificationAuthorization()
         }

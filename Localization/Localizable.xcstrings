@@ -695,6 +695,16 @@
         }
       }
     },
+    "Choose my own time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigene Uhrzeit wählen"
+          }
+        }
+      }
+    },
     "Close": {
       "localizations": {
         "de": {
@@ -1025,6 +1035,16 @@
         }
       }
     },
+    "Fixed time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feste Uhrzeit"
+          }
+        }
+      }
+    },
     "Football": {
       "localizations": {
         "de": {
@@ -1127,6 +1147,16 @@
     },
     "HIIT": {
       "shouldTranslate": false
+    },
+    "Haptics": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haptik"
+          }
+        }
+      }
     },
     "Health unavailable": {
       "localizations": {
@@ -1526,6 +1556,19 @@
         }
       }
     },
+    "Mochi": {
+      "shouldTranslate": false
+    },
+    "Mochi reminds you around the time you usually weigh in.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mochi erinnert dich ungefähr zu der Zeit, zu der du dich sonst wiegst."
+          }
+        }
+      }
+    },
     "Muscle mass": {
       "localizations": {
         "de": {
@@ -1912,6 +1955,36 @@
         }
       }
     },
+    "Reminder style": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnerungsart"
+          }
+        }
+      }
+    },
+    "Reminder time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uhrzeit"
+          }
+        }
+      }
+    },
+    "Reminders": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnerungen"
+          }
+        }
+      }
+    },
     "Remove goal": {
       "localizations": {
         "de": {
@@ -2272,6 +2345,16 @@
         }
       }
     },
+    "Smart": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart"
+          }
+        }
+      }
+    },
     "Stairs": {
       "localizations": {
         "de": {
@@ -2595,6 +2678,16 @@
         }
       }
     },
+    "Time for a quick weigh-in?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeit für ein kurzes Wiegen?"
+          }
+        }
+      }
+    },
     "To goal": {
       "localizations": {
         "de": {
@@ -2647,6 +2740,16 @@
           "stringUnit": {
             "state": "new",
             "value": "Trend %1$@%2$@ kg"
+          }
+        }
+      }
+    },
+    "Turn Mochi on to get a little companion, weigh-in cheers and reminders.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schalte Mochi ein und bekomm einen kleinen Begleiter, Jubel beim Wiegen und Erinnerungen."
           }
         }
       }

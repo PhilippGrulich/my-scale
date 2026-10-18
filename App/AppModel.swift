@@ -89,6 +89,9 @@ final class AppModel: ObservableObject {
         let lastSeen: Date
     }
 
+    /// Mochi companion: reactions, greetings and settings.
+    let mochi: MochiCoordinator
+
     private let scanner: BLEScanner
     private let healthKit = HealthKitSink()
     private let notifications = NotificationManager()
@@ -133,7 +136,11 @@ final class AppModel: ObservableObject {
         self.attribution = AttributionStore.load()
         self.readings = Array(ReadingsStore.load().prefix(maxReadings))
         self.scanner = BLEScanner()
+        self.mochi = MochiCoordinator()
         if !HealthKitSink.isAvailable { self.healthAuth = .unavailable }
+
+        mochi.historyProvider = { [weak self] in self?.weightHistory ?? [] }
+        mochi.profileProvider = { [weak self] in self?.profile ?? ProfileStore.load() }
 
         notifications.configure()
         notifications.onConfirm = { [weak self] id in

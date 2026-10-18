@@ -19,6 +19,8 @@ struct ProfileEditorView: View {
 
                 GoalFieldsView(draft: $draft, currentWeightKg: model.currentWeightKg)
 
+                MochiSettingsSection(mochi: model.mochi)
+
                 Section("Connections") {
                     SyncBadgeView(auth: model.healthAuth,
                                   lastStatus: model.lastOwnReading?.healthKitStatus,
