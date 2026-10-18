@@ -69,7 +69,7 @@ private struct WaitingView: View {
                     .font(.title2.weight(.semibold))
                     .multilineTextAlignment(.center)
                 Text(isListening
-                     ? "Waiting for your scale… stand still once you're on and the reading will start automatically."
+                     ? String(localized: "Waiting for your scale… stand still once you're on and the reading will start automatically.")
                      : bleStatus.label)
                     .font(.callout)
                     .foregroundStyle(.secondary)
@@ -91,8 +91,8 @@ private struct WaitingView: View {
 
 private struct MeasuringView: View {
     let weightKg: Double
-    let label: String
-    let hint: String
+    let label: LocalizedStringKey
+    let hint: LocalizedStringKey
     let startedAt: Date?
     let onAccept: () -> Void
 
@@ -213,7 +213,7 @@ private struct ResultView: View {
         }
     }
 
-    private func miniMetric(_ title: String, _ value: Double, _ unit: String) -> some View {
+    private func miniMetric(_ title: LocalizedStringKey, _ value: Double, _ unit: String) -> some View {
         VStack(spacing: 4) {
             Text(value.formatted(1) + (unit.isEmpty || !value.isFinite ? "" : unit))
                 .font(.headline.monospacedDigit())

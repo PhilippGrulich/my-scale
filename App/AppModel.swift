@@ -25,10 +25,10 @@ struct LoggedReading: Identifiable, Equatable, Codable {
 
         var label: String {
             switch self {
-            case .skipped(let why): return "Skipped (\(why))"
-            case .pending: return "Saving to Health…"
-            case .written: return "Saved to Apple Health"
-            case .failed(let why): return "Sync failed: \(why)"
+            case .skipped(let why): return String(localized: "Skipped (\(why))")
+            case .pending: return String(localized: "Saving to Health…")
+            case .written: return String(localized: "Saved to Apple Health")
+            case .failed(let why): return String(localized: "Sync failed: \(why)")
             }
         }
     }
@@ -393,8 +393,8 @@ final class AppModel: ObservableObject {
             profile: BodyProfile(from: profile.coreProfile, at: Date()))
         let demo = LoggedReading(capturedAt: Date(), weightKg: weightKg, impedanceOhms: impedance,
                                  resolution: "Sample", composition: composition,
-                                 healthKitStatus: .skipped("Sample — not saved"),
-                                 note: "Example reading. Nothing was saved to Apple Health.")
+                                 healthKitStatus: .skipped(String(localized: "Sample — not saved")),
+                                 note: String(localized: "Example reading. Nothing was saved to Apple Health."))
         liveStartedAt = Date()
         simulateTask = Task { [weak self] in
             guard let self else { return }
@@ -552,7 +552,7 @@ final class AppModel: ObservableObject {
         } else {
             composition = BodyCompositionCalculator.partial(
                 weightKg: reading.weightKg, profile: bodyProfile)
-            note = "No impedance — weight + BMI only."
+            note = String(localized: "No impedance — weight + BMI only.")
         }
 
         var logged = LoggedReading(
@@ -575,11 +575,11 @@ final class AppModel: ObservableObject {
             writeReadingToHealth(logged)
             if inBackground { notifications.notifySaved(weightKg: reading.weightKg) }
         case .other:
-            logged.healthKitStatus = .skipped("not you")
+            logged.healthKitStatus = .skipped(String(localized: "not you"))
             finish(with: logged)
         case .uncertain:
             logged.needsConfirmation = true
-            logged.healthKitStatus = .skipped("needs review")
+            logged.healthKitStatus = .skipped(String(localized: "needs review"))
             finish(with: logged)
             if inBackground {
                 notifications.notifyNeedsReview(readingID: logged.id, weightKg: reading.weightKg)

@@ -22,6 +22,6 @@ extension Double {
     /// "80.1" — value only, fixed fraction digits, em-dash for non-finite.
     func formatted(_ digits: Int) -> String {
         guard isFinite else { return "—" }
-        return String(format: "%.\(digits)f", self)
+        return self.formatted(.number.precision(.fractionLength(digits)))
     }
 }

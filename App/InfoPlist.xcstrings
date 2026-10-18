@@ -1,0 +1,74 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "CFBundleDisplayName": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MyOpenScale"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MyOpenScale"
+          }
+        }
+      }
+    },
+    "NSBluetoothAlwaysUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sucht nach den Signalen von Körperanalysewaagen in der Nähe (kompatibel mit der Xiaomi Mi Body Composition Scale 2), um deine Messungen zu lesen. Es wird nichts gekoppelt oder verbunden."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scans for nearby body-composition scale advertisements (compatible with the Xiaomi Mi Body Composition Scale 2) to read your weigh-ins. No pairing or connection is made."
+          }
+        }
+      }
+    },
+    "NSHealthShareUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liest dein Geburtsdatum, dein biologisches Geschlecht, deine Größe und deinen Gewichtsverlauf, um dein Profil einzurichten und aus den Messungen der Waage die Körperzusammensetzung zu berechnen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reads your date of birth, biological sex, height, and weight history to set up your profile and compute body composition from scale readings."
+          }
+        }
+      }
+    },
+    "NSHealthUpdateUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichert dein Gewicht, deinen Körperfettanteil, deine fettfreie Körpermasse und deinen BMI in Apple Health."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves your weight, body fat percentage, lean body mass, and BMI to Apple Health."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

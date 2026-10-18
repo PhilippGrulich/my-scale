@@ -19,6 +19,6 @@ struct MyOpenScaleWatchApp: App {
 /// shadowing the stdlib `Double.rounded()`.
 extension Double {
     func formatted(_ places: Int) -> String {
-        String(format: "%.\(places)f", self)
+        self.formatted(.number.precision(.fractionLength(places)))
     }
 }

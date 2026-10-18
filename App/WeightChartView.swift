@@ -7,6 +7,13 @@ enum ChartRange: String, CaseIterable, Identifiable {
     case m6 = "6M"
     case y1 = "1Y"
     var id: String { rawValue }
+    var title: LocalizedStringKey {
+        switch self {
+        case .d30: return "30D"
+        case .m6: return "6M"
+        case .y1: return "1Y"
+        }
+    }
     var days: Int {
         switch self {
         case .d30: return 30
@@ -29,6 +36,8 @@ enum ChartRange: String, CaseIterable, Identifiable {
 struct WeightChartView: View {
     let history: [WeightSample]
     var goalKg: Double? = nil
+    /// Tapping the header title opens the full measurement list.
+    var onShowHistory: (() -> Void)? = nil
 
     @State private var range: ChartRange = .d30
     @State private var selectedDate: Date?
@@ -68,7 +77,7 @@ struct WeightChartView: View {
             header
             content
             Picker("Range", selection: $range) {
-                ForEach(ChartRange.allCases) { Text($0.rawValue).tag($0) }
+                ForEach(ChartRange.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
         }
@@ -79,9 +88,21 @@ struct WeightChartView: View {
 
     private var header: some View {
         HStack {
-            Label("Weight history", systemImage: "chart.xyaxis.line")
+            Button { onShowHistory?() } label: {
+                HStack(spacing: 4) {
+                    Label("Weight history", systemImage: "chart.xyaxis.line")
+                    if onShowHistory != nil {
+                        Image(systemName: "chevron.right")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 .font(.headline)
                 .foregroundStyle(.primary)
+            }
+            .buttonStyle(.plain)
+            .disabled(onShowHistory == nil)
+            .accessibilityHint("Shows all measurements")
             Spacer()
             if let s = selected {
                 VStack(alignment: .trailing, spacing: 0) {

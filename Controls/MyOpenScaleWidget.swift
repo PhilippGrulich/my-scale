@@ -40,11 +40,11 @@ struct MyOpenScaleWidgetView: View {
 
     private var weightText: String {
         guard let s = entry.snapshot else { return "—" }
-        return String(format: "%.1f", s.weightKg)
+        return s.weightKg.formatted(.number.precision(.fractionLength(1)))
     }
     private var trendText: String? {
         guard let d = entry.snapshot?.trendDeltaKg else { return nil }
-        return String(format: "%@ %.1f kg", d <= 0 ? "▼" : "▲", abs(d))
+        return "\(d <= 0 ? "▼" : "▲") \(abs(d).formatted(.number.precision(.fractionLength(1)))) kg"
     }
 
     var body: some View {

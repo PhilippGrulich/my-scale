@@ -29,7 +29,7 @@ struct TrendSummaryView: View {
                          text: "\(abs(g - c).formatted(1)) kg to goal",
                          tint: Theme.accentSecondary)
                     if let e = eta {
-                        pill(icon: "calendar", text: etaText(e), tint: .secondary)
+                        pill(icon: "calendar", text: "\(etaText(e))", tint: .secondary)
                     }
                 }
             }
@@ -38,11 +38,11 @@ struct TrendSummaryView: View {
     }
 
     private func etaText(_ weeks: Double) -> String {
-        if weeks < 8 { return "~\(max(1, Int(weeks.rounded()))) wk" }
-        return "~\(Int((weeks / 4.345).rounded())) mo"
+        if weeks < 8 { return String(localized: "~\(max(1, Int(weeks.rounded()))) wk") }
+        return String(localized: "~\(Int((weeks / 4.345).rounded())) mo")
     }
 
-    private func pill(icon: String, text: String, tint: Color) -> some View {
+    private func pill(icon: String, text: LocalizedStringKey, tint: Color) -> some View {
         Label(text, systemImage: icon)
             .font(.caption.weight(.medium))
             .foregroundStyle(tint)

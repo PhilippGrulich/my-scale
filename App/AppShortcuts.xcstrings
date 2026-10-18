@@ -1,0 +1,31 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Start a weigh-in with ${applicationName}": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Starte eine Messung mit ${applicationName}",
+              "Wiege mich mit ${applicationName}",
+              "Neue Messung mit ${applicationName}"
+            ]
+          }
+        },
+        "en": {
+          "stringSet": {
+            "state": "new",
+            "values": [
+              "Start a weigh-in with ${applicationName}",
+              "Weigh in with ${applicationName}",
+              "New measurement with ${applicationName}"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

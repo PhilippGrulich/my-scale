@@ -1,0 +1,1547 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@": {
+      "shouldTranslate": false
+    },
+    "%@ history needs at least two weigh-ins.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für den Verlauf von %@ sind mindestens zwei Messungen nötig."
+          }
+        }
+      }
+    },
+    "%@ kg": {
+      "shouldTranslate": false
+    },
+    "%@ kg / 30d": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg / 30 T"
+          }
+        }
+      }
+    },
+    "%@ kg on %@ will be removed from Apple Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ kg vom %2$@ werden aus Apple Health entfernt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ kg on %2$@ will be removed from Apple Health."
+          }
+        }
+      }
+    },
+    "%@ kg saved to Apple Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg in Apple Health gesichert."
+          }
+        }
+      }
+    },
+    "%@ kg to goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "noch %@ kg bis zum Ziel"
+          }
+        }
+      }
+    },
+    "%@ kg · %@": {
+      "shouldTranslate": false
+    },
+    "%@%@ kg": {
+      "shouldTranslate": false
+    },
+    "%lld cm": {
+      "shouldTranslate": false
+    },
+    "%lld dBm": {
+      "shouldTranslate": false
+    },
+    "%lld years": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Jahre"
+          }
+        }
+      }
+    },
+    "%lldΩ": {
+      "shouldTranslate": false
+    },
+    "1Y": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 J"
+          }
+        }
+      }
+    },
+    "30D": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 T"
+          }
+        }
+      }
+    },
+    "6M": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6 M"
+          }
+        }
+      }
+    },
+    "A %@ kg weigh-in needs confirming.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Messung mit %@ kg muss bestätigt werden."
+          }
+        }
+      }
+    },
+    "Age": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alter"
+          }
+        }
+      }
+    },
+    "Almost there — keep your feet on the scale.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fast geschafft – bleib mit beiden Füßen auf der Waage."
+          }
+        }
+      }
+    },
+    "Apple Health": {
+      "shouldTranslate": false
+    },
+    "Authorization not granted": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zugriff nicht erlaubt"
+          }
+        }
+      }
+    },
+    "BMI": {
+      "shouldTranslate": false
+    },
+    "Baseline": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basislinie"
+          }
+        }
+      }
+    },
+    "Biological sex": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biologisches Geschlecht"
+          }
+        }
+      }
+    },
+    "Bluetooth": {
+      "shouldTranslate": false
+    },
+    "Bluetooth LE not supported on this Watch": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth LE wird auf dieser Watch nicht unterstützt"
+          }
+        }
+      }
+    },
+    "Bluetooth LE not supported on this device": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth LE wird auf diesem Gerät nicht unterstützt"
+          }
+        }
+      }
+    },
+    "Bluetooth is off": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth ist aus"
+          }
+        }
+      }
+    },
+    "Bluetooth needed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth wird benötigt"
+          }
+        }
+      }
+    },
+    "Bluetooth permission denied — enable in Settings": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Bluetooth-Zugriff – in den Einstellungen aktivieren"
+          }
+        }
+      }
+    },
+    "Body": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körper"
+          }
+        }
+      }
+    },
+    "Body Fat": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperfett"
+          }
+        }
+      }
+    },
+    "Body fat": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperfett"
+          }
+        }
+      }
+    },
+    "Body-composition values are estimates, not medical advice.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Werte zur Körperzusammensetzung sind Schätzungen und keine medizinische Beratung."
+          }
+        }
+      }
+    },
+    "Body-composition values are estimates, not medical advice. Works with the Xiaomi Mi Body Composition Scale 2 — not affiliated with or endorsed by Xiaomi.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Werte zur Körperzusammensetzung sind Schätzungen und keine medizinische Beratung. Funktioniert mit der Xiaomi Mi Body Composition Scale 2 – nicht mit Xiaomi verbunden oder von Xiaomi unterstützt."
+          }
+        }
+      }
+    },
+    "Can't reach Bluetooth": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth nicht erreichbar"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        }
+      }
+    },
+    "Confirm your details": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestätige deine Angaben"
+          }
+        }
+      }
+    },
+    "Connect": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinden"
+          }
+        }
+      }
+    },
+    "Connect Apple Health": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Apple Health verbinden"
+          }
+        }
+      }
+    },
+    "Connected to Apple Health": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Apple Health verbunden"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter"
+          }
+        }
+      }
+    },
+    "Date": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum"
+          }
+        }
+      }
+    },
+    "Date of birth": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geburtsdatum"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löschen"
+          }
+        }
+      }
+    },
+    "Delete from Apple Health": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Apple Health löschen"
+          }
+        }
+      }
+    },
+    "Delete this weigh-in?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Messung löschen?"
+          }
+        }
+      }
+    },
+    "Developer": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entwickler"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        }
+      }
+    },
+    "Example reading. Nothing was saved to Apple Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beispielmessung. In Apple Health wurde nichts gesichert."
+          }
+        }
+      }
+    },
+    "Female": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiblich"
+          }
+        }
+      }
+    },
+    "Get Started": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los geht’s"
+          }
+        }
+      }
+    },
+    "Goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel"
+          }
+        }
+      }
+    },
+    "Goal %@ kg": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel %@ kg"
+          }
+        }
+      }
+    },
+    "Health unavailable": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health nicht verfügbar"
+          }
+        }
+      }
+    },
+    "Health: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health: %@"
+          }
+        }
+      }
+    },
+    "HealthKit is unavailable on this device.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HealthKit ist auf diesem Gerät nicht verfügbar."
+          }
+        }
+      }
+    },
+    "HealthKit save failed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern in HealthKit fehlgeschlagen."
+          }
+        }
+      }
+    },
+    "Height": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe"
+          }
+        }
+      }
+    },
+    "Hi %@ — step on your scale anytime and your weigh-ins will appear here and in Apple Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hallo %@! Stell dich jederzeit auf deine Waage – deine Messungen erscheinen hier und in Apple Health."
+          }
+        }
+      }
+    },
+    "History": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf"
+          }
+        }
+      }
+    },
+    "Hold still…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stillhalten …"
+          }
+        }
+      }
+    },
+    "Identity": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person"
+          }
+        }
+      }
+    },
+    "Idle": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inaktiv"
+          }
+        }
+      }
+    },
+    "Is this your scale?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ist das deine Waage?"
+          }
+        }
+      }
+    },
+    "Lean": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fettfrei"
+          }
+        }
+      }
+    },
+    "Lean Mass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fettfreie Masse"
+          }
+        }
+      }
+    },
+    "Live frames (%lld)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Frames (%lld)"
+          }
+        }
+      }
+    },
+    "Loading…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden …"
+          }
+        }
+      }
+    },
+    "Male": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Männlich"
+          }
+        }
+      }
+    },
+    "Me": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich"
+          }
+        }
+      }
+    },
+    "Measuring body composition…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperzusammensetzung wird gemessen …"
+          }
+        }
+      }
+    },
+    "Missing height — set it up first.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe fehlt – bitte zuerst einrichten."
+          }
+        }
+      }
+    },
+    "MyOpenScale": {
+      "shouldTranslate": false
+    },
+    "Name": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "No body-fat estimate (no impedance).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Körperfett-Schätzung (keine Impedanz)."
+          }
+        }
+      }
+    },
+    "No impedance — weight + BMI only.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Impedanz – nur Gewicht und BMI."
+          }
+        }
+      }
+    },
+    "No measurements yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Messungen"
+          }
+        }
+      }
+    },
+    "No valid samples to write.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gültigen Werte zum Sichern."
+          }
+        }
+      }
+    },
+    "No weigh-ins yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Messungen"
+          }
+        }
+      }
+    },
+    "No weight data in this range": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Gewichtsdaten in diesem Zeitraum"
+          }
+        }
+      }
+    },
+    "Not enough data yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht genug Daten"
+          }
+        }
+      }
+    },
+    "Not me": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht ich"
+          }
+        }
+      }
+    },
+    "Not my scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht meine Waage"
+          }
+        }
+      }
+    },
+    "Not now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        }
+      }
+    },
+    "Not saved to Health": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht in Health gesichert"
+          }
+        }
+      }
+    },
+    "One reading so far": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bisher eine Messung"
+          }
+        }
+      }
+    },
+    "Opens MyOpenScale and starts a new weight measurement.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet MyOpenScale und startet eine neue Gewichtsmessung."
+          }
+        }
+      }
+    },
+    "Overview": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersicht"
+          }
+        }
+      }
+    },
+    "Pre-filled from Apple Health where available — adjust anything that's off.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soweit verfügbar aus Apple Health übernommen – korrigiere, was nicht stimmt."
+          }
+        }
+      }
+    },
+    "Prefer not to say": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Angabe"
+          }
+        }
+      }
+    },
+    "Profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
+          }
+        }
+      }
+    },
+    "Range": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeitraum"
+          }
+        }
+      }
+    },
+    "Reading weight…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewicht wird gelesen …"
+          }
+        }
+      }
+    },
+    "Remove goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel entfernen"
+          }
+        }
+      }
+    },
+    "Reset onboarding, scale & learned profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einführung, Waage und gelerntes Profil zurücksetzen"
+          }
+        }
+      }
+    },
+    "Revert": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwerfen"
+          }
+        }
+      }
+    },
+    "Sample — not saved": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beispiel – nicht gesichert"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern"
+          }
+        }
+      }
+    },
+    "Save %@ kg now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg jetzt sichern"
+          }
+        }
+      }
+    },
+    "Saved to Apple Health": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Apple Health gesichert"
+          }
+        }
+      }
+    },
+    "Saved to Health": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Health gesichert"
+          }
+        }
+      }
+    },
+    "Saves weight + BMI without body composition.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichert Gewicht und BMI ohne Körperzusammensetzung."
+          }
+        }
+      }
+    },
+    "Saving to Apple Health…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird in Apple Health gesichert …"
+          }
+        }
+      }
+    },
+    "Saving to Health…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird in Health gesichert …"
+          }
+        }
+      }
+    },
+    "Scale found": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waage gefunden"
+          }
+        }
+      }
+    },
+    "Scanning for scale…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche nach Waage …"
+          }
+        }
+      }
+    },
+    "Searching for scale…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche nach Waage …"
+          }
+        }
+      }
+    },
+    "See a sample reading": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beispielmessung ansehen"
+          }
+        }
+      }
+    },
+    "Series": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reihe"
+          }
+        }
+      }
+    },
+    "Set Up": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einrichten"
+          }
+        }
+      }
+    },
+    "Set a weight goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zielgewicht festlegen"
+          }
+        }
+      }
+    },
+    "Set your height": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe eingeben"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen"
+          }
+        }
+      }
+    },
+    "Sex": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschlecht"
+          }
+        }
+      }
+    },
+    "Shows all measurements": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt alle Messungen"
+          }
+        }
+      }
+    },
+    "Simulate weigh-in": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messung simulieren"
+          }
+        }
+      }
+    },
+    "Skip for now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorerst überspringen"
+          }
+        }
+      }
+    },
+    "Skipped (%@)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersprungen (%@)"
+          }
+        }
+      }
+    },
+    "Start": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "Start Weigh-In": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messung starten"
+          }
+        }
+      }
+    },
+    "Start a new weight measurement in MyOpenScale.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte eine neue Gewichtsmessung in MyOpenScale."
+          }
+        }
+      }
+    },
+    "Starting…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird gestartet …"
+          }
+        }
+      }
+    },
+    "Stay still on the scale.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleib ruhig auf der Waage stehen."
+          }
+        }
+      }
+    },
+    "Step on the scale, or add weight in the Health app, and it'll appear here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stell dich auf die Waage oder trag dein Gewicht in der Health-App ein – es erscheint dann hier."
+          }
+        }
+      }
+    },
+    "Step on your body-composition scale and your weigh-ins flow straight into Apple Health — body fat, lean mass and BMI computed on-device. No accounts, no cloud.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stell dich auf deine Körperanalysewaage und deine Messungen landen direkt in Apple Health – Körperfett, fettfreie Masse und BMI werden auf dem Gerät berechnet. Kein Konto, keine Cloud."
+          }
+        }
+      }
+    },
+    "Step on your scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stell dich auf deine Waage"
+          }
+        }
+      }
+    },
+    "Step on your scale now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stell dich jetzt auf deine Waage"
+          }
+        }
+      }
+    },
+    "Sync failed — tap to retry": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisierung fehlgeschlagen – zum Wiederholen tippen"
+          }
+        }
+      }
+    },
+    "Sync failed: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisierung fehlgeschlagen: %@"
+          }
+        }
+      }
+    },
+    "Tap anywhere to dismiss": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Schließen irgendwo tippen"
+          }
+        }
+      }
+    },
+    "Target weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zielgewicht"
+          }
+        }
+      }
+    },
+    "This was me": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das war ich"
+          }
+        }
+      }
+    },
+    "Trend": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend"
+          }
+        }
+      }
+    },
+    "Trend %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend %@"
+          }
+        }
+      }
+    },
+    "Trend %@%@ kg": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend %@%@ kg"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Trend %1$@%2$@ kg"
+          }
+        }
+      }
+    },
+    "Waiting for your scale… stand still once you're on and the reading will start automatically.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warte auf deine Waage … Bleib ruhig stehen, sobald du drauf bist – die Messung startet automatisch."
+          }
+        }
+      }
+    },
+    "Was this you?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warst du das?"
+          }
+        }
+      }
+    },
+    "We need your height to compute weight and body composition.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Größe wird benötigt, um Gewicht und Körperzusammensetzung zu berechnen."
+          }
+        }
+      }
+    },
+    "We'll read your age, height and biological sex to calculate body composition, and save each weigh-in back to Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir lesen dein Alter, deine Größe und dein biologisches Geschlecht, um die Körperzusammensetzung zu berechnen, und sichern jede Messung in Health."
+          }
+        }
+      }
+    },
+    "Weigh In": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiegen"
+          }
+        }
+      }
+    },
+    "Weigh in": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiegen"
+          }
+        }
+      }
+    },
+    "Weigh in again to start seeing your trend.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich noch einmal, um deinen Trend zu sehen."
+          }
+        }
+      }
+    },
+    "Weigh in to see your trend.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich, um deinen Trend zu sehen."
+          }
+        }
+      }
+    },
+    "Weigh-in saved": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messung gesichert"
+          }
+        }
+      }
+    },
+    "Weigh-ins you take will appear here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Messungen erscheinen hier."
+          }
+        }
+      }
+    },
+    "Weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewicht"
+          }
+        }
+      }
+    },
+    "Weight history": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewichtsverlauf"
+          }
+        }
+      }
+    },
+    "Welcome": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkommen"
+          }
+        }
+      }
+    },
+    "Yes, pair this scale": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ja, diese Waage koppeln"
+          }
+        }
+      }
+    },
+    "You're all set": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles bereit"
+          }
+        }
+      }
+    },
+    "Your Details": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Angaben"
+          }
+        }
+      }
+    },
+    "Your latest weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein aktuelles Gewicht"
+          }
+        }
+      }
+    },
+    "Your latest weight, trend, and chart.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein aktuelles Gewicht, Trend und Verlauf."
+          }
+        }
+      }
+    },
+    "Your weigh-ins are recognised automatically from your weight and body-composition signature — no weight range to configure.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Messungen werden automatisch an deinem Gewicht und deiner Körperzusammensetzung erkannt – kein Gewichtsbereich nötig."
+          }
+        }
+      }
+    },
+    "kg": {
+      "shouldTranslate": false
+    },
+    "needs review": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "muss geprüft werden"
+          }
+        }
+      }
+    },
+    "not you": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nicht du"
+          }
+        }
+      }
+    },
+    "since last": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "seit letzter Messung"
+          }
+        }
+      }
+    },
+    "~%lld mo": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~%lld Mon."
+          }
+        }
+      }
+    },
+    "~%lld wk": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~%lld Wo."
+          }
+        }
+      }
+    },
+    "—": {
+      "shouldTranslate": false
+    }
+  },
+  "version": "1.0"
+}

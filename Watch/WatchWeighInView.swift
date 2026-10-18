@@ -127,7 +127,7 @@ struct WatchWeighInView: View {
         }
     }
 
-    private func metricRow(_ title: String, _ value: String) -> some View {
+    private func metricRow(_ title: LocalizedStringKey, _ value: String) -> some View {
         HStack {
             Text(title).font(.caption).foregroundStyle(.secondary)
             Spacer()

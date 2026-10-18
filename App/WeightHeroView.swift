@@ -44,7 +44,7 @@ struct WeightHeroView: View {
         HStack(spacing: 4) {
             Image(systemName: down ? "arrow.down.right" : "arrow.up.right")
                 .symbolEffect(.bounce, value: delta)
-            Text(String(format: "%+.1f kg", delta))
+            Text("\(delta.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always()))) kg")
                 .contentTransition(.numericText(value: delta))
             Text("since last")
                 .foregroundStyle(.secondary)

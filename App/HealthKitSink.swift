@@ -109,7 +109,7 @@ final class HealthKitSink {
                 if let error = error {
                     completion(.failed(error.localizedDescription))
                 } else {
-                    completion(success ? .requested : .failed("Authorization not granted"))
+                    completion(success ? .requested : .failed(String(localized: "Authorization not granted")))
                 }
             }
         }
@@ -246,7 +246,7 @@ final class HealthKitSink {
         case bodyFat, lean, bmi
         var id: String { rawValue }
         var title: String {
-            switch self { case .bodyFat: return "Body Fat"; case .lean: return "Lean Mass"; case .bmi: return "BMI" }
+            switch self { case .bodyFat: return String(localized: "Body Fat"); case .lean: return String(localized: "Lean Mass"); case .bmi: return String(localized: "BMI") }
         }
         var unitLabel: String {
             switch self { case .bodyFat: return "%"; case .lean: return "kg"; case .bmi: return "" }
@@ -341,9 +341,9 @@ final class HealthKitSink {
         case unavailable, noSamples, saveFailed
         var errorDescription: String? {
             switch self {
-            case .unavailable: return "HealthKit is unavailable on this device."
-            case .noSamples: return "No valid samples to write."
-            case .saveFailed: return "HealthKit save failed."
+            case .unavailable: return String(localized: "HealthKit is unavailable on this device.")
+            case .noSamples: return String(localized: "No valid samples to write.")
+            case .saveFailed: return String(localized: "HealthKit save failed.")
             }
         }
     }

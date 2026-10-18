@@ -197,7 +197,7 @@ final class WatchAppModel: ObservableObject {
         phase = .saving
 
         guard let height = profile.heightCm, height > 0 else {
-            phase = .error("Missing height — set it up first.")
+            phase = .error(String(localized: "Missing height — set it up first."))
             return
         }
 
@@ -246,7 +246,7 @@ final class WatchAppModel: ObservableObject {
     private var coreProfile: UserProfile {
         UserProfile(
             id: profile.id,
-            name: "Me",
+            name: String(localized: "Me"),
             heightCm: profile.heightCm ?? 175,
             dateOfBirth: profile.dateOfBirth ?? Date(timeIntervalSince1970: 0),
             sex: profile.sex ?? .male,

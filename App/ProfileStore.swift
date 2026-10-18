@@ -22,7 +22,7 @@ struct StoredProfile: Codable, Equatable {
             .date(byAdding: .year, value: -30, to: Date()) ?? Date(timeIntervalSince1970: 0)
         return StoredProfile(
             id: UUID(),
-            name: "Me",
+            name: String(localized: "Me"),
             heightCm: 175,
             dateOfBirth: dob,
             sex: .male,

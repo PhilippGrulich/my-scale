@@ -7,6 +7,7 @@ options:
   # Built with Xcode 27 / the iOS 27 + watchOS 27 SDKs. Deployment targets stay
   # at iOS 26 / watchOS 11 so existing devices keep working.
   xcodeVersion: "27.0"
+  developmentLanguage: en
 
 settings:
   base:
@@ -14,6 +15,10 @@ settings:
     # HealthKit callback code isn't strict-concurrency clean yet. The pure
     # MyOpenScaleCore package already builds in Swift 6 mode.
     SWIFT_VERSION: "5.0"
+    # English source strings, German translation (Localization/Localizable.xcstrings
+    # + per-target InfoPlist.xcstrings).
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
 
 packages:
   MyOpenScaleCore:
@@ -28,6 +33,7 @@ targets:
     sources:
       - path: App
       - path: Shared
+      - path: Localization
     dependencies:
       - package: MyOpenScaleCore
         product: MyOpenScaleCore
@@ -68,6 +74,7 @@ targets:
     sources:
       - path: Controls
       - path: Shared
+      - path: Localization
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.philippgrulich.myopenscale.app.controls
@@ -96,6 +103,7 @@ targets:
     sources:
       - path: Watch
       - path: App/HealthKitSink.swift
+      - path: Localization
     dependencies:
       - package: MyOpenScaleCore
         product: MyOpenScaleCore

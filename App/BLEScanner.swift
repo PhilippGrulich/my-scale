@@ -23,12 +23,12 @@ enum BLEStatus: Equatable {
 
     var label: String {
         switch self {
-        case .unknown: return "Starting…"
-        case .unsupported: return "Bluetooth LE not supported on this device"
-        case .unauthorized: return "Bluetooth permission denied — enable in Settings"
-        case .poweredOff: return "Bluetooth is off"
-        case .scanning: return "Scanning for scale…"
-        case .idle: return "Idle"
+        case .unknown: return String(localized: "Starting…")
+        case .unsupported: return String(localized: "Bluetooth LE not supported on this device")
+        case .unauthorized: return String(localized: "Bluetooth permission denied — enable in Settings")
+        case .poweredOff: return String(localized: "Bluetooth is off")
+        case .scanning: return String(localized: "Scanning for scale…")
+        case .idle: return String(localized: "Idle")
         }
     }
 }

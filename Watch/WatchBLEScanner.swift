@@ -13,12 +13,12 @@ enum WatchBLEStatus: Equatable {
 
     var label: String {
         switch self {
-        case .unknown: return "Starting…"
-        case .unsupported: return "Bluetooth LE not supported on this Watch"
-        case .unauthorized: return "Bluetooth permission denied — enable in Settings"
-        case .poweredOff: return "Bluetooth is off"
-        case .scanning: return "Searching for scale…"
-        case .idle: return "Idle"
+        case .unknown: return String(localized: "Starting…")
+        case .unsupported: return String(localized: "Bluetooth LE not supported on this Watch")
+        case .unauthorized: return String(localized: "Bluetooth permission denied — enable in Settings")
+        case .poweredOff: return String(localized: "Bluetooth is off")
+        case .scanning: return String(localized: "Searching for scale…")
+        case .idle: return String(localized: "Idle")
         }
     }
 }

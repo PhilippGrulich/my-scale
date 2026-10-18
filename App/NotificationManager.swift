@@ -20,9 +20,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     func configure() {
         let center = UNUserNotificationCenter.current()
         center.delegate = self
-        let confirm = UNNotificationAction(identifier: confirmAction, title: "This was me",
+        let confirm = UNNotificationAction(identifier: confirmAction, title: String(localized: "This was me"),
                                            options: [.authenticationRequired])
-        let reject = UNNotificationAction(identifier: rejectAction, title: "Not me",
+        let reject = UNNotificationAction(identifier: rejectAction, title: String(localized: "Not me"),
                                           options: [.destructive])
         let category = UNNotificationCategory(identifier: reviewCategory,
                                               actions: [confirm, reject],
@@ -36,16 +36,16 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
 
     func notifySaved(weightKg: Double) {
         let content = UNMutableNotificationContent()
-        content.title = "Weigh-in saved"
-        content.body = String(format: "%.1f kg saved to Apple Health.", weightKg)
+        content.title = String(localized: "Weigh-in saved")
+        content.body = String(localized: "\(weightKg.formatted(.number.precision(.fractionLength(1)))) kg saved to Apple Health.")
         content.sound = .default
         post(content)
     }
 
     func notifyNeedsReview(readingID: UUID, weightKg: Double) {
         let content = UNMutableNotificationContent()
-        content.title = "Was this you?"
-        content.body = String(format: "A %.1f kg weigh-in needs confirming.", weightKg)
+        content.title = String(localized: "Was this you?")
+        content.body = String(localized: "A \(weightKg.formatted(.number.precision(.fractionLength(1)))) kg weigh-in needs confirming.")
         content.categoryIdentifier = reviewCategory
         content.userInfo = [readingIDKey: readingID.uuidString]
         content.sound = .default

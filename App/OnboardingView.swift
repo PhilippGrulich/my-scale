@@ -101,7 +101,7 @@ struct OnboardingView: View {
             if bleUnavailable {
                 header(icon: "antenna.radiowaves.left.and.right.slash",
                        title: "Bluetooth needed",
-                       subtitle: model.bleStatus.label)
+                       subtitle: "\(model.bleStatus.label)")
             } else if let candidate = model.scaleCandidate {
                 VStack(spacing: 16) {
                     Image(systemName: "scalemass.fill")
@@ -176,7 +176,7 @@ struct OnboardingView: View {
         step = .profile
     }
 
-    private func header(icon: String, title: String, subtitle: String) -> some View {
+    private func header(icon: String, title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
         VStack(spacing: 18) {
             Image(systemName: icon)
                 .font(.system(size: 60))
@@ -191,7 +191,7 @@ struct OnboardingView: View {
         }
     }
 
-    private func stepTitle(_ title: String, subtitle: String) -> some View {
+    private func stepTitle(_ title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
         VStack(spacing: 6) {
             Text(title)
                 .font(.title.weight(.bold))
@@ -205,7 +205,7 @@ struct OnboardingView: View {
         .padding(.bottom, 8)
     }
 
-    private func primaryButton(_ title: String, disabled: Bool = false, action: @escaping () -> Void) -> some View {
+    private func primaryButton(_ title: LocalizedStringKey, disabled: Bool = false, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(.headline)
@@ -219,7 +219,7 @@ struct OnboardingView: View {
         .disabled(disabled)
     }
 
-    private func secondaryButton(_ title: String, action: @escaping () -> Void) -> some View {
+    private func secondaryButton(_ title: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.medium))
