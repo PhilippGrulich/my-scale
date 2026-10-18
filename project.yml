@@ -104,6 +104,15 @@ targets:
       - path: Watch
       - path: App/HealthKitSink.swift
       - path: Localization
+      - path: Shared/WatchSyncPayload.swift
+      # Mochi's drawing, bubble, state store and lines are shared with the
+      # phone; the watch has its own small coordinator (Watch/WatchMochi.swift).
+      - path: App/Mochi/MochiView.swift
+      - path: App/Mochi/MochiProps.swift
+      - path: App/Mochi/MochiSpeechBubble.swift
+      - path: App/Mochi/MochiStores.swift
+      - path: App/Mochi/MochiLines-en.json
+      - path: App/Mochi/MochiLines-de.json
     dependencies:
       - package: MyOpenScaleCore
         product: MyOpenScaleCore

@@ -152,6 +152,16 @@
         }
       }
     },
+    "%@ kg to go": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "noch %@ kg"
+          }
+        }
+      }
+    },
     "%@ kg · %@": {
       "shouldTranslate": false
     },
@@ -205,9 +215,6 @@
           }
         }
       },
-      "shouldTranslate": false
-    },
-    "%@%@ kg": {
       "shouldTranslate": false
     },
     "%@–%@ kg": {
@@ -387,6 +394,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trag zuerst eine Messung ein, um ein Ziel festzulegen."
+          }
+        }
+      }
+    },
+    "Add weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewicht eintragen"
           }
         }
       }
@@ -1215,6 +1232,16 @@
         }
       }
     },
+    "Goal reached": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel erreicht"
+          }
+        }
+      }
+    },
     "Goal reached!": {
       "localizations": {
         "de": {
@@ -1382,6 +1409,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hallo %@! Stell dich jederzeit auf deine Waage – deine Messungen erscheinen hier und in Apple Health."
+          }
+        }
+      }
+    },
+    "Hi! I just need your height.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi! Ich brauche nur noch deine Größe."
           }
         }
       }
@@ -1798,16 +1835,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Neue Messung"
-          }
-        }
-      }
-    },
-    "No body-fat estimate (no impedance).": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Körperfett-Schätzung (keine Impedanz)."
           }
         }
       }
@@ -2825,6 +2852,16 @@
         }
       }
     },
+    "Tell me a bit about you 💚": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erzähl mir ein bisschen von dir 💚"
+          }
+        }
+      }
+    },
     "Tell me a bit about you!": {
       "localizations": {
         "de": {
@@ -3040,6 +3077,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Schalte Mochi ein und bekomm einen kleinen Begleiter, Jubel beim Wiegen und Erinnerungen."
+          }
+        }
+      }
+    },
+    "Turn the Digital Crown": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digital Crown drehen"
           }
         }
       }

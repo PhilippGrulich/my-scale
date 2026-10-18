@@ -25,6 +25,11 @@ struct WatchSetupView: View {
 
     var body: some View {
         Form {
+            if model.mochiEnabled {
+                WatchMochiRow(presentation: MochiPresentation(
+                    pose: .helloWave, text: String(localized: "Tell me a bit about you 💚"), display: ""))
+                    .listRowBackground(Color.clear)
+            }
             Section("Height") {
                 Stepper(value: $heightCm, in: 120...220, step: 1) {
                     Text("\(Int(heightCm)) cm")
@@ -46,7 +51,7 @@ struct WatchSetupView: View {
             Section {
                 Button("Save") { save() }
                     .buttonStyle(.borderedProminent)
-                    .tint(.blue)
+                    .tint(Theme.accent)
             }
         }
         .navigationTitle("Your Details")

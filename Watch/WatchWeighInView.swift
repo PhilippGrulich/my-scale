@@ -34,10 +34,14 @@ struct WatchWeighInView: View {
     // MARK: - States
 
     private var searching: some View {
-        VStack(spacing: 14) {
-            ProgressView().controlSize(.large)
-            Text("Step on your scale")
-                .font(.headline)
+        VStack(spacing: 10) {
+            if model.mochiEnabled {
+                WatchMochiRow(presentation: WatchMochi.waiting(isListening: model.bleStatus == .scanning), stacked: true)
+            } else {
+                ProgressView().controlSize(.large)
+                Text("Step on your scale")
+                    .font(.headline)
+            }
             Text(model.bleStatus.label)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
@@ -47,7 +51,20 @@ struct WatchWeighInView: View {
         .padding(.top, 8)
     }
 
+    @ViewBuilder
     private func live(_ weightKg: Double) -> some View {
+        if model.mochiEnabled {
+            VStack(spacing: 6) {
+                WatchMochiRow(presentation: WatchMochi.measuring(weightKg), stacked: true)
+                cancelButton
+            }
+            .padding(.top, 4)
+        } else {
+            plainLive(weightKg)
+        }
+    }
+
+    private func plainLive(_ weightKg: Double) -> some View {
         VStack(spacing: 6) {
             Text(weightKg.formatted(1))
                 .font(.system(size: 48, weight: .bold, design: .rounded))
@@ -76,17 +93,18 @@ struct WatchWeighInView: View {
 
     private func resultView(_ result: WatchAppModel.WeighInResult) -> some View {
         VStack(spacing: 10) {
-            Text(result.weightKg.formatted(1) + " kg")
-                .font(.system(size: 36, weight: .bold, design: .rounded))
+            if let mochi = result.mochi {
+                // Mochi shows the weight on its tummy and says its reaction.
+                WatchMochiRow(presentation: mochi, stacked: true)
+            } else {
+                Text(result.weightKg.formatted(1) + " kg")
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+            }
 
             if result.isFull {
                 metricsGrid(result.composition)
             } else {
                 metricRow("BMI", result.composition.bmi.formatted(1))
-                Text("No body-fat estimate (no impedance).")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
             }
 
             Label(result.savedToHealth ? "Saved to Health" : "Not saved to Health",
@@ -97,7 +115,7 @@ struct WatchWeighInView: View {
 
             Button("Done") { model.done() }
                 .buttonStyle(.borderedProminent)
-                .tint(.blue)
+                .tint(Theme.accent)
                 .padding(.top, 4)
         }
         .padding(.top, 4)
@@ -105,9 +123,13 @@ struct WatchWeighInView: View {
 
     private func errorView(_ message: String) -> some View {
         VStack(spacing: 12) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 30))
-                .foregroundStyle(.orange)
+            if model.mochiEnabled {
+                MochiView(pose: .sadWave, display: "– –", size: 64)
+            } else {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(.orange)
+            }
             Text(message)
                 .font(.footnote)
                 .multilineTextAlignment(.center)

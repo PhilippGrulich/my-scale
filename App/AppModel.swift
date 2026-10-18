@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import HealthKit
 import SwiftUI
 import UIKit
@@ -102,6 +103,7 @@ final class AppModel: ObservableObject {
 
     /// Mochi companion: reactions, greetings and settings.
     let mochi: MochiCoordinator
+    private var mochiSettingsObserver: AnyCancellable?
 
     /// Created only once a scale is paired (at launch) or being paired (the user
     /// tapped "Pair my scale"), so people without a scale never see the
@@ -158,6 +160,12 @@ final class AppModel: ObservableObject {
         mochi.lastWeighInProvider = { [weak self] in self?.lastOwnWeighInAt }
         mochi.profileProvider = { [weak self] in self?.profile ?? ProfileStore.load() }
         mochi.activityProvider = { [weak self] now in self?.mochiActivity(now: now) ?? .none }
+
+        // Keep the watch's goal / name / Mochi switch in step with the phone.
+        WatchSync.shared.activate()
+        mochiSettingsObserver = mochi.$settings
+            .removeDuplicates { $0.enabled == $1.enabled }
+            .sink { [weak self] settings in self?.pushWatchSync(mochiEnabled: settings.enabled) }
 
         notifications.configure()
         notifications.onConfirm = { [weak self] id in
@@ -613,6 +621,17 @@ final class AppModel: ObservableObject {
         if dashboardVisible { refreshMochiHomeIfStaleNow() }
     }
 
+    /// Send the watch what it can't read from Health (goal, name, Mochi switch).
+    func pushWatchSync(mochiEnabled: Bool? = nil) {
+        let name = profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        WatchSync.shared.push(WatchSyncPayload(
+            name: name.isEmpty ? nil : name,
+            goalKg: profile.goalWeightKg,
+            goalType: profile.goalWeightKg == nil ? nil : (profile.goalType ?? .lose).rawValue,
+            goalStartKg: profile.goalStartKg,
+            mochiEnabled: mochiEnabled ?? mochi.settings.enabled))
+    }
+
     func saveProfile(_ updated: StoredProfile) {
         var updated = updated
         // A new or changed goal starts its progress from today's weight.
@@ -628,6 +647,7 @@ final class AppModel: ObservableObject {
         let goalChanged = updated.goalWeightKg != profile.goalWeightKg
         profile = updated
         ProfileStore.save(updated)
+        pushWatchSync()
         // The widget shows the goal line and progress ring.
         if goalChanged { updateWidgetSnapshot() }
     }

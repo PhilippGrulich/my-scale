@@ -68,6 +68,8 @@ final class WatchAppModel: ObservableObject {
         /// Full = fat/lean present; partial = weight + BMI only (no impedance or
         /// missing sex/DOB).
         var isFull: Bool
+        /// Mochi's reaction (nil when Mochi is off).
+        var mochi: MochiPresentation?
     }
 
     @Published private(set) var phase: Phase = .idle
@@ -76,6 +78,28 @@ final class WatchAppModel: ObservableObject {
     @Published private(set) var currentWeightKg: Double?
     @Published private(set) var trendDeltaKg: Double?
     @Published private(set) var profile: WatchProfile
+    @Published private(set) var history: [WeightSample] = []
+    @Published private(set) var latestBodyFat: Double?
+    /// Goal, name and Mochi switch from the phone.
+    @Published private(set) var sync: WatchSyncPayload?
+    let mochi = WatchMochi()
+
+    /// Mochi shows unless the phone says it's off.
+    var mochiEnabled: Bool { sync?.mochiEnabled ?? true }
+    var name: String? { sync?.name }
+
+    var goal: WeightGoal {
+        WeightGoal(type: sync?.goalType.flatMap(GoalType.init(rawValue:)) ?? .lose,
+                   targetKg: sync?.goalKg, startKg: sync?.goalStartKg)
+    }
+
+    /// The smoothed 30-day trend change (same as the phone's "30-day trend").
+    var monthTrendKg: Double? { WeightHistory.trendChangeKg(history, lastDays: 30, now: Date()) }
+
+    var bmi: Double? {
+        guard let w = currentWeightKg, let h = profile.heightCm, h > 0 else { return nil }
+        return BodyCompositionCalculator.bmi(weightKg: w, heightCm: h)
+    }
 
     /// True when the user must supply a height before weighing in.
     var needsSetup: Bool { !profile.isUsable }
@@ -105,6 +129,25 @@ final class WatchAppModel: ObservableObject {
         scanner.onReading = { [weak self] reading, _ in
             Task { @MainActor in self?.handle(reading) }
         }
+
+        sync = WatchSyncReceiver.stored
+        WatchSyncReceiver.shared.onChange = { [weak self] payload in
+            guard let self else { return }
+            let mochiChanged = payload.mochiEnabled != self.sync?.mochiEnabled
+            self.sync = payload
+            if mochiChanged || payload.goalKg != nil { self.refreshMochi(force: true) }
+        }
+        WatchSyncReceiver.shared.activate()
+    }
+
+    /// New overview greeting (forced on tap / after changes, else only when stale).
+    func refreshMochi(force: Bool = false) {
+        guard mochiEnabled else { return }
+        if force {
+            mochi.refreshHome(history: history, goal: goal, name: name)
+        } else {
+            mochi.refreshHomeIfStale(history: history, goal: goal, name: name)
+        }
     }
 
     // MARK: - Authorization / profile sync
@@ -113,6 +156,9 @@ final class WatchAppModel: ObservableObject {
     /// (DOB / sex / height) into the watch profile and load the latest weight for
     /// the dashboard. Always safe to call on appear.
     func requestAuthorizationAndSync() {
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "demoWeightHistory") { loadLatestWeight(); return }
+        #endif
         guard HealthKitSink.isAvailable else { authState = .unavailable; return }
         healthKit.requestAuthorization { [weak self] state in
             guard let self else { return }
@@ -147,10 +193,31 @@ final class WatchAppModel: ObservableObject {
 
     /// Refresh the latest weight + trend from HealthKit for the dashboard.
     func loadLatestWeight() {
+        #if DEBUG
+        // `-demoWeightHistory YES`: synthetic history + goal for simulator checks.
+        if UserDefaults.standard.bool(forKey: "demoWeightHistory") {
+            var rng = SystemRandomNumberGenerator()
+            history = (0..<60).reversed().map { day in
+                WeightSample(id: UUID(), date: Date().addingTimeInterval(-Double(day) * 86_400 - 3600),
+                             weightKg: ((82 - Double(60 - day) * 0.03 + Double.random(in: -0.4...0.4, using: &rng)) * 10).rounded() / 10)
+            }
+            currentWeightKg = history.last?.weightKg
+            latestBodyFat = 24.8
+            if profile.heightCm == nil { profile.heightCm = 178 }
+            sync = WatchSyncPayload(name: "Philipp", goalKg: 76, goalType: "lose", goalStartKg: 82, mochiEnabled: true)
+            refreshMochi(force: true)
+            return
+        }
+        #endif
         healthKit.readWeightHistory { [weak self] result in
             guard let self, case .success(let samples) = result else { return }
+            self.history = samples
             self.currentWeightKg = samples.last?.weightKg
             self.trendDeltaKg = WeightHistory.trendDeltaKg(samples)
+            self.refreshMochi()
+        }
+        healthKit.readLatest(.bodyFat) { [weak self] sample in
+            self?.latestBodyFat = sample.flatMap { $0.value.isFinite ? $0.value : nil }
         }
     }
 
@@ -201,6 +268,11 @@ final class WatchAppModel: ObservableObject {
             return
         }
 
+        // Mochi reacts against the history before this reading.
+        let reaction = mochiEnabled
+            ? mochi.reaction(newKg: reading.weightKg, at: reading.capturedAt, history: history, goal: goal, name: name)
+            : nil
+
         let composition: BodyComposition
         let isFull: Bool
         if (1...3000).contains(reading.impedanceOhms), let sex = profile.sex, let dob = profile.dateOfBirth {
@@ -236,7 +308,29 @@ final class WatchAppModel: ObservableObject {
             self.phase = .saved(WeighInResult(weightKg: reading.weightKg,
                                               composition: composition,
                                               savedToHealth: saved,
-                                              isFull: isFull))
+                                              isFull: isFull,
+                                              mochi: reaction))
+        }
+    }
+
+    // MARK: - Manual entry
+
+    /// Save a weight typed in with the Digital Crown (no scale). BMI from the
+    /// height; shown on the same result screen with Mochi's reaction.
+    func saveManual(weightKg: Double) {
+        let now = Date()
+        let reaction = mochiEnabled
+            ? mochi.reaction(newKg: weightKg, at: now, history: history, goal: goal, name: name)
+            : nil
+        let composition = BodyCompositionCalculator.manual(weightKg: weightKg, bodyFatPercent: nil,
+                                                           heightCm: profile.heightCm ?? 175)
+        phase = .saving
+        healthKit.writeManual(composition: composition, at: now) { [weak self] result in
+            guard let self else { return }
+            let saved: Bool
+            if case .success = result { saved = true; self.loadLatestWeight() } else { saved = false }
+            self.phase = .saved(WeighInResult(weightKg: weightKg, composition: composition,
+                                              savedToHealth: saved, isFull: false, mochi: reaction))
         }
     }
 
