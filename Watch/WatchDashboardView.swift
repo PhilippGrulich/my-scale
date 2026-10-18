@@ -137,12 +137,12 @@ struct WatchDashboardView: View {
         let progress = reached ? 1 : (goal.progressFraction(current) ?? 0)
         return VStack(spacing: 8) {
             ZStack {
-                Circle().stroke(Theme.accent.opacity(0.2), lineWidth: 12)
+                Circle().stroke(Theme.accent.opacity(0.2), lineWidth: 14)
                 Circle()
                     .trim(from: 0, to: max(0.001, progress))
                     .stroke(AngularGradient(colors: [Theme.accentSecondary, Theme.accent], center: .center,
                                             startAngle: .degrees(0), endAngle: .degrees(360 * max(0.05, progress))),
-                            style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                            style: StrokeStyle(lineWidth: 14, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 0) {
                     if reached {
@@ -152,7 +152,7 @@ struct WatchDashboardView: View {
                     } else {
                         // Just the number in the ring; the words go below it.
                         Text(abs(target - current).formatted(1))
-                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .font(.system(size: 36, weight: .bold, design: .rounded))
                             .minimumScaleFactor(0.7)
                         Text("kg left")
                             .font(.caption2)
@@ -161,7 +161,7 @@ struct WatchDashboardView: View {
                     }
                 }
             }
-            .frame(width: 100, height: 100)
+            .frame(width: 128, height: 128)
             HStack(spacing: 4) {
                 Text(reached ? String(localized: "Goal reached") : String(localized: "Goal \(target.formatted(1)) kg"))
                 if !reached, goal.progressFraction(current) != nil {
