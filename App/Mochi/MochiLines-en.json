@@ -2275,6 +2275,186 @@
       "events": [
         "goalNoData"
       ]
+    },
+    {
+      "id": "homeWorkout.1",
+      "text": "{activity} done – love that energy! 💪",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.2",
+      "text": "{minutes} minutes of moving. Proud of you, {name}! 🌟",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.3",
+      "text": "Sweaty and happy? That's the spirit! 💦",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.4",
+      "text": "You moved, and I noticed! 👀💚",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.today.1",
+      "text": "You moved today! Your body says thanks 💚",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:today"
+      ]
+    },
+    {
+      "id": "homeWorkout.yesterday.1",
+      "text": "Yesterday's {activity} still has me cheering 🎉",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:yesterday"
+      ]
+    },
+    {
+      "id": "homeWorkout.run.1",
+      "text": "Shoes on, kilometres done. Great run! 🏃",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:run"
+      ]
+    },
+    {
+      "id": "homeWorkout.walk.1",
+      "text": "A walk clears the head. Nice one! 🚶",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:walk"
+      ]
+    },
+    {
+      "id": "homeWorkout.ride.1",
+      "text": "Wheels turning, heart happy 🚴",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:ride"
+      ]
+    },
+    {
+      "id": "homeWorkout.swim.1",
+      "text": "Splash! Swimming is pure joy 🏊",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:swim"
+      ]
+    },
+    {
+      "id": "homeWorkout.strength.1",
+      "text": "Strong today! Your muscles say hello 🏋️",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:strength"
+      ]
+    },
+    {
+      "id": "homeWorkout.yoga.1",
+      "text": "Breathe in, stretch out. Lovely yoga 🧘",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:yoga"
+      ]
+    },
+    {
+      "id": "homeWorkout.week.1",
+      "text": "So many workouts this week – you're on fire! 🔥",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:week"
+      ]
+    },
+    {
+      "id": "homeActive.1",
+      "text": "So many steps! I'm getting dizzy 🌀",
+      "events": [
+        "homeActive"
+      ]
+    },
+    {
+      "id": "homeActive.2",
+      "text": "Busy feet, happy Mochi 🥰",
+      "events": [
+        "homeActive"
+      ]
+    },
+    {
+      "id": "homeActive.today.1",
+      "text": "{steps} steps today! Your feet are busy 👣",
+      "events": [
+        "homeActive"
+      ],
+      "tags": [
+        "steps:today"
+      ]
+    },
+    {
+      "id": "homeActive.yesterday.1",
+      "text": "{steps} steps yesterday – what a day! 👣",
+      "events": [
+        "homeActive"
+      ],
+      "tags": [
+        "steps:yesterday"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.1",
+      "text": "After training, muscles hold water. Totally normal 💧",
+      "events": [
+        "awayAfterWorkout"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.2",
+      "text": "That's your workout talking, not a setback 💪",
+      "events": [
+        "awayAfterWorkout"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.3",
+      "text": "Post-workout wobble! The trend knows better 📈",
+      "events": [
+        "awayAfterWorkout"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.4",
+      "text": "Tired muscles hold extra water. You did great 💚",
+      "events": [
+        "awayAfterWorkout"
+      ]
     }
   ]
 }

@@ -29,7 +29,8 @@ final class MochiLibraryFileTests: XCTestCase {
     }
 
     func testOnlyKnownPlaceholders() throws {
-        let allowed: Set = ["name", "weight", "change", "left", "percent", "streak", "weeks", "days", "target"]
+        let allowed: Set = ["name", "weight", "change", "left", "percent", "streak", "weeks", "days", "target",
+                            "activity", "minutes", "steps"]
         for lang in ["en", "de"] { for l in try load(lang).lines {
             XCTAssertTrue(MochiMessageSelector.placeholders(in: l.text).isSubset(of: allowed), "\(lang) \(l.id)")
         } }
@@ -39,7 +40,8 @@ final class MochiLibraryFileTests: XCTestCase {
         let minimums: [String: Int] = ["toward": 25, "away": 20, "newBest": 8, "streak": 8, "goodWeek": 6, "daysInRange": 4,
             "milestonePercent": 6, "milestoneKg": 6, "goalReached": 6, "welcomeBack": 8, "notYou": 4, "home": 30, "homeIdle": 6,
             "birthday": 4, "anniversary": 4, "saved": 6, "reminder1": 5, "reminder2": 5, "reminder4": 5, "reminder8": 5, "reminderWeekly": 5,
-            "goalNone": 6, "goalNoData": 3, "goalProgress": 12, "goalReachedHome": 6]
+            "goalNone": 6, "goalNoData": 3, "goalProgress": 12, "goalReachedHome": 6,
+            "homeWorkout": 8, "homeActive": 3, "awayAfterWorkout": 4]
         let en = try load("en")
         for (event, min) in minimums { XCTAssertGreaterThanOrEqual(en.lines.filter { $0.events.contains(event) }.count, min, event) }
     }
@@ -47,7 +49,8 @@ final class MochiLibraryFileTests: XCTestCase {
     func testEveryGoalTypeHasPlaceholderFreeFallback() throws {
         // With no values at all, every reaction event must still find a line for every goal type.
         for event in ["toward", "away", "newBest", "goodWeek", "goalReached", "notYou", "home",
-                      "goalNone", "goalNoData", "goalProgress", "goalReachedHome"] {
+                      "goalNone", "goalNoData", "goalProgress", "goalReachedHome",
+                      "homeWorkout", "homeActive", "awayAfterWorkout"] {
             for goal in GoalType.allCases where !(goal == .maintain && event == "newBest") {
                 var rng = SystemRandomNumberGenerator()
                 let s = MochiSituation(event: event, goalType: goal, tags: [], streakDays: 0, values: [:])
@@ -68,9 +71,9 @@ final class MochiLibraryFileTests: XCTestCase {
             return n
         }
         let greetings: Set = ["home", "homeIdle", "birthday", "anniversary", "goalNone", "goalNoData",
-                              "goalProgress", "goalReachedHome"]
+                              "goalProgress", "goalReachedHome", "homeWorkout", "homeActive"]
         let reactions: Set = ["toward", "away", "newBest", "streak", "goodWeek", "daysInRange",
-                              "milestonePercent", "milestoneKg", "goalReached"]
+                              "milestonePercent", "milestoneKg", "goalReached", "awayAfterWorkout"]
         for lang in ["en", "de"] {
             let lines = try load(lang).lines
             func longest(_ events: Set<String>) -> Int {

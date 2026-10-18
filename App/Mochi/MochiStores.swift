@@ -52,6 +52,16 @@ enum MochiStateStore {
         set { save(newValue, "progress") }
     }
 
+    /// The workout / step day Mochi already greeted, so each is mentioned once.
+    static var greetedWorkoutID: String? {
+        get { defaults.string(forKey: prefix + "greetedWorkout") }
+        set { defaults.set(newValue, forKey: prefix + "greetedWorkout") }
+    }
+    static var greetedStepDay: Date? {
+        get { defaults.object(forKey: prefix + "greetedStepDay") as? Date }
+        set { defaults.set(newValue, forKey: prefix + "greetedStepDay") }
+    }
+
     static var lineHistory: MochiLineHistory {
         get { load(MochiLineHistory.self, "lineHistory") ?? MochiLineHistory(used: [:]) }
         set { save(newValue, "lineHistory") }

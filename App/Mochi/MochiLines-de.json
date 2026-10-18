@@ -2275,6 +2275,186 @@
       "events": [
         "goalNoData"
       ]
+    },
+    {
+      "id": "homeWorkout.1",
+      "text": "{activity} erledigt – was für eine Energie! 💪",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.2",
+      "text": "{minutes} Minuten Bewegung. Stolz auf dich, {name}! 🌟",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.3",
+      "text": "Verschwitzt und glücklich? So muss das! 💦",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.4",
+      "text": "Du hast dich bewegt, und ich hab's gesehen! 👀💚",
+      "events": [
+        "homeWorkout"
+      ]
+    },
+    {
+      "id": "homeWorkout.today.1",
+      "text": "Du hast dich heute bewegt! Dein Körper sagt danke 💚",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:today"
+      ]
+    },
+    {
+      "id": "homeWorkout.yesterday.1",
+      "text": "Gestern {activity}? Ich jubel immer noch 🎉",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:yesterday"
+      ]
+    },
+    {
+      "id": "homeWorkout.run.1",
+      "text": "Laufschuhe an, Kilometer geschafft. Super Lauf! 🏃",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:run"
+      ]
+    },
+    {
+      "id": "homeWorkout.walk.1",
+      "text": "Ein Spaziergang macht den Kopf frei. Schön! 🚶",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:walk"
+      ]
+    },
+    {
+      "id": "homeWorkout.ride.1",
+      "text": "Räder drehen sich, das Herz lacht 🚴",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:ride"
+      ]
+    },
+    {
+      "id": "homeWorkout.swim.1",
+      "text": "Platsch! Schwimmen ist pure Freude 🏊",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:swim"
+      ]
+    },
+    {
+      "id": "homeWorkout.strength.1",
+      "text": "Stark heute! Deine Muskeln winken 🏋️",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:strength"
+      ]
+    },
+    {
+      "id": "homeWorkout.yoga.1",
+      "text": "Einatmen, strecken. Schönes Yoga 🧘",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:yoga"
+      ]
+    },
+    {
+      "id": "homeWorkout.week.1",
+      "text": "So viele Trainings diese Woche – du brennst! 🔥",
+      "events": [
+        "homeWorkout"
+      ],
+      "tags": [
+        "workout:week"
+      ]
+    },
+    {
+      "id": "homeActive.1",
+      "text": "So viele Schritte! Mir wird ganz schwindelig 🌀",
+      "events": [
+        "homeActive"
+      ]
+    },
+    {
+      "id": "homeActive.2",
+      "text": "Fleißige Füße, glückliches Mochi 🥰",
+      "events": [
+        "homeActive"
+      ]
+    },
+    {
+      "id": "homeActive.today.1",
+      "text": "{steps} Schritte heute! Deine Füße sind fleißig 👣",
+      "events": [
+        "homeActive"
+      ],
+      "tags": [
+        "steps:today"
+      ]
+    },
+    {
+      "id": "homeActive.yesterday.1",
+      "text": "{steps} Schritte gestern – was für ein Tag! 👣",
+      "events": [
+        "homeActive"
+      ],
+      "tags": [
+        "steps:yesterday"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.1",
+      "text": "Nach dem Training speichern Muskeln Wasser. Ganz normal 💧",
+      "events": [
+        "awayAfterWorkout"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.2",
+      "text": "Das ist dein Training, kein Rückschritt 💪",
+      "events": [
+        "awayAfterWorkout"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.3",
+      "text": "Wackeln nach dem Training! Der Trend weiß es besser 📈",
+      "events": [
+        "awayAfterWorkout"
+      ]
+    },
+    {
+      "id": "awayAfterWorkout.4",
+      "text": "Müde Muskeln halten Wasser. Du warst super 💚",
+      "events": [
+        "awayAfterWorkout"
+      ]
     }
   ]
 }

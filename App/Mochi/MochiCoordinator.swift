@@ -29,6 +29,8 @@ final class MochiCoordinator: ObservableObject {
     /// Newest own weigh-in that may not be in the history (e.g. a failed Health write).
     var lastWeighInProvider: () -> Date? = { nil }
     var profileProvider: () -> StoredProfile = { StoredProfile.makeDefault() }
+    /// Recent workouts and steps from Apple Health (supplied by `AppModel`).
+    var activityProvider: (Date) -> MochiActivityContext = { _ in .none }
 
     private let library: MochiLibrary
     private let reminderScheduler = MochiReminderScheduler()
@@ -88,6 +90,8 @@ final class MochiCoordinator: ObservableObject {
         var values = MochiPlaceholders.values(profile: profile, currentKg: reading.weightKg,
                                               history: withReading, stats: stats, now: now)
         MochiPlaceholders.applyReaction(reaction, goal: goal, currentKg: reading.weightKg, to: &values)
+        let activity = activityProvider(now)
+        values.merge(activity.values(formatSteps: Self.formatSteps)) { current, _ in current }
 
         func say(_ event: String) -> String? {
             line(event, goalType: goal.type, tags: context.tags, streakDays: stats.streakDays, values: values, now: now)
@@ -98,7 +102,9 @@ final class MochiCoordinator: ObservableObject {
             // No weight talk on the user's birthday, except for reaching the goal.
             presentation = MochiPresentation(pose: .birthday, text: say("birthday") ?? "", display: display)
         } else {
-            var text = say(reaction.event.lineEvent) ?? ""
+            // Weight up within a day of a workout: that's water in the muscles.
+            let afterWorkout = reaction.event == .away && activity.recentWithin24h
+            var text = (afterWorkout ? say("awayAfterWorkout") : nil) ?? say(reaction.event.lineEvent) ?? ""
             if reaction.isWelcomeBack, let hello = say("welcomeBack") {
                 text = text.isEmpty ? hello : hello + " " + text
             }
@@ -149,11 +155,23 @@ final class MochiCoordinator: ObservableObject {
         var values = MochiPlaceholders.values(profile: profile, currentKg: latestKg,
                                               history: history, stats: stats, now: now)
 
+        let activity = activityProvider(now)
+        values.merge(activity.values(formatSteps: Self.formatSteps)) { current, _ in current }
+        let tags = context.tags.union(activity.tags)
+
         let event: String
         var pose = MochiPose.idle
         if context.isBirthday {
             event = "birthday"
             pose = .birthday
+        } else if let workout = activity.latest, MochiStateStore.greetedWorkoutID != workout.id {
+            // A new workout from today or yesterday gets one cheer.
+            event = "homeWorkout"
+            pose = .thumbsUp
+            MochiStateStore.greetedWorkoutID = workout.id
+        } else if let day = activity.bigStepDay, !greetedStepDay(day.isToday, now: now) {
+            event = "homeActive"
+            MochiStateStore.greetedStepDay = calendar.startOfDay(for: day.isToday ? now : now.addingTimeInterval(-86_400))
         } else if let days = stats.daysSinceLastWeighIn, days >= 3 {
             event = "homeIdle"
             pose = .snoozing
@@ -165,12 +183,30 @@ final class MochiCoordinator: ObservableObject {
         }
 
         func say(_ event: String) -> String? {
-            line(event, goalType: goal.type, tags: context.tags, streakDays: stats.streakDays, values: values, now: now)
+            line(event, goalType: goal.type, tags: tags, streakDays: stats.streakDays, values: values, now: now)
         }
         // A special occasion without a fitting line falls back to a plain greeting.
         let text = say(event) ?? (event == "home" ? nil : say("home")) ?? ""
         homePresentation = MochiPresentation(pose: pose, text: text, display: latestKg?.formatted(1) ?? "– –")
         homeProducedAt = now
+    }
+
+    /// Whether there is a workout or big step day Mochi hasn't greeted yet
+    /// (then the next refresh should say something about it).
+    func hasUngreetedActivity(now: Date = Date()) -> Bool {
+        let activity = activityProvider(now)
+        if let w = activity.latest, MochiStateStore.greetedWorkoutID != w.id { return true }
+        if let day = activity.bigStepDay, !greetedStepDay(day.isToday, now: now) { return true }
+        return false
+    }
+
+    private func greetedStepDay(_ isToday: Bool, now: Date) -> Bool {
+        let day = calendar.startOfDay(for: isToday ? now : now.addingTimeInterval(-86_400))
+        return MochiStateStore.greetedStepDay.map { calendar.isDate($0, inSameDayAs: day) } ?? false
+    }
+
+    nonisolated static func formatSteps(_ steps: Double) -> String {
+        Int(steps.rounded()).formatted()
     }
 
     // MARK: - Goal page

@@ -157,6 +157,7 @@ final class AppModel: ObservableObject {
         mochi.historyProvider = { [weak self] in self?.weightHistory ?? [] }
         mochi.lastWeighInProvider = { [weak self] in self?.lastOwnWeighInAt }
         mochi.profileProvider = { [weak self] in self?.profile ?? ProfileStore.load() }
+        mochi.activityProvider = { [weak self] now in self?.mochiActivity(now: now) ?? .none }
 
         notifications.configure()
         notifications.onConfirm = { [weak self] id in
@@ -719,12 +720,49 @@ final class AppModel: ObservableObject {
         let since = Date().addingTimeInterval(-Double(Self.activityDays) * 86_400)
         let load = { [weak self] in
             guard let self else { return }
-            self.healthKit.readWorkouts(since: since) { [weak self] in self?.workouts = $0 }
-            self.healthKit.readDailyTotals(since: since) { [weak self] in self?.dailyTotals = $0 }
+            self.healthKit.readWorkouts(since: since) { [weak self] in
+                self?.workouts = $0
+                self?.greetNewActivity()
+            }
+            self.healthKit.readDailyTotals(since: since) { [weak self] in
+                self?.dailyTotals = $0
+                self?.greetNewActivity()
+            }
         }
         guard !activityAuthRequested else { load(); return }
         activityAuthRequested = true
         healthKit.requestActivityAuthorization(load)
+    }
+
+    /// Recent workouts and steps for Mochi.
+    func mochiActivity(now: Date) -> MochiActivityContext {
+        let mapped = workouts.map { w in
+            MochiWorkout(id: w.id.uuidString, start: w.start, end: w.end,
+                         kind: Self.mochiKind(w.activityType), name: w.activityType.title)
+        }
+        return MochiActivityContext.make(workouts: mapped,
+                                         stepsByDay: dailyTotals.compactMapValues(\.steps),
+                                         now: now, calendar: .current)
+    }
+
+    private static func mochiKind(_ type: HKWorkoutActivityType) -> MochiWorkoutKind {
+        switch type {
+        case .running: return .run
+        case .walking, .hiking: return .walk
+        case .cycling: return .ride
+        case .swimming: return .swim
+        case .traditionalStrengthTraining, .functionalStrengthTraining, .coreTraining,
+             .highIntensityIntervalTraining, .crossTraining: return .strength
+        case .yoga, .pilates, .mindAndBody: return .yoga
+        default: return .other
+        }
+    }
+
+    /// A workout or big step day just arrived from Health that Mochi hasn't
+    /// mentioned: say something about it now if the Overview is showing.
+    private func greetNewActivity() {
+        guard mochiHomeCanUpdate, dashboardVisible, mochi.hasUngreetedActivity() else { return }
+        mochi.refreshHome(history: weightHistory, profile: profile)
     }
 
     /// One History card: everything that happened on a calendar day.
@@ -783,6 +821,7 @@ final class AppModel: ObservableObject {
         }
         dailyTotals = totals
         workouts = demo
+        greetNewActivity()
     }
     #endif
 

@@ -63,6 +63,8 @@ struct RootTabView: View {
             }
             #endif
             model.loadWeightHistory()
+            // Workouts / steps for History and Mochi (asks Health once for these types).
+            model.loadActivity()
             #if DEBUG
             // `-simulateWeighIn YES` on launch: arm a weigh-in, then simulate one a few
             // seconds later (waiting → measuring → result, for simulator screenshots).
