@@ -24,7 +24,7 @@ struct MochiCornerView: View {
             MochiView(pose: presentation?.pose ?? .idle, display: display, size: Self.size, onTap: tap)
                 .offset(y: reduceMotion ? 0 : (bobbing ? -3 : 3))
             if bubbleVisible, let text = presentation?.text, !text.isEmpty {
-                MochiSpeechBubble(text: text)
+                MochiSpeechBubble(text: text, maxWidth: 200, lineLimit: 2)
                     .padding(.top, 8)
                     .accessibilityElement(children: .combine)
             }

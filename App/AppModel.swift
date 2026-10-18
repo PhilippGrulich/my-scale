@@ -344,7 +344,7 @@ final class AppModel: ObservableObject {
                                     impedanceOhms: 490 + Int.random(in: -15...15, using: &rng) + (200 - day) / 20)
             }
             rescheduleMochiReminders()
-            refreshMochiHome()
+            refreshMochiHomeAfterLoad()
             return
         }
         #endif
@@ -360,16 +360,37 @@ final class AppModel: ObservableObject {
                 // Watch weigh-ins that arrive through Health.
                 self.rescheduleMochiReminders()
                 self.updateWidgetSnapshot()
-                self.refreshMochiHome()
+                self.refreshMochiHomeAfterLoad()
             case .failure(let error):
                 self.lastSyncError = error.localizedDescription
-                if self.mochi.homePresentation == nil { self.refreshMochiHome() }
+                self.refreshMochiHomeAfterLoad()
             }
         }
     }
 
-    /// Ask Mochi what the home screen shows: a stashed reaction first, else a fresh greeting.
-    /// Does nothing while Mochi is off.
+    /// Whether the dashboard is on screen (set by the view); Mochi's home line only updates then.
+    var dashboardVisible = false
+
+    private var mochiHomeCanUpdate: Bool {
+        mochi.settings.enabled && measurementPhase == .idle
+    }
+
+    /// Dashboard appear / foreground: a stashed reaction, or a new greeting if the old one is stale.
+    func refreshMochiHomeIfStale() {
+        guard mochiHomeCanUpdate else { return }
+        mochi.refreshHomeIfStale(history: weightHistory, profile: profile)
+    }
+
+    /// A history load never regenerates the greeting: it may show a stashed reaction, and gives
+    /// the very first greeting (so it sees the loaded history).
+    private func refreshMochiHomeAfterLoad() {
+        guard mochiHomeCanUpdate, dashboardVisible else { return }
+        if !mochi.showPendingHomeReaction(), mochi.homePresentation == nil {
+            mochi.refreshHome(history: weightHistory, profile: profile)
+        }
+    }
+
+    /// A new greeting on request (tap, or after a weigh-in result is dismissed).
     func refreshMochiHome() {
         guard mochi.settings.enabled else { return }
         mochi.refreshHome(history: weightHistory, profile: profile)
@@ -404,6 +425,7 @@ final class AppModel: ObservableObject {
     /// Called by the view when the app returns to the foreground.
     func onForeground() {
         loadWeightHistory()
+        if dashboardVisible { refreshMochiHomeIfStale() }
     }
 
     func saveProfile(_ updated: StoredProfile) {
@@ -705,6 +727,8 @@ final class AppModel: ObservableObject {
 
     /// Manually dismiss the weigh-in overlay.
     func dismissOverlay() {
+        var wasResult = false
+        if case .result = measurementPhase { wasResult = true }
         dismissTask?.cancel()
         idleTask?.cancel()
         simulateTask?.cancel()
@@ -713,7 +737,7 @@ final class AppModel: ObservableObject {
         awaitingStepOff = false
         measurementPhase = .idle
         weighInPresentation = nil
-        refreshMochiHome()
+        if wasResult { refreshMochiHome() }
     }
 
     /// Finalize the current live (possibly not-yet-stable) weight on demand —

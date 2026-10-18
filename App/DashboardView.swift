@@ -14,9 +14,11 @@ struct DashboardView: View {
             weightPage
                 .background(Theme.backgroundGradient.ignoresSafeArea())
                 .onAppear {
-                    // With no history yet, the load that is under way refreshes Mochi when it lands.
-                    if !model.weightHistory.isEmpty { model.refreshMochiHome() }
+                    model.dashboardVisible = true
+                    // With no history yet, the load that is under way gives the first greeting.
+                    if !model.weightHistory.isEmpty { model.refreshMochiHomeIfStale() }
                 }
+                .onDisappear { model.dashboardVisible = false }
                 .toolbarVisibility(.hidden, for: .navigationBar)
                 .navigationDestination(item: $selectedMetric) { metric in
                     BodyMetricDetailView(metric: metric)
@@ -36,8 +38,8 @@ struct DashboardView: View {
                                        measuredAt: model.weightHistory.max { $0.date < $1.date }?.date
                                            ?? model.lastOwnReading?.capturedAt)
                             .frame(maxWidth: .infinity)
-                            // Room for the corner bubble above the number while Mochi is on.
-                            .padding(.top, model.mochi.settings.enabled ? 36 : 0)
+                            // The corner row (Mochi, and a bubble capped at two lines) sits above the number.
+                            .padding(.top, model.mochi.settings.enabled ? 68 : 0)
                         MochiHomeCorner(mochi: model.mochi,
                                         display: model.currentWeightKg?.formatted(1) ?? "– –",
                                         onTap: { model.refreshMochiHome() })

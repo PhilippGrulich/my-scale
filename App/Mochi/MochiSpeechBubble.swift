@@ -3,6 +3,8 @@ import SwiftUI
 /// What Mochi says: a white rounded bubble whose tail points back toward Mochi on the leading side.
 struct MochiSpeechBubble: View {
     let text: String
+    var maxWidth: CGFloat = 220
+    var lineLimit: Int? = nil
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -13,6 +15,7 @@ struct MochiSpeechBubble: View {
             .font(.system(.subheadline, design: .rounded).weight(.medium))
             .foregroundStyle(MochiPalette.ink)
             .multilineTextAlignment(.leading)
+            .lineLimit(lineLimit)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.vertical, 9)
             .padding(.trailing, 12)
@@ -23,7 +26,7 @@ struct MochiSpeechBubble: View {
                     .flipsForRightToLeftLayoutDirection(true)
                     .shadow(color: .black.opacity(0.12), radius: 6, y: 2)
             )
-            .frame(maxWidth: 220, alignment: .leading)
+            .frame(maxWidth: maxWidth, alignment: .leading)
             // Reduce Motion: a plain crossfade instead of the scale pop.
             .transition(reduceMotion ? .opacity : .scale(scale: 0.6, anchor: .leading).combined(with: .opacity))
     }

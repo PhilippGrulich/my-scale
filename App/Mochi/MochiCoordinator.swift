@@ -18,6 +18,10 @@ final class MochiCoordinator: ObservableObject {
 
     /// What the home-screen Mochi currently shows.
     @Published private(set) var homePresentation: MochiPresentation?
+    /// When `homePresentation` was produced; decides whether the greeting is still fresh.
+    private(set) var homeProducedAt: Date?
+    /// A greeting older than this is replaced on the next dashboard appear or foreground.
+    static let homeFreshness: TimeInterval = 30 * 60
 
     /// Current weight history and profile, supplied by `AppModel`, for work not
     /// triggered by a call that passes them in (e.g. reminders after a settings change).
@@ -114,13 +118,32 @@ final class MochiCoordinator: ObservableObject {
 
     // MARK: - Home
 
-    /// Picks what the home-screen Mochi shows: a stashed reaction first, else a greeting.
+    /// Shows a stashed background reaction, if there is one. Never generates a greeting.
+    @discardableResult
+    func showPendingHomeReaction(now: Date = Date()) -> Bool {
+        guard let pending = MochiStateStore.pendingHomeReaction else { return false }
+        MochiStateStore.pendingHomeReaction = nil
+        homePresentation = pending
+        homeProducedAt = now
+        return true
+    }
+
+    /// Whether there is no greeting yet, or it is older than 30 minutes or from another day.
+    func isHomeStale(now: Date = Date()) -> Bool {
+        guard homePresentation != nil, let at = homeProducedAt else { return true }
+        return now.timeIntervalSince(at) > Self.homeFreshness || !calendar.isDate(at, inSameDayAs: now)
+    }
+
+    /// Dashboard appear / foreground: a stashed reaction first, else a new greeting only when
+    /// the current one is stale. Keeps a fresh greeting (and the repeat-avoidance history) untouched.
+    func refreshHomeIfStale(history: [WeightSample], profile: StoredProfile, now: Date = Date()) {
+        if showPendingHomeReaction(now: now) { return }
+        if isHomeStale(now: now) { refreshHome(history: history, profile: profile, now: now) }
+    }
+
+    /// Picks what the home-screen Mochi shows: a stashed reaction first, else a new greeting.
     func refreshHome(history: [WeightSample], profile: StoredProfile, now: Date = Date()) {
-        if let pending = MochiStateStore.pendingHomeReaction {
-            MochiStateStore.pendingHomeReaction = nil
-            homePresentation = pending
-            return
-        }
+        if showPendingHomeReaction(now: now) { return }
 
         let goal = profile.weightGoal
         let context = MochiCalendarContext.make(now: now, dateOfBirth: profile.dateOfBirth,
@@ -152,6 +175,7 @@ final class MochiCoordinator: ObservableObject {
         // A special occasion without a fitting line falls back to a plain greeting.
         let text = say(event) ?? (event == "home" ? nil : say("home")) ?? ""
         homePresentation = MochiPresentation(pose: pose, text: text, display: latestKg?.formatted(1) ?? "– –")
+        homeProducedAt = now
     }
 
     // MARK: - Notifications
