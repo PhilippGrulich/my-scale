@@ -1,18 +1,14 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// Minimal single-profile editor for the HealthKit owner (v1). Full profile
-/// CRUD + Unassigned queue is M5b.
+/// Profile tab: edits the single HealthKit owner profile in place. Changes are
+/// kept as a draft until Save (shown only when something changed), so a
+/// half-edited stepper never reaches Health. Full profile CRUD is M5b.
 struct ProfileEditorView: View {
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var model: AppModel
+    @State private var draft = StoredProfile.makeDefault()
 
-    @State private var draft: StoredProfile
-    private let onSave: (StoredProfile) -> Void
-
-    init(profile: StoredProfile, onSave: @escaping (StoredProfile) -> Void) {
-        _draft = State(initialValue: profile)
-        self.onSave = onSave
-    }
+    private var hasChanges: Bool { draft != model.profile }
 
     var body: some View {
         NavigationStack {
@@ -35,6 +31,26 @@ struct ProfileEditorView: View {
                     }
                 }
 
+                Section("Settings") {
+                    SyncBadgeView(auth: model.healthAuth,
+                                  lastStatus: model.lastOwnReading?.healthKitStatus,
+                                  lastError: model.lastSyncError,
+                                  onAuthorize: { model.requestHealthAuthorization() },
+                                  inline: true)
+                    HStack {
+                        Label("Bluetooth", systemImage: "dot.radiowaves.left.and.right")
+                        Spacer()
+                        Text(model.bleStatus.label)
+                            .font(.subheadline)
+                            .foregroundStyle(model.bleStatus == .scanning ? Theme.accent : .secondary)
+                            .multilineTextAlignment(.trailing)
+                    }
+                }
+
+                #if DEBUG
+                developerSection
+                #endif
+
                 Section {
                     Label("Your weigh-ins are recognised automatically from your weight and body-composition signature — no weight range to configure.",
                           systemImage: "person.fill.checkmark")
@@ -44,14 +60,46 @@ struct ProfileEditorView: View {
             }
             .navigationTitle("Profile")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                if hasChanges {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Revert") { draft = model.profile }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") { model.saveConfirmedProfile(draft) }
+                            .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { onSave(draft); dismiss() }
-                        .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            .onAppear { draft = model.profile }
+            .onChange(of: model.profile) { _, saved in draft = saved }
+        }
+    }
+
+    #if DEBUG
+    private var developerSection: some View {
+        Section("Developer") {
+            Button {
+                model.simulateWeighIn()
+            } label: {
+                Label("Simulate weigh-in", systemImage: "wand.and.stars")
+            }
+
+            Button(role: .destructive) {
+                model.unpairScale()
+                model.resetAttribution()
+                OnboardingStore.reset()
+            } label: {
+                Label("Reset onboarding, scale & learned profile", systemImage: "arrow.counterclockwise")
+            }
+
+            if !model.recentFrames.isEmpty {
+                Text("Live frames (\(model.recentFrames.count))")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(model.recentFrames.prefix(10)) { frame in
+                    FrameRow(frame: frame)
                 }
             }
         }
     }
+    #endif
 }

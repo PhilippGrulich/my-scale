@@ -3,13 +3,8 @@ import MyOpenScaleCore
 
 struct DashboardView: View {
     @EnvironmentObject var model: AppModel
-    @Environment(\.scenePhase) private var scenePhase
-    @State private var showingProfile = false
-    @State private var showingHistory = false
     @State private var selectedMetric: HealthKitSink.MetricKind?
-    #if DEBUG
-    @State private var showingDeveloper = false
-    #endif
+    @State private var showingHistory = false
 
     var body: some View {
         NavigationStack {
@@ -23,19 +18,6 @@ struct DashboardView: View {
                         TrendSummaryView(history: model.weightHistory,
                                          currentKg: model.currentWeightKg,
                                          goalKg: model.profile.goalWeightKg)
-
-                        Button {
-                            model.startMeasurement()
-                        } label: {
-                            Label("Start new measurement", systemImage: "scalemass")
-                                .font(.headline)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 4)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Theme.accent)
-                        .controlSize(.large)
-                        .clipShape(.capsule)
 
                         // Discoverable when there's no data yet (e.g. App Review
                         // without the physical scale); hides once you have readings.
@@ -52,17 +34,10 @@ struct DashboardView: View {
                         reviewSection
 
                         WeightChartView(history: model.weightHistory,
-                                        goalKg: model.profile.goalWeightKg)
+                                        goalKg: model.profile.goalWeightKg,
+                                        onShowHistory: { showingHistory = true })
 
                         metricCards
-
-                        SyncBadgeView(auth: model.healthAuth,
-                                      lastStatus: model.lastOwnReading?.healthKitStatus,
-                                      lastError: model.lastSyncError,
-                                      onAuthorize: { model.requestHealthAuthorization() })
-                            .frame(maxWidth: .infinity)
-
-                        bluetoothHint
 
                         Text("Body-composition values are estimates, not medical advice.")
                             .font(.caption2)
@@ -71,9 +46,6 @@ struct DashboardView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.top, 4)
 
-                        #if DEBUG
-                        developerSection
-                        #endif
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 24)
@@ -82,41 +54,11 @@ struct DashboardView: View {
             .background(Theme.backgroundGradient.ignoresSafeArea())
             .navigationTitle("MyOpenScale")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { showingHistory = true } label: {
-                        Image(systemName: "clock.arrow.circlepath")
-                    }
-                    .accessibilityLabel("Measurement history")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { showingProfile = true } label: {
-                        Image(systemName: "person.crop.circle")
-                    }
-                }
-            }
-            .sheet(isPresented: $showingProfile) {
-                ProfileEditorView(profile: model.profile) { model.saveConfirmedProfile($0) }
-            }
             .sheet(isPresented: $showingHistory) {
                 MeasurementHistoryView().environmentObject(model)
             }
             .sheet(item: $selectedMetric) { kind in
                 MetricDetailView(kind: kind).environmentObject(model)
-            }
-            .fullScreenCover(isPresented: overlayBinding) {
-                WeighInOverlayView(phase: model.measurementPhase,
-                                   startedAt: model.liveStartedAt,
-                                   bleStatus: model.bleStatus,
-                                   onAccept: { model.acceptCurrentLiveWeight() },
-                                   onDismiss: { model.dismissOverlay() })
-            }
-            .onChange(of: scenePhase) { _, phase in
-                if phase == .active { model.onForeground() }
-            }
-            .task {
-                model.loadWeightHistory()
-                model.requestNotificationAuthorization()
             }
         }
     }
@@ -178,69 +120,6 @@ struct DashboardView: View {
                 }
             }
         }
-    }
-
-    @ViewBuilder
-    private var bluetoothHint: some View {
-        if model.bleStatus != .scanning {
-            Label(model.bleStatus.label, systemImage: "dot.radiowaves.left.and.right")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .glassEffect(in: .capsule)
-                .frame(maxWidth: .infinity)
-        }
-    }
-
-    #if DEBUG
-    private var developerSection: some View {
-        DisclosureGroup(isExpanded: $showingDeveloper) {
-            VStack(spacing: 10) {
-                Button {
-                    model.simulateWeighIn()
-                } label: {
-                    Label("Simulate weigh-in", systemImage: "wand.and.stars")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.glass)
-
-                Button(role: .destructive) {
-                    model.unpairScale()
-                    model.resetAttribution()
-                    OnboardingStore.reset()
-                } label: {
-                    Label("Reset onboarding, scale & learned profile", systemImage: "arrow.counterclockwise")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.glass)
-
-                if !model.recentFrames.isEmpty {
-                    Text("Live frames (\(model.recentFrames.count))")
-                        .font(.caption).foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    ForEach(model.recentFrames.prefix(10)) { frame in
-                        FrameRow(frame: frame)
-                    }
-                }
-            }
-            .padding(.top, 8)
-        } label: {
-            Label("Developer", systemImage: "wrench.and.screwdriver")
-                .font(.subheadline.weight(.medium))
-        }
-        .padding(16)
-        .glassEffect(in: .rect(cornerRadius: 22))
-    }
-    #endif
-
-    // MARK: - Overlay presentation
-
-    private var overlayBinding: Binding<Bool> {
-        Binding(
-            get: { model.measurementPhase.isActive },
-            set: { if !$0 { model.dismissOverlay() } }
-        )
     }
 }
 

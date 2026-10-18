@@ -42,7 +42,7 @@ struct MeasurementHistoryView: View {
                     }
                 }
             }
-            .navigationTitle("Measurements")
+            .navigationTitle("History")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

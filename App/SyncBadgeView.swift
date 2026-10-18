@@ -8,8 +8,34 @@ struct SyncBadgeView: View {
     let lastStatus: LoggedReading.SinkStatus?
     let lastError: String?
     let onAuthorize: () -> Void
+    /// Plain row for a `Form` (Profile → Settings) instead of a glass capsule.
+    var inline: Bool = false
 
     var body: some View {
+        if inline { row } else { badge }
+    }
+
+    private var row: some View {
+        HStack {
+            Label("Apple Health", systemImage: "heart.text.square.fill")
+                .foregroundStyle(.primary)
+            Spacer()
+            if needsAuthorization {
+                Button("Connect", action: onAuthorize)
+                    .buttonStyle(.borderedProminent)
+                    .tint(Theme.accent)
+                    .controlSize(.small)
+            } else {
+                Text(text)
+                    .font(.subheadline)
+                    .foregroundStyle(color)
+                    .multilineTextAlignment(.trailing)
+            }
+        }
+        .animation(.snappy, value: text)
+    }
+
+    private var badge: some View {
         Group {
             if needsAuthorization {
                 Button(action: onAuthorize) {
@@ -48,13 +74,13 @@ struct SyncBadgeView: View {
     private var isSyncing: Bool { lastStatus == .pending }
 
     private var text: String {
-        if case .unavailable = auth { return "Health unavailable" }
+        if case .unavailable = auth { return String(localized: "Health unavailable") }
         switch lastStatus {
-        case .written: return "Saved to Apple Health"
-        case .pending: return "Saving to Apple Health…"
-        case .failed: return "Sync failed — tap to retry"
-        case .skipped(let why): return "Health: \(why)"
-        case .none: return "Connected to Apple Health"
+        case .written: return String(localized: "Saved to Apple Health")
+        case .pending: return String(localized: "Saving to Apple Health…")
+        case .failed: return String(localized: "Sync failed — tap to retry")
+        case .skipped(let why): return String(localized: "Health: \(why)")
+        case .none: return String(localized: "Connected to Apple Health")
         }
     }
 

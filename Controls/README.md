@@ -44,4 +44,4 @@ Both require the Apple ID account in Xcode's GUI to register the app id / group.
 
 Until then, "Start Weigh-In" is still available via **Siri, Spotlight, and the
 Shortcuts app** (the in-app `StartMeasurementIntent` + `MyOpenScaleShortcuts`), and
-the on-screen **Start new measurement** button.
+the **+ Weigh in** button in the middle of the tab bar.

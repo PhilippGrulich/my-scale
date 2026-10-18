@@ -16,7 +16,7 @@ struct MyOpenScaleApp: App {
                         showOnboarding = false
                     })
                 } else {
-                    DashboardView()
+                    RootTabView()
                 }
             }
             .environmentObject(model)
