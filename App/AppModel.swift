@@ -378,12 +378,14 @@ final class AppModel: ObservableObject {
                                 lastSeenWeightKg: scaleCandidate?.weightKg)
         PairedScaleStore.save(scale)
         pairedScaleID = id
+        pushWatchSync()
     }
 
     /// Forget the paired scale (developer / re-pair) and stop scanning.
     func unpairScale() {
         PairedScaleStore.clear()
         pairedScaleID = nil
+        pushWatchSync()
         if !pairingScanActive { stopBluetooth() }
     }
 
@@ -629,7 +631,8 @@ final class AppModel: ObservableObject {
             goalKg: profile.goalWeightKg,
             goalType: profile.goalWeightKg == nil ? nil : (profile.goalType ?? .lose).rawValue,
             goalStartKg: profile.goalStartKg,
-            mochiEnabled: mochiEnabled ?? mochi.settings.enabled))
+            mochiEnabled: mochiEnabled ?? mochi.settings.enabled,
+            hasPairedScale: hasPairedScale))
     }
 
     func saveProfile(_ updated: StoredProfile) {

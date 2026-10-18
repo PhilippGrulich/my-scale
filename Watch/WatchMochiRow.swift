@@ -29,7 +29,7 @@ struct WatchMochiRow: View {
     }
 
     private var bubble: some View {
-        MochiSpeechBubble(text: presentation.text, maxWidth: 150, lineLimit: 4)
+        MochiSpeechBubble(text: presentation.text, maxWidth: stacked ? 180 : 150, lineLimit: stacked ? 4 : 3)
             .font(.footnote)
             .animation(.snappy, value: presentation.text)
     }

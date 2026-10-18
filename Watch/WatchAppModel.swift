@@ -86,6 +86,11 @@ final class WatchAppModel: ObservableObject {
 
     /// Mochi shows unless the phone says it's off.
     var mochiEnabled: Bool { sync?.mochiEnabled ?? true }
+    /// A scale is paired on the phone: "+ Weigh in" starts the scale capture;
+    /// otherwise it opens manual entry.
+    var hasScale: Bool { sync?.hasPairedScale ?? false }
+    /// Set when the weigh-in screen asks to switch to manual entry.
+    @Published var manualRequested = false
     var name: String? { sync?.name }
 
     var goal: WeightGoal {
@@ -204,7 +209,8 @@ final class WatchAppModel: ObservableObject {
             currentWeightKg = history.last?.weightKg
             latestBodyFat = 24.8
             if profile.heightCm == nil { profile.heightCm = 178 }
-            sync = WatchSyncPayload(name: "Philipp", goalKg: 76, goalType: "lose", goalStartKg: 82, mochiEnabled: true)
+            sync = WatchSyncPayload(name: "Philipp", goalKg: 76, goalType: "lose", goalStartKg: 82, mochiEnabled: true,
+                                    hasPairedScale: UserDefaults.standard.bool(forKey: "demoScale"))
             refreshMochi(force: true)
             return
         }
@@ -229,6 +235,13 @@ final class WatchAppModel: ObservableObject {
         guard !needsSetup else { return }
         phase = .searching
         scanner.start()
+    }
+
+    /// Leave the scale weigh-in for manual entry (the overview opens it).
+    func switchToManual() {
+        scanner.stop()
+        phase = .idle
+        manualRequested = true
     }
 
     /// Cancel an in-progress weigh-in and return to idle.

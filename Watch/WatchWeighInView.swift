@@ -1,15 +1,16 @@
 import SwiftUI
 import MyOpenScaleCore
 
-/// The standalone weigh-in flow, driven entirely by `WatchAppModel.phase`:
-/// searching → live weight → saving → result (or error). Presented as a sheet
-/// from the dashboard.
+/// The standalone weigh-in flow, driven by `WatchAppModel.phase`: searching →
+/// live weight → saving → result (or error). One centred layout for every step:
+/// Mochi (or the number when Mochi is off) with a short line under it. The
+/// sheet's own close button cancels; the result has a Done button.
 struct WatchWeighInView: View {
     @EnvironmentObject var model: WatchAppModel
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: 10) {
                 switch model.phase {
                 case .idle:
                     EmptyView()
@@ -18,113 +19,90 @@ struct WatchWeighInView: View {
                 case .live(let weightKg):
                     live(weightKg)
                 case .saving:
-                    saving
+                    ProgressView().controlSize(.large).padding(.top, 30)
                 case .saved(let result):
                     resultView(result)
                 case .error(let message):
                     errorView(message)
                 }
             }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
+            .padding(.horizontal, 4)
         }
     }
 
     // MARK: - States
 
+    @ViewBuilder
     private var searching: some View {
-        VStack(spacing: 10) {
-            if model.mochiEnabled {
-                WatchMochiRow(presentation: WatchMochi.waiting(isListening: model.bleStatus == .scanning), stacked: true)
-            } else {
-                ProgressView().controlSize(.large)
-                Text("Step on your scale")
-                    .font(.headline)
-            }
+        if model.mochiEnabled {
+            WatchMochiRow(presentation: WatchMochi.waiting(isListening: model.bleStatus == .scanning), stacked: true)
+        } else {
+            ProgressView().controlSize(.large)
+            Text("Step on your scale").font(.headline)
+        }
+        if model.bleStatus != .scanning {
             Text(model.bleStatus.label)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-            cancelButton
         }
-        .padding(.top, 8)
+        manualButton
+    }
+
+    private var manualButton: some View {
+        Button { model.switchToManual() } label: {
+            Label("Enter manually", systemImage: "digitalcrown.horizontal.arrow.clockwise")
+                .frame(maxWidth: .infinity)
+        }
+        // Prominent once Bluetooth is clearly not working.
+        .buttonStyle(.bordered)
+        .tint(model.bleStatus == .scanning || model.bleStatus == .unknown ? .secondary : Theme.accent)
     }
 
     @ViewBuilder
     private func live(_ weightKg: Double) -> some View {
         if model.mochiEnabled {
-            VStack(spacing: 6) {
-                WatchMochiRow(presentation: WatchMochi.measuring(weightKg), stacked: true)
-                cancelButton
-            }
-            .padding(.top, 4)
+            WatchMochiRow(presentation: WatchMochi.measuring(weightKg), stacked: true)
         } else {
-            plainLive(weightKg)
-        }
-    }
-
-    private func plainLive(_ weightKg: Double) -> some View {
-        VStack(spacing: 6) {
             Text(weightKg.formatted(1))
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .contentTransition(.numericText(value: weightKg))
-                .animation(.snappy, value: weightKg)
-            Text("kg")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text("Hold still…")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .padding(.top, 4)
-            cancelButton
+            Text("Hold still…").font(.footnote).foregroundStyle(.secondary)
         }
-        .padding(.top, 8)
-    }
-
-    private var saving: some View {
-        VStack(spacing: 12) {
-            ProgressView().controlSize(.large)
-            Text("Saving to Health…")
-                .font(.subheadline)
-        }
-        .padding(.top, 16)
     }
 
     private func resultView(_ result: WatchAppModel.WeighInResult) -> some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             if let mochi = result.mochi {
-                // Mochi shows the weight on its tummy and says its reaction.
                 WatchMochiRow(presentation: mochi, stacked: true)
             } else {
-                Text(result.weightKg.formatted(1) + " kg")
+                Text("\(result.weightKg.formatted(1)) kg")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
             }
 
-            if result.isFull {
-                metricsGrid(result.composition)
-            } else {
-                metricRow("BMI", result.composition.bmi.formatted(1))
+            HStack(spacing: 6) {
+                if result.isFull {
+                    chip("Body Fat", "\(result.composition.bodyFatPercent.formatted(1)) %")
+                }
+                chip("BMI", result.composition.bmi.formatted(1))
             }
 
             Label(result.savedToHealth ? "Saved to Health" : "Not saved to Health",
                   systemImage: result.savedToHealth ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                .font(.caption)
-                .foregroundStyle(result.savedToHealth ? .green : .orange)
-                .padding(.top, 2)
+                .font(.caption2)
+                .foregroundStyle(result.savedToHealth ? Theme.accent : .orange)
 
             Button("Done") { model.done() }
                 .buttonStyle(.borderedProminent)
                 .tint(Theme.accent)
-                .padding(.top, 4)
         }
-        .padding(.top, 4)
     }
 
     private func errorView(_ message: String) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             if model.mochiEnabled {
-                MochiView(pose: .sadWave, display: "– –", size: 64)
+                MochiView(pose: .sadWave, display: "– –", size: 70)
             } else {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 30))
@@ -136,34 +114,15 @@ struct WatchWeighInView: View {
             Button("Done") { model.done() }
                 .buttonStyle(.bordered)
         }
-        .padding(.top, 12)
     }
 
-    // MARK: - Pieces
-
-    private func metricsGrid(_ c: BodyComposition) -> some View {
-        VStack(spacing: 6) {
-            metricRow("Body Fat", c.bodyFatPercent.formatted(1) + "%")
-            metricRow("Lean", c.leanMassKg.formatted(1) + " kg")
-            metricRow("BMI", c.bmi.formatted(1))
+    private func chip(_ title: LocalizedStringKey, _ value: String) -> some View {
+        VStack(spacing: 0) {
+            Text(title).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+            Text(value).font(.footnote.weight(.bold).monospacedDigit())
         }
-    }
-
-    private func metricRow(_ title: LocalizedStringKey, _ value: String) -> some View {
-        HStack {
-            Text(title).font(.caption).foregroundStyle(.secondary)
-            Spacer()
-            Text(value).font(.caption.weight(.semibold))
-        }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 4)
-        .background(.gray.opacity(0.15), in: .rect(cornerRadius: 8))
-    }
-
-    private var cancelButton: some View {
-        Button("Cancel") { model.cancel() }
-            .buttonStyle(.bordered)
-            .tint(.secondary)
-            .padding(.top, 8)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background(.ultraThinMaterial, in: .rect(cornerRadius: 10))
     }
 }

@@ -1,47 +1,48 @@
 import SwiftUI
+import Charts
 import MyOpenScaleCore
 
-/// Watch overview: Mochi's greeting, the latest weight with its 30-day trend,
-/// goal progress (from the phone), body fat / BMI, and the two ways to add a
-/// weight — the scale (foreground only on watchOS) or the Digital Crown.
+/// Watch overview as vertical pages (scroll with the Digital Crown), one topic
+/// each — Today (Mochi + weight + trend), Goal (ring), Body (values + chart),
+/// Weigh in (the scale when one is paired — foreground only on watchOS — or
+/// manual entry with the Crown).
 struct WatchDashboardView: View {
     @EnvironmentObject var model: WatchAppModel
     @State private var didRequestAuth = false
+    @State private var showingManual = false
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 12) {
-                    if model.needsSetup {
-                        setupPrompt
-                    } else {
-                        if model.mochiEnabled, let home = model.mochi.home {
-                            WatchMochiRow(presentation: home, onTap: { model.refreshMochi(force: true) })
-                        }
-                        latestWeight
-                        if let goalKg = model.goal.targetKg, let current = model.currentWeightKg {
-                            goalRow(goalKg: goalKg, current: current)
-                        }
-                        bodyValues
-                        weighInButton
-                        NavigationLink {
-                            WatchManualEntryView().environmentObject(model)
-                        } label: {
-                            Label("Enter manually", systemImage: "digitalcrown.horizontal.arrow.clockwise")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.bordered)
+            Group {
+                if model.needsSetup {
+                    setupPage
+                } else {
+                    TabView {
+                        todayPage
+                        if model.goal.targetKg != nil, model.currentWeightKg != nil { goalPage }
+                        if model.latestBodyFat != nil || model.bmi != nil || model.history.count >= 2 { bodyPage }
+                        weighInPage
                     }
+                    .tabViewStyle(.verticalPage)
                 }
-                .padding(.horizontal, 4)
             }
-            .navigationTitle("MyOpenScale")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(isPresented: $showingManual) {
+                WatchManualEntryView().environmentObject(model)
+            }
         }
         .task {
             if !didRequestAuth {
                 didRequestAuth = true
                 model.requestAuthorizationAndSync()
+            }
+        }
+        .onChange(of: model.manualRequested) { _, requested in
+            guard requested else { return }
+            model.manualRequested = false
+            // Let the weigh-in sheet close first.
+            Task {
+                try? await Task.sleep(for: .milliseconds(400))
+                showingManual = true
             }
         }
         .sheet(isPresented: Binding(
@@ -52,136 +53,209 @@ struct WatchDashboardView: View {
         }
     }
 
-    // MARK: - Latest weight
+    // MARK: - Weigh in
 
-    private var latestWeight: some View {
-        VStack(spacing: 2) {
+    private var weighInPage: some View {
+        VStack(spacing: 8) {
+            if model.mochiEnabled {
+                MochiView(pose: .helloWave, display: model.currentWeightKg?.formatted(1) ?? "", size: 64)
+            } else {
+                Image(systemName: "scalemass.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(Theme.accent)
+            }
+            if model.hasScale {
+                Button { model.startWeighIn() } label: {
+                    Label("Scale", systemImage: "scalemass.fill").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.accent)
+                Button { showingManual = true } label: {
+                    Label("Manual", systemImage: "digitalcrown.horizontal.arrow.clockwise").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            } else {
+                Button { showingManual = true } label: {
+                    Label("Enter manually", systemImage: "plus").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.accent)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .containerBackground(Theme.accent.gradient.opacity(0.25), for: .tabView)
+        .navigationTitle("Weigh In")
+    }
+
+    // MARK: - Today
+
+    private var todayPage: some View {
+        VStack(spacing: 6) {
+            if model.mochiEnabled, let home = model.mochi.home {
+                WatchMochiRow(presentation: home, onTap: { model.refreshMochi(force: true) })
+            }
+            Spacer(minLength: 0)
             if let weight = model.currentWeightKg {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(weight.formatted(1))
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .font(.system(size: 46, weight: .bold, design: .rounded))
                         .contentTransition(.numericText(value: weight))
-                    Text("kg").font(.caption).foregroundStyle(.secondary)
+                        .minimumScaleFactor(0.7)
+                    Text("kg").font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
                 }
-                if let month = model.monthTrendKg {
-                    let toward = model.goal.isToward(fromKg: weight - month, toKg: weight)
-                    let flat = abs(month) < 0.05
-                    Label("\(abs(month).formatted(1)) kg / 30d",
-                          systemImage: flat ? "arrow.right" : (month < 0 ? "arrow.down.right" : "arrow.up.right"))
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(flat ? .secondary : (toward ? Theme.accent : .orange))
-                }
+                trendLabel(weight)
             } else {
-                Image(systemName: "scalemass")
-                    .font(.system(size: 34))
-                    .foregroundStyle(.secondary)
                 Text("No weigh-ins yet")
-                    .font(.footnote)
+                    .font(.headline)
                     .foregroundStyle(.secondary)
             }
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity)
+        .containerBackground(Theme.accent.gradient.opacity(0.35), for: .tabView)
+    }
+
+    @ViewBuilder
+    private func trendLabel(_ weight: Double) -> some View {
+        if let month = model.monthTrendKg {
+            let flat = abs(month) < 0.05
+            let toward = model.goal.isToward(fromKg: weight - month, toKg: weight)
+            Label("\(abs(month).formatted(1)) kg / 30d",
+                  systemImage: flat ? "arrow.right" : (month < 0 ? "arrow.down.right" : "arrow.up.right"))
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(flat ? .secondary : (toward ? Theme.accent : .orange))
+        }
     }
 
     // MARK: - Goal
 
-    private func goalRow(goalKg: Double, current: Double) -> some View {
-        let progress = model.goal.progressFraction(current)
-        let toGo = abs(goalKg - current)
-        return HStack(spacing: 10) {
+    private var goalPage: some View {
+        let goal = model.goal
+        let current = model.currentWeightKg ?? 0
+        let target = goal.targetKg ?? current
+        let reached = goal.isReached(current)
+        let progress = reached ? 1 : (goal.progressFraction(current) ?? 0)
+        return VStack(spacing: 8) {
             ZStack {
-                Circle().stroke(Theme.accent.opacity(0.2), lineWidth: 5)
+                Circle().stroke(Theme.accent.opacity(0.2), lineWidth: 12)
                 Circle()
-                    .trim(from: 0, to: max(0.001, progress ?? (model.goal.isReached(current) ? 1 : 0)))
-                    .stroke(Theme.accent, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    .trim(from: 0, to: max(0.001, progress))
+                    .stroke(AngularGradient(colors: [Theme.accentSecondary, Theme.accent], center: .center,
+                                            startAngle: .degrees(0), endAngle: .degrees(360 * max(0.05, progress))),
+                            style: StrokeStyle(lineWidth: 12, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                Image(systemName: "target").font(.system(size: 11, weight: .bold)).foregroundStyle(Theme.accent)
-            }
-            .frame(width: 34, height: 34)
-            VStack(alignment: .leading, spacing: 0) {
-                if model.goal.isReached(current) {
-                    Text("Goal reached").font(.footnote.weight(.semibold))
-                } else {
-                    Text("\(toGo.formatted(1)) kg to go").font(.footnote.weight(.semibold))
+                VStack(spacing: 0) {
+                    if reached {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.title2)
+                            .foregroundStyle(Theme.accent)
+                    } else {
+                        // Just the number in the ring; the words go below it.
+                        Text(abs(target - current).formatted(1))
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .minimumScaleFactor(0.7)
+                        Text("kg left")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
                 }
-                Text("Goal \(goalKg.formatted(1)) kg").font(.caption2).foregroundStyle(.secondary)
             }
+            .frame(width: 100, height: 100)
+            HStack(spacing: 4) {
+                Text(reached ? String(localized: "Goal reached") : String(localized: "Goal \(target.formatted(1)) kg"))
+                if !reached, goal.progressFraction(current) != nil {
+                    Text(verbatim: "· \(Int((progress * 100).rounded())) %").foregroundStyle(Theme.accent)
+                }
+            }
+            .font(.footnote.weight(.semibold))
             Spacer(minLength: 0)
         }
-        .padding(8)
-        .background(.gray.opacity(0.15), in: .rect(cornerRadius: 12))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .containerBackground(Theme.accentSecondary.gradient.opacity(0.35), for: .tabView)
+        .navigationTitle("Goal")
     }
 
-    // MARK: - Body values
+    // MARK: - Body
 
-    @ViewBuilder
-    private var bodyValues: some View {
-        if model.latestBodyFat != nil || model.bmi != nil {
+    private var bodyPage: some View {
+        VStack(spacing: 8) {
             HStack(spacing: 6) {
                 if let fat = model.latestBodyFat {
-                    tile(icon: "drop.fill", tint: .orange, title: "Body Fat", value: "\(fat.formatted(1)) %")
+                    value(icon: "drop.fill", tint: .orange, title: "Body Fat", text: "\(fat.formatted(1)) %")
                 }
                 if let bmi = model.bmi {
-                    tile(icon: "ruler.fill", tint: Theme.accent, title: "BMI", value: bmi.formatted(1))
+                    value(icon: "ruler.fill", tint: Theme.accent, title: "BMI", text: bmi.formatted(1))
                 }
             }
+            miniChart
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .containerBackground(Color.orange.gradient.opacity(0.25), for: .tabView)
+        .navigationTitle("Body")
     }
 
-    private func tile(icon: String, tint: Color, title: LocalizedStringKey, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
+    private func value(icon: String, tint: Color, title: LocalizedStringKey, text: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
             Label(title, systemImage: icon)
                 .font(.caption2)
                 .foregroundStyle(tint)
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
-            Text(value).font(.footnote.weight(.bold).monospacedDigit())
+                .minimumScaleFactor(0.7)
+            Text(text).font(.title3.weight(.bold).monospacedDigit())
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(8)
-        .background(.gray.opacity(0.15), in: .rect(cornerRadius: 12))
+        .background(.ultraThinMaterial, in: .rect(cornerRadius: 12))
     }
 
-    private var weighInButton: some View {
-        Button {
-            model.startWeighIn()
-        } label: {
-            Label("Weigh In", systemImage: "scalemass.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.borderedProminent)
-        .tint(Theme.accent)
-    }
-
-    // MARK: - Setup prompt
-
-    private var setupPrompt: some View {
-        VStack(spacing: 10) {
-            if model.mochiEnabled {
-                WatchMochiRow(presentation: MochiPresentation(
-                    pose: .helloWave, text: String(localized: "Hi! I just need your height."), display: ""))
-            } else {
-                Image(systemName: "ruler")
-                    .font(.system(size: 32))
+    /// 30-day smoothed trend, same maths as the phone chart.
+    @ViewBuilder
+    private var miniChart: some View {
+        let trend = WeightHistory.filter(
+            WeightHistory.trend(WeightHistory.bucketed(model.history), halfLifeDays: 3, centered: true),
+            lastDays: 30, now: Date())
+        if trend.count >= 2 {
+            let axis = WeightHistory.chartAxis(for: trend)
+            Chart(trend) { t in
+                AreaMark(x: .value("Date", t.date), yStart: .value("Base", axis.domain.lowerBound),
+                         yEnd: .value("Weight", t.weightKg))
+                    .interpolationMethod(.monotone)
+                    .foregroundStyle(Theme.accent.opacity(0.25))
+                LineMark(x: .value("Date", t.date), y: .value("Weight", t.weightKg))
+                    .interpolationMethod(.monotone)
                     .foregroundStyle(Theme.accent)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
             }
-            Text("Set your height")
-                .font(.headline)
-            Text("We need your height to compute weight and body composition.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            NavigationLink {
-                WatchSetupView().environmentObject(model)
-            } label: {
-                Text("Set Up")
-                    .font(.subheadline.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(Theme.accent)
+            .chartYScale(domain: axis.domain)
+            .chartXAxis(.hidden)
+            .chartYAxis { AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) }
+            .frame(maxHeight: .infinity)
         }
-        .padding(.top, 4)
+    }
+
+    // MARK: - Setup
+
+    private var setupPage: some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                if model.mochiEnabled {
+                    WatchMochiRow(presentation: MochiPresentation(
+                        pose: .helloWave, text: String(localized: "Hi! I just need your height."), display: ""))
+                }
+                Text("We need your height to compute weight and body composition.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                NavigationLink {
+                    WatchSetupView().environmentObject(model)
+                } label: {
+                    Text("Set Up").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.accent)
+            }
+        }
+        .navigationTitle("Set your height")
     }
 }

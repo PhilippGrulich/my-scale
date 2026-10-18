@@ -152,16 +152,6 @@
         }
       }
     },
-    "%@ kg to go": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "noch %@ kg"
-          }
-        }
-      }
-    },
     "%@ kg · %@": {
       "shouldTranslate": false
     },
@@ -398,16 +388,6 @@
         }
       }
     },
-    "Add weight": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gewicht eintragen"
-          }
-        }
-      }
-    },
     "Age": {
       "localizations": {
         "de": {
@@ -538,6 +518,9 @@
           }
         }
       }
+    },
+    "Base": {
+      "shouldTranslate": false
     },
     "Baseline": {
       "localizations": {
@@ -1673,6 +1656,16 @@
         }
       }
     },
+    "Manual": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manuell"
+          }
+        }
+      }
+    },
     "Manual entry": {
       "localizations": {
         "de": {
@@ -1795,9 +1788,6 @@
           }
         }
       }
-    },
-    "MyOpenScale": {
-      "shouldTranslate": false
     },
     "MyOpenScale may not save to Apple Health. Allow it in the Health app under Profile › Apps › MyOpenScale.": {
       "localizations": {
@@ -3844,6 +3834,16 @@
     },
     "kg": {
       "shouldTranslate": false
+    },
+    "kg left": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kg übrig"
+          }
+        }
+      }
     },
     "kg to go": {
       "localizations": {

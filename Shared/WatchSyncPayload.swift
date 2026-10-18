@@ -10,6 +10,9 @@ struct WatchSyncPayload: Codable, Equatable {
     var goalType: String?
     var goalStartKg: Double?
     var mochiEnabled: Bool
+    /// Whether a scale is paired on the phone (the watch then offers the scale
+    /// weigh-in; otherwise only manual entry). Optional for older payloads.
+    var hasPairedScale: Bool?
 
     private static let key = "payload"
 
@@ -18,12 +21,14 @@ struct WatchSyncPayload: Codable, Equatable {
         return [Self.key: data]
     }
 
-    init(name: String?, goalKg: Double?, goalType: String?, goalStartKg: Double?, mochiEnabled: Bool) {
+    init(name: String?, goalKg: Double?, goalType: String?, goalStartKg: Double?, mochiEnabled: Bool,
+         hasPairedScale: Bool? = nil) {
         self.name = name
         self.goalKg = goalKg
         self.goalType = goalType
         self.goalStartKg = goalStartKg
         self.mochiEnabled = mochiEnabled
+        self.hasPairedScale = hasPairedScale
     }
 
     init?(dictionary: [String: Any]) {

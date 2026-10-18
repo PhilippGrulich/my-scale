@@ -32,14 +32,19 @@ struct WatchManualEntryView: View {
             Text("Turn the Digital Crown")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-            Button("Save") {
-                model.saveManual(weightKg: rounded)
-                dismiss()
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(Theme.accent)
         }
-        .navigationTitle("Add weight")
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Button("Save") {
+                    model.saveManual(weightKg: rounded)
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.accent)
+            }
+        }
+        .navigationTitle("Weight")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if let last = model.currentWeightKg { weightKg = (last * 10).rounded() / 10 }
