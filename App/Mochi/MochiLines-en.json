@@ -634,7 +634,7 @@
     },
     {
       "id": "newBest.6",
-      "text": "You've never been closer to your goal! 🎯",
+      "text": "Look at that number shine! 🌟",
       "events": [
         "newBest"
       ]
@@ -1164,7 +1164,7 @@
     },
     {
       "id": "notYou.2",
-      "text": "Oh, a visitor! Hello there 👋",
+      "text": "Oh, did we have a visitor? Hello there 👋",
       "events": [
         "notYou"
       ]
@@ -1178,21 +1178,21 @@
     },
     {
       "id": "notYou.4",
-      "text": "Not yours? No problem, I won't count it 💚",
+      "text": "If that wasn't you, it won't count 💚",
       "events": [
         "notYou"
       ]
     },
     {
       "id": "notYou.5",
-      "text": "A guest! Mochi says hi 🍡",
+      "text": "A guest, maybe? Mochi says hi 🍡",
       "events": [
         "notYou"
       ]
     },
     {
       "id": "notYou.6",
-      "text": "Got it, that one stays off your story 📖",
+      "text": "Was that someone else? Just let me know 💭",
       "events": [
         "notYou"
       ]
