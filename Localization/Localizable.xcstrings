@@ -7,12 +7,15 @@
     "%@": {
       "shouldTranslate": false
     },
-    "%@ Change": {
+    "%@ %%": {
+      "shouldTranslate": false
+    },
+    "%@ %% to go.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ Ändern"
+            "value": "Noch %@ %%."
           }
         }
       }
@@ -40,12 +43,42 @@
         }
       }
     },
+    "%@ kg ahead": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg voraus"
+          }
+        }
+      }
+    },
+    "%@ kg behind": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg hinter Plan"
+          }
+        }
+      }
+    },
     "%@ kg below your current weight.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ kg unter deinem aktuellen Gewicht."
+          }
+        }
+      }
+    },
+    "%@ kg left": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "noch %@ kg"
           }
         }
       }
@@ -89,6 +122,17 @@
         }
       }
     },
+    "%@ · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ · %2$@"
+          }
+        }
+      },
+      "shouldTranslate": false
+    },
     "%@%@ kg": {
       "shouldTranslate": false
     },
@@ -100,6 +144,22 @@
     },
     "%lld dBm": {
       "shouldTranslate": false
+    },
+    "%lld of %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld von %2$lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld of %2$lld"
+          }
+        }
+      }
     },
     "%lld years": {
       "localizations": {
@@ -160,6 +220,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eine Messung mit %@ kg muss bestätigt werden."
+          }
+        }
+      }
+    },
+    "Add a body-fat goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperfett-Ziel hinzufügen"
           }
         }
       }
@@ -251,6 +321,16 @@
     },
     "BMI": {
       "shouldTranslate": false
+    },
+    "BMI at goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI beim Ziel"
+          }
+        }
+      }
     },
     "Baseline": {
       "localizations": {
@@ -375,6 +455,26 @@
         }
       }
     },
+    "Body-fat goal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperfett-Ziel"
+          }
+        }
+      }
+    },
+    "Body-fat goal reached.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Körperfett-Ziel erreicht."
+          }
+        }
+      }
+    },
     "Can't reach Bluetooth": {
       "localizations": {
         "de": {
@@ -401,6 +501,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ziel ändern"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließen"
           }
         }
       }
@@ -455,6 +565,16 @@
         }
       }
     },
+    "Consistency": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regelmäßigkeit"
+          }
+        }
+      }
+    },
     "Continue": {
       "localizations": {
         "de": {
@@ -465,12 +585,22 @@
         }
       }
     },
-    "Current": {
+    "Currently %@ %%.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aktuell"
+            "value": "Aktuell %@ %%."
+          }
+        }
+      }
+    },
+    "Daily ups and downs inside this range are normal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tägliche Schwankungen innerhalb dieses Bereichs sind normal."
           }
         }
       }
@@ -645,6 +775,26 @@
         }
       }
     },
+    "Goal %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel %@"
+          }
+        }
+      }
+    },
+    "Goal %@ %%": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel %@ %%"
+          }
+        }
+      }
+    },
     "Goal %@ kg": {
       "localizations": {
         "de": {
@@ -655,12 +805,12 @@
         }
       }
     },
-    "Goal reached": {
+    "Goal reached!": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ziel erreicht"
+            "value": "Ziel erreicht!"
           }
         }
       }
@@ -701,6 +851,48 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sichern in HealthKit fehlgeschlagen."
+          }
+        }
+      }
+    },
+    "Healthy range for %lld cm: %@–%@ kg (BMI 18.5–25).": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesunder Bereich bei %1$lld cm: %2$@–%3$@ kg (BMI 18,5–25)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Healthy range for %1$lld cm: %2$@–%3$@ kg (BMI 18.5–25)."
+          }
+        }
+      }
+    },
+    "Healthy weight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Normalgewicht"
+          }
+        }
+      }
+    },
+    "Healthy: %@–%@ kg": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesund: %1$@–%2$@ kg"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Healthy: %1$@–%2$@ kg"
           }
         }
       }
@@ -765,6 +957,16 @@
         }
       }
     },
+    "In goal range": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Zielbereich"
+          }
+        }
+      }
+    },
     "Is this your scale?": {
       "localizations": {
         "de": {
@@ -781,6 +983,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sie wacht auf, sobald du dich draufstellst, und erscheint dann hier."
+          }
+        }
+      }
+    },
+    "Keep it": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halten"
           }
         }
       }
@@ -865,6 +1077,26 @@
         }
       }
     },
+    "Milestone reached!": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meilenstein erreicht!"
+          }
+        }
+      }
+    },
+    "Milestones": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meilensteine"
+          }
+        }
+      }
+    },
     "Missing height — set it up first.": {
       "localizations": {
         "de": {
@@ -894,6 +1126,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Name"
+          }
+        }
+      }
+    },
+    "Needed from now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ab jetzt nötig"
           }
         }
       }
@@ -1028,6 +1270,36 @@
         }
       }
     },
+    "Now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt"
+          }
+        }
+      }
+    },
+    "Obesity": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adipositas"
+          }
+        }
+      }
+    },
+    "On plan": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Plan"
+          }
+        }
+      }
+    },
     "One reading so far": {
       "localizations": {
         "de": {
@@ -1048,12 +1320,32 @@
         }
       }
     },
+    "Outside goal range": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Außerhalb des Zielbereichs"
+          }
+        }
+      }
+    },
     "Overview": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Übersicht"
+          }
+        }
+      }
+    },
+    "Overweight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übergewicht"
           }
         }
       }
@@ -1088,6 +1380,26 @@
         }
       }
     },
+    "Plan": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan"
+          }
+        }
+      }
+    },
+    "Plan for today": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan für heute"
+          }
+        }
+      }
+    },
     "Pre-filled from Apple Health where available — adjust anything that's off.": {
       "localizations": {
         "de": {
@@ -1114,6 +1426,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zeitraum"
+          }
+        }
+      }
+    },
+    "Reach by": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreichen bis"
           }
         }
       }
@@ -1348,6 +1670,16 @@
         }
       }
     },
+    "Set a target date": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zieldatum festlegen"
+          }
+        }
+      }
+    },
     "Set a weight goal": {
       "localizations": {
         "de": {
@@ -1578,6 +1910,26 @@
         }
       }
     },
+    "Target": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziel"
+          }
+        }
+      }
+    },
+    "Target date": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zieldatum"
+          }
+        }
+      }
+    },
     "Target weight": {
       "localizations": {
         "de": {
@@ -1588,12 +1940,52 @@
         }
       }
     },
+    "That needs %@ kg per week — more than 1 kg per week is hard to keep up.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dafür sind %@ kg pro Woche nötig – mehr als 1 kg pro Woche ist schwer durchzuhalten."
+          }
+        }
+      }
+    },
+    "That needs %@ kg per week.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dafür sind %@ kg pro Woche nötig."
+          }
+        }
+      }
+    },
     "That's your current weight.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Das ist dein aktuelles Gewicht."
+          }
+        }
+      }
+    },
+    "The target date has passed — set a new one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Zieldatum ist vorbei – leg ein neues fest."
+          }
+        }
+      }
+    },
+    "This goal is below the healthy range.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Ziel liegt unter dem gesunden Bereich."
           }
         }
       }
@@ -1650,6 +2042,16 @@
           "stringUnit": {
             "state": "new",
             "value": "Trend %1$@%2$@ kg"
+          }
+        }
+      }
+    },
+    "Underweight": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untergewicht"
           }
         }
       }
@@ -1774,6 +2176,16 @@
         }
       }
     },
+    "Weigh in on your scale to track body fat.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wieg dich auf deiner Waage, um dein Körperfett zu verfolgen."
+          }
+        }
+      }
+    },
     "Weigh in to see your trend.": {
       "localizations": {
         "de": {
@@ -1814,6 +2226,26 @@
         }
       }
     },
+    "Weighed in on %lld of the last 14 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An %lld der letzten 14 Tage gewogen"
+          }
+        }
+      }
+    },
+    "Weighing in most days makes your trend and forecast more reliable.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn du dich an den meisten Tagen wiegst, werden Trend und Prognose genauer."
+          }
+        }
+      }
+    },
     "Weight": {
       "localizations": {
         "de": {
@@ -1840,6 +2272,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Willkommen"
+          }
+        }
+      }
+    },
+    "With a date, the Goal tab shows whether you're on plan.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit einem Datum zeigt dir der Ziel-Tab, ob du im Plan bist."
           }
         }
       }
@@ -1874,12 +2316,12 @@
         }
       }
     },
-    "You've reached your goal. Keep your weight here, or set a new goal.": {
+    "Your 30-day pace": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Du hast dein Ziel erreicht. Halte dein Gewicht oder setz dir ein neues Ziel."
+            "value": "Dein 30-Tage-Tempo"
           }
         }
       }
@@ -1900,6 +2342,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Deine Angaben"
+          }
+        }
+      }
+    },
+    "Your goal range is %@–%@ kg.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Zielbereich ist %1$@–%2$@ kg."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Your goal range is %1$@–%2$@ kg."
           }
         }
       }
@@ -1934,12 +2392,52 @@
         }
       }
     },
+    "Your trend is %@ kg above your goal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Trend liegt %@ kg über deinem Ziel."
+          }
+        }
+      }
+    },
+    "Your trend is %@ kg below your goal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Trend liegt %@ kg unter deinem Ziel."
+          }
+        }
+      }
+    },
     "Your weigh-ins are recognised automatically from your weight and body-composition signature — no weight range to configure.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Deine Messungen werden automatisch an deinem Gewicht und deiner Körperzusammensetzung erkannt – kein Gewichtsbereich nötig."
+          }
+        }
+      }
+    },
+    "for %lld days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "seit %lld Tagen"
+          }
+        }
+      }
+    },
+    "for 1 day": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "seit 1 Tag"
           }
         }
       }

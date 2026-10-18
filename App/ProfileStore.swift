@@ -19,6 +19,13 @@ struct StoredProfile: Codable, Equatable {
     /// changes (optional, so older saved profiles still decode).
     var goalStartKg: Double?
     var goalSetAt: Date?
+    /// Optional deadline for the goal (the "plan"); nil = just a forecast.
+    var goalTargetDate: Date?
+    /// Optional body-fat target in percent, and the value when it was set.
+    var goalBodyFatPercent: Double?
+    var goalBodyFatStartPercent: Double?
+    /// How many milestones of the current goal were already celebrated.
+    var goalMilestonesSeen: Int?
 
     /// A sensible default so the app is usable on first launch without setup.
     static func makeDefault() -> StoredProfile {

@@ -315,6 +315,11 @@ final class AppModel: ObservableObject {
         if updated.goalWeightKg != profile.goalWeightKg {
             updated.goalStartKg = updated.goalWeightKg == nil ? nil : currentWeightKg
             updated.goalSetAt = updated.goalWeightKg == nil ? nil : Date()
+            updated.goalMilestonesSeen = nil
+            if updated.goalWeightKg == nil { updated.goalTargetDate = nil }
+        }
+        if updated.goalBodyFatPercent != profile.goalBodyFatPercent {
+            updated.goalBodyFatStartPercent = updated.goalBodyFatPercent == nil ? nil : latestValue(.bodyFat).flatMap { $0.isFinite ? $0 : nil }
         }
         profile = updated
         ProfileStore.save(updated)
