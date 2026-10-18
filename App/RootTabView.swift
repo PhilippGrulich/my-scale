@@ -1,41 +1,32 @@
 import SwiftUI
 
-/// Bottom tab bar: goal · "+" weigh-in action (center) · overview. Settings
-/// (profile, Health, scale) live behind the gear button at the top right. Owns the
-/// app-wide pieces (Add Measurement sheet, passive weigh-in overlay, Health
-/// loading, foreground refresh) so they work no matter which tab is open.
+/// App shell: two pages you can swipe between (Goal ⟷ Overview) and one
+/// Liquid Glass bar at the bottom — Goal · Overview · Weigh in. The system
+/// tab bar can't swipe between tabs, hence a paged `TabView` plus our own bar.
+/// Settings (profile, Health, scale) live behind the gear at the top right.
+/// Also owns the app-wide pieces (Add Measurement sheet, passive weigh-in
+/// overlay, Health loading, foreground refresh).
 struct RootTabView: View {
     @EnvironmentObject var model: AppModel
     @Environment(\.scenePhase) private var scenePhase
 
-    enum TabID: Hashable { case goal, measure, overview }
-    @State private var selection: TabID = .overview
+    enum Page: Hashable { case goal, overview }
+    @State private var page: Page = .overview
     @State private var showingAddMeasurement = false
 
     var body: some View {
-        TabView(selection: $selection) {
-            Tab("Goal", systemImage: "target", value: TabID.goal) {
-                GoalPageView()
-            }
-            // Action tab: selecting it opens Add Measurement (see onChange below).
-            Tab("Weigh in", systemImage: "plus.circle.fill", value: TabID.measure) {
-                Color.clear
-            }
-            Tab("Overview", systemImage: "gauge.with.dots.needle.67percent", value: TabID.overview) {
-                DashboardView(onShowGoal: { selection = .goal })
-            }
+        TabView(selection: $page) {
+            GoalPageView().tag(Page.goal)
+            DashboardView(onShowGoal: { withAnimation(.snappy) { page = .goal } })
+                .tag(Page.overview)
         }
-        .tint(Theme.accent)
-        // The "+" tab is an action, not a destination: when it gets selected,
-        // jump straight back to the previous tab and open the sheet.
-        // (Refusing the selection in a custom Binding instead leaves TabView
-        // thinking "+" is selected, so every second tap was ignored.)
-        .onChange(of: selection) { previous, tab in
-            guard tab == .measure else { return }
-            selection = previous
-            showingAddMeasurement = true
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .background(Theme.backgroundGradient.ignoresSafeArea())
+        // Pages scroll under the floating bar but can always scroll clear of it.
+        .contentMargins(.bottom, 84, for: .scrollContent)
+        .overlay(alignment: .bottom) {
+            BottomBar(page: $page) { showingAddMeasurement = true }
         }
-        .tabBarMinimizeBehavior(.onScrollDown)
         .sheet(isPresented: addMeasurementBinding) {
             AddMeasurementView(startIn: model.hasPairedScale ? .scale : .manual)
                 .environmentObject(model)
@@ -85,5 +76,68 @@ struct RootTabView: View {
             get: { model.measurementPhase.isActive && !showingAddMeasurement },
             set: { if !$0 { model.dismissOverlay() } }
         )
+    }
+}
+
+/// Floating glass bar: two page buttons (the selected one gets a glass pill
+/// that slides between them) and the prominent Weigh in action.
+private struct BottomBar: View {
+    @Binding var page: RootTabView.Page
+    let onWeighIn: () -> Void
+    @Namespace private var pill
+
+    var body: some View {
+        GlassEffectContainer(spacing: 12) {
+            HStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    item(.goal, title: "Goal", icon: "target")
+                    item(.overview, title: "Overview", icon: "gauge.with.dots.needle.67percent")
+                }
+                .padding(4)
+                .glassEffect(in: .capsule)
+
+                Button(action: onWeighIn) {
+                    VStack(spacing: 2) {
+                        Image(systemName: "plus")
+                            .font(.title3.weight(.bold))
+                        Text("Weigh in")
+                            .font(.caption2.weight(.semibold))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(width: 72, height: 56)
+                }
+                .buttonStyle(.plain)
+                .glassEffect(.regular.tint(Theme.accent).interactive(), in: .capsule)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 6)
+    }
+
+    private func item(_ target: RootTabView.Page, title: LocalizedStringKey, icon: String) -> some View {
+        let selected = page == target
+        return Button {
+            withAnimation(.snappy) { page = target }
+        } label: {
+            VStack(spacing: 2) {
+                Image(systemName: icon)
+                    .font(.title3)
+                Text(title)
+                    .font(.caption2.weight(.semibold))
+            }
+            .foregroundStyle(selected ? Theme.accent : .primary)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background {
+                if selected {
+                    Capsule()
+                        .fill(Theme.accent.opacity(0.14))
+                        .matchedGeometryEffect(id: "pill", in: pill)
+                }
+            }
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
