@@ -22,12 +22,12 @@ struct AboutView: View {
                 Link(destination: Self.privacyURL) { Label("Privacy policy", systemImage: "hand.raised") }
                 Link(destination: Self.supportURL) { Label("Support & feedback", systemImage: "questionmark.bubble") }
             } footer: {
-                Text("MyOpenScale is open source. No account, no tracking — your data stays on your devices and in Apple Health.")
+                Text("Mochi is open source. No account, no tracking — your data stays on your devices and in Apple Health.")
             }
 
             Section("Licenses") {
-                NavigationLink("MyOpenScale — MIT License") {
-                    LicenseText(title: "MyOpenScale", text: Licenses.myOpenScale)
+                NavigationLink("Mochi — MIT License") {
+                    LicenseText(title: "Mochi", text: Licenses.myOpenScale)
                 }
                 NavigationLink("Xiaomi_Scale_Body_Metrics — MIT License") {
                     LicenseText(title: "Xiaomi_Scale_Body_Metrics", text: Licenses.lolouk44)
@@ -46,7 +46,7 @@ struct AboutView: View {
 
             Section {
                 Text("Body-composition values are estimates, not medical advice. Talk to a doctor before making health decisions.")
-                Text("Works with the Xiaomi Mi Body Composition Scale 2. MyOpenScale is an independent app and is not affiliated with, endorsed by, or sponsored by Xiaomi. Apple Health and Apple Watch are trademarks of Apple Inc.")
+                Text("Works with the Xiaomi Mi Body Composition Scale 2. Mochi is an independent app and is not affiliated with, endorsed by, or sponsored by Xiaomi. Apple Health and Apple Watch are trademarks of Apple Inc.")
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
@@ -120,7 +120,7 @@ enum Licenses {
     License for the specific language governing permissions and limitations under \
     the License.
 
-    MyOpenScale reimplements the published body-composition equations in Swift; \
+    Mochi reimplements the published body-composition equations in Swift; \
     no bodymiscale source code is included.
     """
 }

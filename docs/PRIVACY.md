@@ -1,8 +1,8 @@
-# Privacy Policy — MyOpenScale
+# Privacy Policy — Mochi: Weight Tracker
 
 _Last updated: 2026-10-20_
 
-MyOpenScale ("the App", for iPhone and Apple Watch) is built to keep your data
+Mochi: Weight Tracker ("the App", for iPhone and Apple Watch) is built to keep your data
 private and on your own devices.
 
 ## Summary

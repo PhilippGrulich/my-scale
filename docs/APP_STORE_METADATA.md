@@ -1,18 +1,17 @@
 # App Store metadata (draft)
 
-## App name: **MyOpenScale**
-Chosen to avoid Xiaomi's **"Mi"** trademark (the original "MiScale" was a
-5.2.5/5.2.1 risk). Set as `CFBundleDisplayName` in the app + extension.
-
-Before submitting: confirm **"MyOpenScale"** is available as an App Store app
-name in App Store Connect. Note it echoes the open-source *openScale* project —
-distinct enough, but avoid implying affiliation with it too.
+## App name: **Mochi: Weight Tracker**
+App Store name (30 chars max: 21). Home-screen name (`CFBundleDisplayName`):
+**Mochi**, after the cat companion. Renamed from "MyOpenScale" on 2026-10-20;
+the ASC app record keeps its id (`6787745052`), only the name changes — set it
+in App Store Connect → App Information → Name (must be available).
+Avoid Xiaomi's "Mi" in the name (trademark, guidelines 5.2.1/5.2.5).
 
 The bundle id (`com.philippgrulich.myopenscale.app`) stays — Apple cares about the
 **visible name** and metadata, not the reverse-DNS id.
 
 ## Subtitle (30 chars max)
-- `Weigh-ins straight to Health`  (28)
+- `Smart scale & body composition`  (30)
 
 ## Promotional text (170 chars)
 Turn your Bluetooth body-composition scale into automatic Apple Health

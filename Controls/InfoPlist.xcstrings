@@ -7,13 +7,13 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "MyOpenScale Steuerelemente"
+            "value": "Mochi Steuerelemente"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "MyOpenScale Controls"
+            "value": "Mochi Controls"
           }
         }
       }

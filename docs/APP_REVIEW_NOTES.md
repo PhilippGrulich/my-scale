@@ -1,6 +1,6 @@
 # App Review Notes (paste into App Store Connect → App Review Information → Notes)
 
-Thank you for reviewing MyOpenScale.
+Thank you for reviewing Mochi: Weight Tracker.
 
 ## How to evaluate without the scale
 The app reads a physical Bluetooth body-composition scale, which the review

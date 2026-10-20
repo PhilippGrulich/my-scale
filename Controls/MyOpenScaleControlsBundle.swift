@@ -25,6 +25,6 @@ struct StartWeighInControl: ControlWidget {
             }
         }
         .displayName("Start Weigh-In")
-        .description("Start a new weight measurement in MyOpenScale.")
+        .description("Start a new weight measurement in Mochi.")
     }
 }

@@ -144,8 +144,8 @@ final class HealthKitSink {
         let metadata: [String: Any] = [
             HKMetadataKeyWasUserEntered: false,
             Self.impedanceKey: impedanceOhms,
-            "MyOpenScaleAppBuild": appBuild,
-            "MyOpenScaleUserID": profile.id.uuidString,
+            "MochiAppBuild": appBuild,
+            "MochiUserID": profile.id.uuidString,
         ]
         save(composition, at: capturedAt, metadata: metadata, completion: completion)
     }
@@ -562,7 +562,7 @@ final class HealthKitSink {
     static func userMessage(for error: Error) -> String {
         if let hk = error as? HKError,
            hk.code == .errorAuthorizationDenied || hk.code == .errorAuthorizationNotDetermined {
-            return String(localized: "MyOpenScale may not save to Apple Health. Allow it in the Health app under Profile › Apps › MyOpenScale.")
+            return String(localized: "Mochi may not save to Apple Health. Allow it in the Health app under Profile › Apps › Mochi.")
         }
         return error.localizedDescription
     }

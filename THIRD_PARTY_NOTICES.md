@@ -1,6 +1,6 @@
 # Third-party notices
 
-MyOpenScale links no third-party code libraries. The body-composition
+Mochi: Weight Tracker (source: MyOpenScale) links no third-party code libraries. The body-composition
 estimates are a Swift reimplementation of formulas published by:
 
 - **Xiaomi_Scale_Body_Metrics** by lolouk44 and contributors — MIT License —
