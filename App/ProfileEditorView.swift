@@ -85,6 +85,14 @@ struct ProfileEditorView: View {
                 #endif
 
                 Section {
+                    NavigationLink {
+                        AboutView()
+                    } label: {
+                        Label("About & licenses", systemImage: "info.circle")
+                    }
+                }
+
+                Section {
                     Label("Your weigh-ins are recognised automatically from your weight and body-composition signature — no weight range to configure.",
                           systemImage: "person.fill.checkmark")
                         .font(.footnote)

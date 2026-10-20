@@ -32,7 +32,7 @@
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Used only when you pair your scale (Xiaomi Mi Body Composition Scale 2): listens for its nearby weigh-in broadcasts to read your weight. The app never connects to the scale.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Reads your date of birth, biological sex, height, and weight history to set up your profile and compute body composition from scale readings.</string>
+	<string>Reads your date of birth, sex, height, weight and body measurements to set up your profile and estimate body composition, and your workouts, steps, active and dietary energy to show them in your history and let Mochi cheer you on. Nothing leaves your devices.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Saves your weight, body fat percentage, lean body mass, and BMI to Apple Health.</string>
 	<key>UIApplicationSceneManifest</key>

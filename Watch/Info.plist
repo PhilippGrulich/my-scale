@@ -30,7 +30,7 @@
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Scans for nearby body-composition scale advertisements (compatible with the Xiaomi Mi Body Composition Scale 2) to read your weigh-ins. No pairing or connection is made.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Reads your date of birth, biological sex, height, and weight history to compute body composition from scale readings.</string>
+	<string>Reads your date of birth, sex, height and weight history to estimate body composition from scale readings. Nothing leaves your devices.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Saves your weight, body fat percentage, lean body mass, and BMI to Apple Health.</string>
 	<key>WKApplication</key>

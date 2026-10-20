@@ -358,6 +358,36 @@
         }
       }
     },
+    "About": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über"
+          }
+        }
+      }
+    },
+    "About & licenses": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über die App & Lizenzen"
+          }
+        }
+      }
+    },
+    "Acknowledgements": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danksagungen"
+          }
+        }
+      }
+    },
     "Activity": {
       "localizations": {
         "de": {
@@ -641,6 +671,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Werte zur Körperzusammensetzung sind Schätzungen und keine medizinische Beratung."
+          }
+        }
+      }
+    },
+    "Body-composition values are estimates, not medical advice. Talk to a doctor before making health decisions.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Werte zur Körperzusammensetzung sind Schätzungen und keine medizinische Beratung. Sprich vor gesundheitlichen Entscheidungen mit einer Ärztin oder einem Arzt."
           }
         }
       }
@@ -1616,6 +1656,16 @@
         }
       }
     },
+    "Licenses": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenzen"
+          }
+        }
+      }
+    },
     "Live frames (%lld)": {
       "localizations": {
         "de": {
@@ -1809,6 +1859,16 @@
         }
       }
     },
+    "MyOpenScale is open source. No account, no tracking — your data stays on your devices and in Apple Health.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MyOpenScale ist Open Source. Kein Konto, kein Tracking – deine Daten bleiben auf deinen Geräten und in Apple Health."
+          }
+        }
+      }
+    },
     "MyOpenScale may not save to Apple Health. Allow it in the Health app under Profile › Apps › MyOpenScale.": {
       "localizations": {
         "de": {
@@ -1818,6 +1878,9 @@
           }
         }
       }
+    },
+    "MyOpenScale — MIT License": {
+      "shouldTranslate": false
     },
     "Name": {
       "localizations": {
@@ -2198,6 +2261,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Angabe"
+          }
+        }
+      }
+    },
+    "Privacy policy": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenschutzerklärung"
           }
         }
       }
@@ -2672,6 +2745,16 @@
         }
       }
     },
+    "Source code": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quellcode"
+          }
+        }
+      }
+    },
     "Stairs": {
       "localizations": {
         "de": {
@@ -2778,6 +2861,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Krafttraining"
+          }
+        }
+      }
+    },
+    "Support & feedback": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hilfe & Feedback"
           }
         }
       }
@@ -2921,6 +3014,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Das ist dein aktuelles Gewicht."
+          }
+        }
+      }
+    },
+    "The body-composition estimates (body fat, lean and muscle mass, water, bone mass, visceral fat, basal metabolic rate, metabolic age, protein) are based on the formulas published in lolouk44/Xiaomi_Scale_Body_Metrics and dckiller51/bodymiscale.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Schätzungen der Körperzusammensetzung (Körperfett, fettfreie und Muskelmasse, Wasser, Knochenmasse, Viszeralfett, Grundumsatz, Stoffwechselalter, Protein) beruhen auf den Formeln aus lolouk44/Xiaomi_Scale_Body_Metrics und dckiller51/bodymiscale."
           }
         }
       }
@@ -3167,6 +3270,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wert"
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
           }
         }
       }
@@ -3501,6 +3614,16 @@
         }
       }
     },
+    "Works with the Xiaomi Mi Body Composition Scale 2. MyOpenScale is an independent app and is not affiliated with, endorsed by, or sponsored by Xiaomi. Apple Health and Apple Watch are trademarks of Apple Inc.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funktioniert mit der Xiaomi Mi Body Composition Scale 2. MyOpenScale ist eine unabhängige App und steht in keiner Verbindung zu Xiaomi und wird nicht von Xiaomi unterstützt. Apple Health und Apple Watch sind Marken von Apple Inc."
+          }
+        }
+      }
+    },
     "Works with: Xiaomi Mi Body Composition Scale 2": {
       "localizations": {
         "de": {
@@ -3510,6 +3633,9 @@
           }
         }
       }
+    },
+    "Xiaomi_Scale_Body_Metrics — MIT License": {
+      "shouldTranslate": false
     },
     "Yes, pair this scale": {
       "localizations": {
@@ -3821,6 +3947,9 @@
           }
         }
       }
+    },
+    "bodymiscale — Apache License 2.0": {
+      "shouldTranslate": false
     },
     "for %lld days": {
       "localizations": {

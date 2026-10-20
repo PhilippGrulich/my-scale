@@ -1,54 +1,64 @@
-# Privacy Policy
+# Privacy Policy — MyOpenScale
 
-_Last updated: 2026-07-01_
+_Last updated: 2026-10-20_
 
-This app ("the App") is designed to keep your data private and on your device.
-Host this page at a public URL and enter that URL in App Store Connect
-(App Privacy → Privacy Policy URL).
+MyOpenScale ("the App", for iPhone and Apple Watch) is built to keep your data
+private and on your own devices.
 
 ## Summary
 
 - The App **does not collect, transmit, sell, or share** any personal data.
-- There are **no accounts, no servers, and no analytics or tracking**.
-- Everything happens **on your iPhone** and, with your permission, in **Apple
-  Health**.
+- There are **no accounts, no servers, no analytics and no tracking**.
+- Everything happens **on your iPhone and Apple Watch** and, with your
+  permission, in **Apple Health**.
 
 ## What the App accesses
 
-**Bluetooth.** The App listens for the broadcast advertisements of a nearby
-compatible body-composition scale to read your weight and impedance. It does not
-pair with, connect to, or send anything to the scale, and it does not use
-Bluetooth to identify you or your location.
+**Bluetooth.** Only after you choose to pair a scale, the App listens for the
+broadcast advertisements of a nearby compatible body-composition scale to read
+your weight and impedance. It does not connect to or send anything to the scale,
+and does not use Bluetooth to identify you or your location.
 
 **Apple Health (HealthKit).** With your explicit permission, the App:
-- **reads** your date of birth, biological sex, height, and weight history to set
-  up your profile and calculate body composition, and
-- **writes** your weight, body-fat percentage, lean body mass, and body-mass
-  index back to Apple Health.
+- **reads** your date of birth, biological sex, height, weight, body-fat
+  percentage, lean body mass and BMI, to set up your profile, estimate body
+  composition and show your history and goal progress;
+- **reads** your workouts, steps, active energy and dietary energy, only to show
+  them in your history and to let the in-app companion (Mochi) react to them;
+- **writes** your weight, body-fat percentage, lean body mass and BMI.
 
-Health data is used **only** to provide the App's features on your device. It is
+Health data is used **only** to provide the App's features on your devices. It is
 **never** used for advertising or marketing, and is **never** transmitted to us
-or any third party. HealthKit data is not stored in iCloud by the App; the App's
-local data file is excluded from device backups.
+or any third party.
 
-**Notifications.** With your permission, the App shows local notifications on
-your device (e.g. "weigh-in saved"). No notification data leaves your device.
+**Apple Watch.** The iPhone app sends your goal, your name (for Mochi's
+greetings), whether a scale is paired and whether Mochi is on to your own Apple
+Watch, directly between your devices (WatchConnectivity). Nothing goes through a
+server.
+
+**Notifications.** With your permission, the App shows local notifications
+(e.g. "weigh-in saved", "Was this you?", and optional weigh-in reminders). They
+are created on your device; no notification data leaves it.
+
+**Widgets.** Home/Lock Screen widgets read a small summary the App stores
+locally on your iPhone.
 
 ## Data storage and deletion
 
-Your profile and recent readings are stored locally on your device. You can
-delete individual weigh-ins in the App (which also removes the corresponding
-samples the App wrote to Apple Health), and you can revoke Health or Bluetooth
-access at any time in iOS Settings. Deleting the App removes its local data.
+Your profile, settings and recent readings are stored locally on your devices;
+the local readings file is excluded from device backups. You can delete or edit
+weigh-ins the App saved, which also changes them in Apple Health. You can revoke
+Health, Bluetooth or notification access at any time in iOS Settings. Deleting
+the App removes its local data.
 
 ## Children
 
 The App is not directed at children and collects no data from anyone.
 
-## Changes
-
-If this policy changes, the updated version will be posted at this URL.
-
 ## Contact
 
-Questions: **hello@grulich.me**
+Questions: open an issue at https://github.com/PhilippGrulich/my-scale/issues
+
+## Changes
+
+If this policy changes, the updated version is published at this URL.
