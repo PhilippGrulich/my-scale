@@ -36,6 +36,10 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 
+    /// Simulator checks only: deliver the next posts after this many seconds, so the
+    /// app can be sent to the background first (`AppModel.debugPostTestNotifications`).
+    var debugDelay: TimeInterval?
+
     func notifySaved(weightKg: Double) {
         notifySaved(title: String(localized: "Weigh-in saved"),
                     body: String(localized: "\(weightKg.formatted(.number.precision(.fractionLength(1)))) kg saved to Apple Health."))
@@ -61,7 +65,8 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func post(_ content: UNMutableNotificationContent) {
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        let trigger = debugDelay.map { UNTimeIntervalNotificationTrigger(timeInterval: $0, repeats: false) }
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
     }
 

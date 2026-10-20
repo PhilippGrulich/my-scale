@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 /// System tab bar: Goal · Overview · "+" Weigh in (center) · History · Settings.
 /// Also owns the app-wide pieces (passive weigh-in overlay, Health loading,
@@ -74,6 +75,22 @@ struct RootTabView: View {
                 try? await Task.sleep(for: .seconds(4))
                 model.simulateWeighIn()
                 return
+            }
+            if UserDefaults.standard.bool(forKey: "testNotifications") { model.debugPostTestNotifications() }
+            // `-notificationReport YES`: log the notification permission and every
+            // pending notification (Mochi reminders) for checking in the simulator.
+            if UserDefaults.standard.bool(forKey: "notificationReport") {
+                Task {
+                    try? await Task.sleep(for: .seconds(3))
+                    let center = UNUserNotificationCenter.current()
+                    let settings = await center.notificationSettings()
+                    NSLog("MOSNOTE auth=%ld alert=%ld", settings.authorizationStatus.rawValue, settings.alertSetting.rawValue)
+                    for r in await center.pendingNotificationRequests().sorted(by: { $0.identifier < $1.identifier }) {
+                        let date = (r.trigger as? UNCalendarNotificationTrigger)?.nextTriggerDate()
+                        NSLog("MOSNOTE pending %@ at %@: %@ — %@", r.identifier, date?.description ?? "-",
+                              r.content.title, r.content.body)
+                    }
+                }
             }
             // `-skipNotificationPrompt YES`: no permission alert (it makes the app inactive,
             // which holds back Mochi's home content), for simulator screenshots.

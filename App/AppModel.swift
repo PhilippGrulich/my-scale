@@ -901,6 +901,24 @@ final class AppModel: ObservableObject {
         }
     }
 
+    #if DEBUG
+    /// `-testNotifications YES` (simulator): post the real "saved" and "Was this you?"
+    /// notifications a few seconds from now, for a pending review item when there is one.
+    func debugPostTestNotifications() {
+        notifications.debugDelay = 6
+        let kg = currentWeightKg ?? 80
+        if mochi.settings.enabled {
+            notifications.notifySaved(title: "Mochi", body: mochi.savedNotificationBody(weightKg: kg, profile: profile))
+        } else {
+            notifications.notifySaved(weightKg: kg)
+        }
+        notifications.debugDelay = 9
+        let review = pendingConfirmations.first
+        notifications.notifyNeedsReview(readingID: review?.id ?? UUID(), weightKg: review?.weightKg ?? kg + 3)
+        notifications.debugDelay = nil
+    }
+    #endif
+
     /// Mochi reacts to a typed weigh-in too (the user did weigh in). Mochi off: nothing.
     private func reactToManualEntry(weightKg: Double, date: Date) -> (LoggedReading, MochiPresentation)? {
         guard mochi.settings.enabled else { return nil }
