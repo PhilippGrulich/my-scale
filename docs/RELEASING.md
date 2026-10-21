@@ -1,6 +1,6 @@
 # Releasing a new build to TestFlight
 
-Verified end-to-end on 2026-07-05 (build 1.0.0 (1)). Fully headless — no Xcode
+Verified end-to-end on 2026-07-05 (build 1.0.0 (1)) and 2026-10-21 (1.0.0 (2), "Mochi"). Fully headless — no Xcode
 GUI needed. Written for whoever ships the next build (human or agent).
 
 ## One-time state that already exists
@@ -79,8 +79,12 @@ WORK=$(mktemp -d)
 
    ```bash
    xcrun altool --upload-app -f "$WORK/export/MyOpenScaleApp.ipa" -t ios \
+     --apple-id 6787745052 \
      --apiKey Z7MX5327NV --apiIssuer 7517ab5e-7043-41c4-a30a-306219d14bb9
    ```
+
+   Pass `--apple-id` (the app's ASC id): without it altool sometimes can't
+   find the app record ("Unable to find Apple ID for Bundle ID").
 
    Processing takes ~2–15 min (poll `GET /v1/builds`, wait for
    `processingState: VALID`). The **Internal** group gets the build
@@ -122,6 +126,16 @@ Recreate it via the API (App Manager role is sufficient — it's only Xcode
    both profile directories (names must keep matching `exportOptions.plist`).
 
 ## Gotchas
+
+- **`403 FORBIDDEN.REQUIRED_AGREEMENTS_MISSING_OR_EXPIRED`** on upload and on
+  every API call: an agreement needs accepting. Check App Store Connect →
+  Business (Free Apps agreement **Active**) *and* developer.apple.com →
+  Account (updated Program License Agreement, Account Holder only). After
+  accepting, it can take a few minutes until uploads go through.
+- Adding a build to the **Internal** group via the API returns 422 — expected,
+  internal groups get every build automatically.
+- A `betaBuildLocalizations` POST for `en-US` can 409 (auto-created): PATCH the
+  existing one instead.
 
 - `xcode-select` points at CommandLineTools — always `export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
 - Never hand-edit the `.xcodeproj`; edit `project.yml` and re-run `xcodegen generate`.
